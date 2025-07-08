@@ -1,0 +1,13 @@
+{
+  "name": "@bedrock-ws/bedrockws",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./lib/mod.ts",
+    "./events": "./lib/events.ts"
+  },
+  "license": "MIT",
+  "imports": {
+    "@asyncio/sync": "jsr:@asyncio/sync@^0.0.5",
+    "@minecraft/server": "npm:@minecraft/server@^2.0.0"
+  }
+}

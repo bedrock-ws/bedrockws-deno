@@ -1,0 +1,17 @@
+{
+  "name": "@bedrock-ws/schema",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./lib/mod.ts"
+  },
+  "tasks": {
+    "json-schema": {
+      "description": "Generates the JSON schema for the request/response; either of them must be passed as an argument",
+      "command": "deno run ./scipts/jsonSchema.ts"
+    }
+  },
+  "license": "MIT",
+  "imports": {
+    "zod": "npm:zod@^3.25.0"
+  }
+}

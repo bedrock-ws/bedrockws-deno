@@ -170,16 +170,17 @@ export interface PlayerMessage {
    * The receiver of the message or an empty string if there is no particular
    * receiver.
    *
-   * This is usually the player name targeted when using the `tell`/`w` or
-   * `tellraw` command.
+   * This is usually the player name targeted when using the `tell`/`w`/`msg`
+   * or `tellraw` command.
    */
   receiver: string;
 
   /**
    * The medium used for transmitting the message.
    *
-   * `"tell"` includes the commands `tell`, `w` and `tellraw`; `"say"` includes
-   * the `say` commands and `"chat"` means that no command has been used.
+   * `"tell"` includes the commands `tell`, `w`, `msg`, and `tellraw`; `"say"`
+   * includes the `say` commands and `"chat"` means that no command has been
+   * used.
    */
   type: "chat" | "tell" | "say";
 }

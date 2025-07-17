@@ -8,7 +8,8 @@ import {
   PlayerMessageEvent,
   PlayerTravelledEvent,
 } from "./events.ts";
-import type { Server } from "bedrockws";
+import type { Server } from "@bedrock-ws/bedrockws";
+import type { WebSocket } from "ws";
 import { eventNameAsCamelCase, eventNameAsPascalCase } from "./case.ts";
 
 interface PendingRequest<O, E> {

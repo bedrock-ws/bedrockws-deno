@@ -1,8 +1,4 @@
-// FIXME: Server sometimes randomly closes connection; see also: https://github.com/denoland/deno/discussions/13168.
-//        It cannot be the ping idle as python websockets.py uses 20 and Deno uses 30 (even setting it to 60 does not
-//        help).
 // TODO: remove all console.* calls
-// TODO: separate lib in same workspace for ui stuff
 // TODO: enforce pascal case event names in api
 
 export { default as Client } from "./Client.ts";

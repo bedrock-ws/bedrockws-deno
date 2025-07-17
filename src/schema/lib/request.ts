@@ -6,6 +6,10 @@ export const MessagePurpose = z.enum(
   ["subscribe", "unsubscribe", "commandRequest"] as const,
 );
 
+export const SubsribeRequest = z.strictObject({}); // TODO
+
+export const UnsubscribeRequest = z.strictObject({}); // TODO
+
 export const Request = z.strictObject({
   header: z.strictObject({
     version: z.number(),

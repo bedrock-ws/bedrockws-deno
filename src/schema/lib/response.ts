@@ -1,37 +1,55 @@
 import * as z from "zod/v4";
-import { EventName } from "./shared.ts";
+import { CompatibilityVersion } from "./common.ts";
 
 export const Player = z.strictObject({
   color: z.string().regex(/[0-9a-f]+/g),
-  dimension: z.number(),
+  dimension: z.union([
+    z.literal(0).meta({ description: "Overworld" }),
+    z.literal(1).meta({ description: "Nether" }),
+    z.literal(2).meta({ description: "End dimension" }),
+  ] as const),
   id: z.number(),
   name: z.string(),
   position: z.strictObject({
-    x: z.number(), y: z.number(), z: z.number(),
-  }),
-  type: z.string().meta({description: "This is always `\"minecraft:player\"`"}),
+    x: z.number(),
+    y: z.number(),
+    z: z.number(),
+  }).meta({ description: "The position of the player" }),
+  type: z.string().meta({ description: 'This is always `"minecraft:player"`' }),
   variant: z.number(),
   yRot: z.number(),
-})
+});
 
 export const PlayerTravelled = z.strictObject({
   isUnderwater: z.boolean(),
   metersTravelled: z.number(),
   newBiome: z.number(),
   player: Player,
-  travelMethod: z.number(),
-})
-
-export const EventResponse = z.strictObject({
-  header: z.strictObject({
-    eventName: EventName,
-    messagePurpose: z.literal("event"),
-    version: z.number().meta({
-      description:
-        "Number representing the compability version. This is always 17104896 as of writing and represents Minecraft version 1.5.0",
-    }),
-  }),
-  body: z.any(), // TODO
+  travelMethod: z.union([
+    // TODO: Elytra, swimming, jumping
+    z.literal(0).meta({ description: "Walking" }),
+    z.literal(2).meta({ description: "Falling" }),
+    z.literal(5).meta({ description: "Flying (in creative mode)" }),
+    z.literal(6).meta({ description: "Riding (minecart for example)" }),
+  ] as const),
 });
+
+function eventResponse<ItemType extends z.ZodType>(
+  eventName: string,
+  body: ItemType,
+) {
+  return z.strictObject({
+    header: z.strictObject({
+      messagePurpose: z.literal("event"),
+      version: CompatibilityVersion,
+      eventName: z.literal(eventName),
+    }),
+    body,
+  });
+}
+
+export const EventResponse = z.union([
+  eventResponse("PlayerTravelled", PlayerTravelled),
+] as const);
 
 export const Response = z.union([EventResponse] as const);

@@ -226,7 +226,7 @@ export interface PlayerTravelled {
    * The method used for traveling.
    *
    * This is `5` for flying in creative mode, `2` for falling, `0` for
-   * walking, `6` for riding (a minecraft for example).
+   * walking, `6` for riding (a minecart for example).
    */
   travelMethod: number;
 

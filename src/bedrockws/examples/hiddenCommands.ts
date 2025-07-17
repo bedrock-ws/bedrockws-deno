@@ -4,7 +4,7 @@
  * This is intended to try out hidden commands only executable by a WebSocket
  * client. These commands include:
  *
- * - `querytarget`: Returns data like the position of the target.
+ * - `querytarget`: This always fails.
  * - `geteduclientinfo`: This always fails.
  * - `getlocalplayername`: Returns the player name of the connected client.
  */

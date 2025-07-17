@@ -1,6 +1,16 @@
-import type { JsonValue } from "@std/json";
+export class Response {
+  data: ResponseData;
 
-export default interface Response {
+  constructor(data: ResponseData) {
+    this.data = data;
+  }
+
+  get ok(): boolean {
+    return this.data.body.statucCode >= 0;
+  }
+}
+
+export interface ResponseData {
   header: Header;
   body: Body;
 }

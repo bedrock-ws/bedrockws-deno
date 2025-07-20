@@ -17,8 +17,8 @@ function eventResponse<ItemType extends z.ZodType>(
   });
 }
 
-function commandResponse(
-  body,
+function commandResponse<Z extends z.ZodType>(
+  body: Z,
 ) {
   return z.strictObject({
     header: z.strictObject({
@@ -26,17 +26,19 @@ function commandResponse(
       requestId: z.uuidv4(),
       version: CompatibilityVersion,
     }),
-    body: z.strictObject({
-      statusCode: z.number().meta({
-        description:
-          "The status code of an executed command. This is negative on failure and zero on success.",
-      }),
-      statusMessage: z.string().meta({
-        description: "The command output displayed in the chat.",
-      }),
-    }).extend(body),
+    body,
   });
 }
+
+export const CommandResponseBase = z.strictObject({
+  statusCode: z.number().meta({
+    description:
+      "The status code of an executed command. This is negative on failure and zero on success.",
+  }),
+  statusMessage: z.string().meta({
+    description: "The command output displayed in the chat.",
+  }),
+});
 
 export const EventResponse = z.union(
   [
@@ -47,15 +49,15 @@ export const EventResponse = z.union(
 
 export const CommandResponse = z.union(
   [
-    commandResponse({
+    commandResponse(CommandResponseBase.extend({
       message: z.string().meta({ description: "The message that got send" }),
       recipient: z.array(z.string()).meta({
         description: "Names of players who received the message",
       }),
-    }), // tell/w/msg command
-    commandResponse({ details: z.string() }), // getlocalplayername command
-    commandResponse({}), // errors
+    })), // tell/w/msg command
+    commandResponse(CommandResponseBase.extend({ details: z.string() })), // getlocalplayername command
+    commandResponse(CommandResponseBase), // errors
   ] as const,
 );
 
-export const Response = z.union([EventResponse] as const);
+export const Response = z.union([EventResponse, CommandResponse] as const);

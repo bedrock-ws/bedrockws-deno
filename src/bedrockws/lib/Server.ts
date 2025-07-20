@@ -26,7 +26,7 @@ export default class Server extends EventEmitter {
   /** Launches the server. */
   launch(options: LaunchOptions) {
     const wss = new WebSocketServer({ ...options });
-    wss.on("connection", (socket) => {
+    wss.on("connection", (socket, _request) => {
       const client = new Client(socket, this);
       this.clients.push(client);
 

@@ -1,16 +1,4 @@
-export class Response {
-  data: ResponseData;
-
-  constructor(data: ResponseData) {
-    this.data = data;
-  }
-
-  get ok(): boolean {
-    return this.data.body.statucCode >= 0;
-  }
-}
-
-export interface ResponseData {
+export default interface Response {
   header: Header;
   body: Body;
 }
@@ -21,4 +9,4 @@ export interface Header {
   requestId: string;
 }
 
-export type Body = any; // TODO: prefer JsonValue or use zod
+export type Body = unknown;

@@ -1,5 +1,6 @@
 // TODO: remove all console.* calls
 // TODO: enforce pascal case event names in api
+// TODO: encryption; see also: https://github.com/Sandertv/mcwss/blob/master/encryption.go
 
 export { default as Client } from "./Client.ts";
 export { default as Server } from "./Server.ts";

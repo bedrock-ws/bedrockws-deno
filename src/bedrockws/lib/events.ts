@@ -1,106 +1,114 @@
-// TODO: factor out to separate lib using zod or standardschema.dev
-// TODO: all events
-
 import type Server from "./Server.ts";
 import type Client from "./Client.ts";
+import type {
+  AdditionalContentLoaded,
+  ItemUsed,
+  MobKilled,
+  PlayerBounced,
+  PlayerMessage,
+  PlayerTeleported,
+  PlayerTransform,
+  PlayerTravelled,
+} from "@bedrock-ws/schema/events";
 import type { RawText } from "@minecraft/server";
+import type { z } from "zod/v4";
 
-/** Names of events the server can trigger. */
+/** Events the server can trigger. */
 export interface ServerEvent {
-  ready: (event: ReadyEvent) => void;
+  Ready: (event: ReadyEvent) => void;
 }
 
-/** Names of events the client can trigger. */
+/** Events the client can trigger. */
 export interface ClientEvent {
-  connect: (event: ConnectEvent) => void;
-  disconnect: (event: unknown) => void;
+  Connect: (event: ConnectEvent) => void;
+  Disconnect: (event: unknown) => void;
 }
 
-/** Names of events the game can trigger. */
+/** Events the game can trigger. */
 export interface GameEvent {
-  additionalContentLoaded: (event: AdditionalContentLoadedEvent) => void;
-  agentCommand: (event: unknown) => void;
-  agentCreated: (event: unknown) => void;
-  apiInit: (event: unknown) => void;
-  appPaused: (event: unknown) => void;
-  appResumed: (event: unknown) => void;
-  appSuspended: (event: unknown) => void;
-  awardAchievement: (event: unknown) => void;
-  blockBroken: (event: unknown) => void;
-  blockPlaced: (event: unknown) => void;
-  boardTextUpdated: (event: unknown) => void;
-  bossKilled: (event: unknown) => void;
-  cameraUsed: (event: unknown) => void;
-  cauldronUsed: (event: unknown) => void;
-  configurationChanged: (event: unknown) => void;
-  connectionFailed: (event: unknown) => void;
-  craftingSessionCompleted: (event: unknown) => void;
-  endOfDay: (event: unknown) => void;
-  entitySpawned: (event: unknown) => void;
-  fileTransmissionCancelled: (event: unknown) => void;
-  fileTransmissionCompleted: (event: unknown) => void;
-  fileTransmissionStarted: (event: unknown) => void;
-  firstTimeClientOpen: (event: unknown) => void;
-  focusGained: (event: unknown) => void;
-  focusLost: (event: unknown) => void;
-  gameSessionComplete: (event: unknown) => void;
-  gameSessionStart: (event: unknown) => void;
-  hardwareInfo: (event: unknown) => void;
-  hasNewContent: (event: unknown) => void;
-  itemAcquired: (event: unknown) => void;
-  itemCrafted: (event: unknown) => void;
-  itemDestroyed: (event: unknown) => void;
-  itemDropped: (event: unknown) => void;
-  itemEnchanted: (event: unknown) => void;
-  itemSmelted: (event: unknown) => void;
-  itemUsed: (event: ItemUsedEvent) => void;
-  joinCanceled: (event: unknown) => void;
-  jukeboxUsed: (event: unknown) => void;
-  licenseCensus: (event: unknown) => void;
-  mascotCreated: (event: unknown) => void;
-  menuShown: (event: unknown) => void;
-  mobInteracted: (event: unknown) => void;
-  mobKilled: (event: MobKilledEvent) => void;
-  multiplayerConnectionStateChanged: (event: unknown) => void;
-  multiplayerRoundEnd: (event: unknown) => void;
-  multiplayerRoundStart: (event: unknown) => void;
-  npcPropertiesUpdated: (event: unknown) => void;
-  optionsUpdated: (event: unknown) => void;
-  performanceMetrics: (event: unknown) => void;
-  playerBounced: (event: PlayerBouncedEvent) => void;
-  playerDied: (event: unknown) => void;
-  playerJoin: (event: unknown) => void;
-  playerLeave: (event: unknown) => void;
-  playerMessage: (event: PlayerMessageEvent) => void;
-  playerTeleported: (event: PlayerTeleportedEvent) => void;
-  playerTransform: (event: PlayerTransformEvent) => void;
-  playerTravelled: (event: PlayerTravelledEvent) => void;
-  portalBuilt: (event: unknown) => void;
-  portalUsed: (event: unknown) => void;
-  portfolioExported: (event: unknown) => void;
-  potionBrewed: (event: unknown) => void;
-  purchaseAttempt: (event: unknown) => void;
-  purchaseResolved: (event: unknown) => void;
-  regionalPopup: (event: unknown) => void;
-  respondedToAcceptContent: (event: unknown) => void;
-  screenChanged: (event: unknown) => void;
-  screenHeartbeat: (event: unknown) => void;
-  signInToEdu: (event: unknown) => void;
-  signInToXboxLive: (event: unknown) => void;
-  signOutOfXboxLive: (event: unknown) => void;
-  specialMobBuilt: (event: unknown) => void;
-  startClient: (event: unknown) => void;
-  startWorld: (event: unknown) => void;
-  textToSpeechToggled: (event: unknown) => void;
-  ugcDownloadCompleted: (event: unknown) => void;
-  ugcDownloadStarted: (event: unknown) => void;
-  uploadSkin: (event: unknown) => void;
-  vehicleExited: (event: unknown) => void;
-  worldExported: (event: unknown) => void;
-  worldFilesListed: (event: unknown) => void;
-  worldGenerated: (event: unknown) => void;
-  worldLoaded: (event: unknown) => void;
-  worldUnloaded: (event: unknown) => void;
+  AdditionalContentLoaded: (event: AdditionalContentLoadedEvent) => void;
+  AgentCommand: (event: unknown) => void;
+  AgentCreated: (event: unknown) => void;
+  ApiInit: (event: unknown) => void;
+  AppPaused: (event: unknown) => void;
+  AppResumed: (event: unknown) => void;
+  AppSuspended: (event: unknown) => void;
+  AwardAchievement: (event: unknown) => void;
+  BlockBroken: (event: unknown) => void;
+  BlockPlaced: (event: unknown) => void;
+  BoardTextUpdated: (event: unknown) => void;
+  BossKilled: (event: unknown) => void;
+  CameraUsed: (event: unknown) => void;
+  CauldronUsed: (event: unknown) => void;
+  ConfigurationChanged: (event: unknown) => void;
+  ConnectionFailed: (event: unknown) => void;
+  CraftingSessionCompleted: (event: unknown) => void;
+  EndOfDay: (event: unknown) => void;
+  EntitySpawned: (event: unknown) => void;
+  FileTransmissionCancelled: (event: unknown) => void;
+  FileTransmissionCompleted: (event: unknown) => void;
+  FileTransmissionStarted: (event: unknown) => void;
+  FirstTimeClientOpen: (event: unknown) => void;
+  FocusGained: (event: unknown) => void;
+  FocusLost: (event: unknown) => void;
+  GameSessionComplete: (event: unknown) => void;
+  GameSessionStart: (event: unknown) => void;
+  HardwareInfo: (event: unknown) => void;
+  HasNewContent: (event: unknown) => void;
+  ItemAcquired: (event: unknown) => void;
+  ItemCrafted: (event: unknown) => void;
+  ItemDestroyed: (event: unknown) => void;
+  ItemDropped: (event: unknown) => void;
+  ItemEnchanted: (event: unknown) => void;
+  ItemSmelted: (event: unknown) => void;
+  ItemUsed: (event: ItemUsedEvent) => void;
+  JoinCanceled: (event: unknown) => void;
+  JukeboxUsed: (event: unknown) => void;
+  LicenseCensus: (event: unknown) => void;
+  MascotCreated: (event: unknown) => void;
+  MenuShown: (event: unknown) => void;
+  MobInteracted: (event: unknown) => void;
+  MobKilled: (event: MobKilledEvent) => void;
+  MultiplayerConnectionStateChanged: (event: unknown) => void;
+  MultiplayerRoundEnd: (event: unknown) => void;
+  MultiplayerRoundStart: (event: unknown) => void;
+  NpcPropertiesUpdated: (event: unknown) => void;
+  OptionsUpdated: (event: unknown) => void;
+  PerformanceMetrics: (event: unknown) => void;
+  PlayerBounced: (event: PlayerBouncedEvent) => void;
+  PlayerDied: (event: unknown) => void;
+  PlayerJoin: (event: unknown) => void;
+  PlayerLeave: (event: unknown) => void;
+  PlayerMessage: (event: PlayerMessageEvent) => void;
+  PlayerTeleported: (event: PlayerTeleportedEvent) => void;
+  PlayerTransform: (event: PlayerTransformEvent) => void;
+  PlayerTravelled: (event: PlayerTravelledEvent) => void;
+  PortalBuilt: (event: unknown) => void;
+  PortalUsed: (event: unknown) => void;
+  PortfolioExported: (event: unknown) => void;
+  PotionBrewed: (event: unknown) => void;
+  PurchaseAttempt: (event: unknown) => void;
+  PurchaseResolved: (event: unknown) => void;
+  RegionalPopup: (event: unknown) => void;
+  RespondedToAcceptContent: (event: unknown) => void;
+  ScreenChanged: (event: unknown) => void;
+  ScreenHeartbeat: (event: unknown) => void;
+  SignInToEdu: (event: unknown) => void;
+  SignInToXboxLive: (event: unknown) => void;
+  SignOutOfXboxLive: (event: unknown) => void;
+  SpecialMobBuilt: (event: unknown) => void;
+  StartClient: (event: unknown) => void;
+  StartWorld: (event: unknown) => void;
+  TextToSpeechToggled: (event: unknown) => void;
+  UgcDownloadCompleted: (event: unknown) => void;
+  UgcDownloadStarted: (event: unknown) => void;
+  UploadSkin: (event: unknown) => void;
+  VehicleExited: (event: unknown) => void;
+  WorldExported: (event: unknown) => void;
+  WorldFilesListed: (event: unknown) => void;
+  WorldGenerated: (event: unknown) => void;
+  WorldLoaded: (event: unknown) => void;
+  WorldUnloaded: (event: unknown) => void;
 }
 
 export type Event = ServerEvent & ClientEvent & GameEvent;
@@ -143,282 +151,149 @@ export class ConnectEvent implements GameEventBase {
   }
 }
 
-export interface AdditionalContentLoaded {}
-
 export class AdditionalContentLoadedEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: AdditionalContentLoaded;
+  data: z.infer<typeof AdditionalContentLoaded>;
 
   constructor(
-    options: { server: Server; client: Client; data: AdditionalContentLoaded },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof AdditionalContentLoaded>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
-}
-
-export interface PlayerMessage {
-  /** The player name of the sender of the message. */
-  sender: string;
-
-  /** The message that got sent. */
-  message: string;
-
-  /**
-   * The receiver of the message or an empty string if there is no particular
-   * receiver.
-   *
-   * This is usually the player name targeted when using the `tell`/`w`/`msg`
-   * or `tellraw` command.
-   */
-  receiver: string;
-
-  /**
-   * The medium used for transmitting the message.
-   *
-   * `"tell"` includes the commands `tell`, `w`, `msg`, and `tellraw`; `"say"`
-   * includes the `say` commands and `"chat"` means that no command has been
-   * used.
-   */
-  type: "chat" | "tell" | "say";
 }
 
 export class PlayerMessageEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: PlayerMessage;
+  data: z.infer<typeof PlayerMessage>;
 
   constructor(
-    options: { server: Server; client: Client; data: PlayerMessage },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof PlayerMessage>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
 
-  // TODO: also allow rawtext as parameter
-  reply(message: string, options?: ReplyOptions): void {
-    if (options?.raw) {
-      const rawText: RawText = {
-        rawtext: [
-          { text: message },
-        ],
-      };
-      this.client.run(`tellraw ${this.data.sender} ${JSON.stringify(rawText)}`);
-    }
-    this.client.run(`tell ${this.data.sender} ${message}`);
+  reply(message: RawText | string) {
+    const rawText: RawText = typeof message === "string"
+      ? { rawtext: [{ text: message }] }
+      : message;
+    this.client.run(`tellraw ${this.data.sender} ${JSON.stringify(rawText)}`);
   }
-}
-
-export interface ReplyOptions {
-  raw: boolean;
-}
-
-export interface PlayerTravelled {
-  isUnderwater: boolean;
-  metersTravelled: number;
-  newBiome: number;
-  player: Player;
-
-  /**
-   * The method used for traveling.
-   *
-   * This is `5` for flying in creative mode, `2` for falling, `0` for
-   * walking, `6` for riding (a minecart for example).
-   */
-  travelMethod: number;
-
-  vehicle?: Entity;
 }
 
 export class PlayerTravelledEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: PlayerTravelled;
+  data: z.infer<typeof PlayerTravelled>;
 
   constructor(
-    options: { server: Server; client: Client; data: PlayerTravelled },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof PlayerTravelled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
-}
-
-export interface PlayerTransform {
-  player: Player;
 }
 
 export class PlayerTransformEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: PlayerTransform;
+  data: z.infer<typeof PlayerTransform>;
 
   constructor(
-    options: { server: Server; client: Client; data: PlayerTransform },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof PlayerTransform>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
-}
-
-export interface PlayerTeleported {
-  /**
-   * The metod used for teleporting.
-   *
-   * `1` means Ender Pearl, `2` means Chorus Fruit, `3` means `teleport`
-   * command.
-   */
-  cause: number;
-
-  itemType?: number;
-
-  metersTravelled: number;
 }
 
 export class PlayerTeleportedEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: PlayerTeleported;
+  data: z.infer<typeof PlayerTeleported>;
 
   constructor(
-    options: { server: Server; client: Client; data: PlayerTeleported },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof PlayerTeleported>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
-}
-
-export interface PlayerBounced {
-  block: {
-    aux: number;
-    id: string;
-    namespace: string;
-  };
-  bounceHeight: number;
-  player: Player;
 }
 
 export class PlayerBouncedEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: PlayerBounced;
+  data: z.infer<typeof PlayerBounced>;
 
   constructor(
-    options: { server: Server; client: Client; data: PlayerBounced },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof PlayerBounced>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
-}
-
-export interface ItemUsed {
-  count: number;
-  item: {
-    aux: number;
-    id: string;
-    namespace: string;
-  };
-  player: Player;
-
-  /**
-   * The method used to interact with the item.
-   *
-   * `1` means eating, `10` setting on fire.
-   */
-  useMethod: number;
 }
 
 export class ItemUsedEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: ItemUsed;
+  data: z.infer<typeof ItemUsed>;
 
   constructor(
-    options: { server: Server; client: Client; data: ItemUsed },
+    options: { server: Server; client: Client; data: z.infer<typeof ItemUsed> },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
-}
-
-export interface MobKilled {
-  armorBody: Item;
-  armorFeet: Item;
-  armorHead: Item;
-  armorTorso: Item;
-  isMonster: boolean;
-  killMethodType: number;
-  player: Player;
-  playerIsHiddenFrom: boolean;
-  victim: Entity;
-  weapon: Item;
 }
 
 export class MobKilledEvent implements GameEventBase {
   server: Server;
   client: Client;
-  data: MobKilled;
+  data: z.infer<typeof MobKilled>;
 
   constructor(
-    options: { server: Server; client: Client; data: MobKilled },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof MobKilled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
     this.data = options.data;
   }
-}
-
-export interface Player {
-  /** A hex encoded color of form `RRGGBBAA`. */
-  color: string;
-
-  /**
-   * The dimension the player is in.
-   *
-   * `0` means overworld, `1` mean nether and `2` means end dimension.
-   */
-  dimension: number;
-
-  id: number;
-
-  /** The name of the player. */
-  name: string;
-
-  /** The position of the player. */
-  position: { x: number; y: number; z: number };
-
-  /** Usually `"minecraft:player"`. */
-  type: string;
-
-  variant: number;
-
-  yRot: number;
-}
-
-export interface Item {
-  aux: 0;
-  enchantments: unknown[]; // TODO
-  freeStackSize: number;
-  id: string;
-  maxStackSize: number;
-  namespace: string;
-  stackSize: number;
-}
-
-export interface Entity {
-  color: number;
-  dimension: number;
-  id: number;
-  position: { x: number; y: number; z: number };
-  /** Example: `"minecraft:minecart"`. */
-  type: string;
-  variant: number;
-  yRot: number;
 }

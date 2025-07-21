@@ -10,6 +10,7 @@
     "@asyncio/sync": "jsr:@asyncio/sync@^0.0.5",
     "@minecraft/server": "npm:@minecraft/server@^2.0.0",
     "ws": "npm:ws@^8.18.3",
-    "@types/ws": "npm:@types/ws"
+    "@types/ws": "npm:@types/ws",
+    "zod": "npm:zod@^3.25.0"
   }
 }

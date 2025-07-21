@@ -2,6 +2,7 @@ import * as z from "zod/v4";
 import { CompatibilityVersion } from "./common.ts";
 import PlayerTravelled from "./events/PlayerTravelled.ts";
 import PlayerMessage from "./events/PlayerMessage.ts";
+import BlockBroken from "./events/BlockBroken.ts";
 
 function eventResponse<ItemType extends z.ZodType>(
   eventName: string,
@@ -42,8 +43,17 @@ export const CommandResponseBase = z.strictObject({
 
 export const EventResponse = z.union(
   [
-    eventResponse("PlayerMessage", PlayerMessage),
-    eventResponse("PlayerTravelled", PlayerTravelled),
+    //eventResponse("BlockBroken" as const, BlockBroken),
+    //eventResponse("PlayerMessage" as const, PlayerMessage),
+    //eventResponse("PlayerTravelled" as const, PlayerTravelled),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("PlayerMessage"),
+      }),
+      body: PlayerMessage,
+    }),
   ] as const,
 );
 
@@ -60,4 +70,15 @@ export const CommandResponse = z.union(
   ] as const,
 );
 
-export const Response = z.union([EventResponse, CommandResponse] as const);
+export const ErrorResponse = z.strictObject({
+  header: z.strictObject({
+    messagePurpose: z.literal("error"),
+    requestId: z.uuidv4(),
+    version: CompatibilityVersion,
+  }),
+  body: z.undefined(), // TODO
+});
+
+export const Response = z.union(
+  [EventResponse, CommandResponse, ErrorResponse] as const,
+);

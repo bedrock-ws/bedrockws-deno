@@ -63,7 +63,8 @@
           "jsr:@asyncio/sync@^0.0.5",
           "npm:@minecraft/server@2",
           "npm:@types/ws@*",
-          "npm:ws@^8.18.3"
+          "npm:ws@^8.18.3",
+          "npm:zod@^3.25.0"
         ]
       },
       "src/schema": {

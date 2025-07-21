@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { Player } from "../common.ts";
+import { Player } from "@bedrock-ws/schema/common";
 
 export default z.strictObject({
   isUnderwater: z.boolean(),

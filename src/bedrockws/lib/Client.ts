@@ -1,16 +1,20 @@
 import { Semaphore } from "@asyncio/sync/semaphore";
 import * as consts from "./consts.ts";
-import type Request from "./Request.ts";
-import type Response from "./Response.ts";
-import type { Event } from "./events.ts";
+import type { GameEvent } from "./events.ts";
 import {
   AdditionalContentLoadedEvent,
   PlayerMessageEvent,
   PlayerTravelledEvent,
 } from "./events.ts";
-import type { Server } from "@bedrock-ws/bedrockws";
+import type { Server, Response, Request } from "@bedrock-ws/bedrockws";
 import type { WebSocket } from "ws";
-import { eventNameAsCamelCase, eventNameAsPascalCase } from "./case.ts";
+
+function isPlayerMessage(
+  res: Response,
+): res is Extract<Response, { header: { eventName: "PlayerMessage" } }> {
+  return res.header.messagePurpose === "event" &&
+    res.header.eventName === "PlayerMessage";
+}
 
 interface PendingRequest<O, E> {
   resolve: (value: O) => void;
@@ -62,11 +66,12 @@ export default class Client {
 
   /** Handles a response from the Minecraft client. */
   receive(res: Response) {
-    const { requestId } = res.header;
+    const requestId = (res.header.messagePurpose === "commandResponse")
+      ? res.header.requestId
+      : undefined;
     const isError = res.header.messagePurpose === "error";
-    const isResponse = res.header.messagePurpose == "commandResponse";
-    const eventName = res.header.eventName;
-    if (isResponse) {
+    const isResponse = res.header.messagePurpose === "commandResponse";
+    if (isResponse && requestId !== undefined) {
       this.commandSemaphore.release();
       const maybeRequest = this.requests.get(requestId);
       if (maybeRequest !== undefined) {
@@ -79,43 +84,16 @@ export default class Client {
       }
     }
 
-    // TODO: just use data: res.body
-    switch (eventName) {
-      case "AdditionalContentLoaded": {
-        const event = new AdditionalContentLoadedEvent({
-          server: this.server,
-          client: this,
-          data: {},
-        });
-        this.server.emit(eventNameAsCamelCase(eventName), event);
-        break;
-      }
-      // TODO
-      case "PlayerMessage": {
-        const event = new PlayerMessageEvent({
-          server: this.server,
-          client: this,
-          data: {
-            sender: res.body.sender,
-            type: res.body.type,
-            message: res.body.message,
-            receiver: res.body.receiver,
-          },
-        });
-        this.server.emit(eventNameAsCamelCase(eventName), event);
-        break;
-      }
-      case "PlayerTravelled": {
-        const event = new PlayerTravelledEvent({
-          server: this.server,
-          client: this,
-          data: res.body,
-        });
-        this.server.emit(eventNameAsCamelCase(eventName), event);
-        break;
-      }
+    if (
+      isPlayerMessage(res)
+    ) {
+      const event = new PlayerMessageEvent({
+        server: this.server,
+        client: this,
+        data: res.body,
+      });
+      this.server.emit(res.header.eventName, event);
     }
-    // TODO
   }
 
   /** Runs a command as the Minecraft client. */
@@ -139,7 +117,7 @@ export default class Client {
   }
 
   /** Subscribes to a client's event. */
-  async subscribe(eventName: keyof Event): Promise<Response> {
+  async subscribe(eventName: keyof GameEvent): Promise<Response> {
     const identifier = crypto.randomUUID();
     const res = await this.send({
       header: {
@@ -149,7 +127,7 @@ export default class Client {
         messagePurpose: "subscribe",
       },
       body: {
-        eventName: eventNameAsPascalCase(eventName),
+        eventName: eventName,
       },
     });
     return res;

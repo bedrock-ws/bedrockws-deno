@@ -11,18 +11,18 @@ import type {
 
 const server = new Server();
 
-server.on("ready", (event: ReadyEvent) => {
+server.on("Ready", (event: ReadyEvent) => {
   console.log(`Ready at ${event.hostname}:${event.port}`);
 });
 
-server.on("connect", (event: ConnectEvent) => {
+server.on("Connect", (event: ConnectEvent) => {
   event.client.run("say Hello World 1!");
   event.client.run("say Hello World 2!");
   event.client.run("say Hello World 3!");
   event.client.run("say Hello World 4!");
 });
 
-server.on("playerMessage", (event: PlayerMessageEvent) => {
+server.on("PlayerMessage", (event: PlayerMessageEvent) => {
   if (Object.values(consts.names).includes(event.data.sender)) {
     return;
   }

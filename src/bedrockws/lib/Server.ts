@@ -1,10 +1,10 @@
-import type Request from "./Request.ts";
 import { EventEmitter } from "node:events";
 import type { Event, GameEvent } from "./events.ts";
 import { ConnectEvent, ReadyEvent } from "./events.ts";
 import Client from "./Client.ts";
 import { format } from "@std/datetime";
 import { WebSocketServer } from "ws";
+import type { Request } from "@bedrock-ws/bedrockws";
 
 export interface LaunchOptions {
   port: number;
@@ -34,13 +34,13 @@ export default class Server extends EventEmitter {
         client.subscribe(eventName);
       }
       this.emit(
-        "connect",
+        "Connect",
         new ConnectEvent({ server: this, client }),
       );
 
       socket.on("close", (event) => {
         console.debug(event);
-        this.emit("disconnect");
+        this.emit("Disconnect");
       });
 
       socket.on("error", (event) => {
@@ -64,7 +64,7 @@ export default class Server extends EventEmitter {
       });
     });
     this.emit(
-      "ready",
+      "Ready",
       new ReadyEvent({
         server: this,
         hostname: options.hostname,
@@ -85,8 +85,8 @@ export default class Server extends EventEmitter {
     eventHandler: Event[K],
   ): this {
     if (
-      eventName !== "ready" && eventName !== "connect" &&
-      eventName !== "disconnect"
+      eventName !== "Ready" && eventName !== "Connect" &&
+      eventName !== "Disconnect"
     ) {
       this.pendingSubscriptions.add(eventName);
     }

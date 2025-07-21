@@ -9,7 +9,7 @@ import type { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
 const amount = 1_000;
 const server = new Server();
 
-server.on("playerMessage", async (event: PlayerMessageEvent) => {
+server.on("PlayerMessage", async (event: PlayerMessageEvent) => {
   if (Object.values(consts.names).includes(event.data.sender)) {
     return;
   }

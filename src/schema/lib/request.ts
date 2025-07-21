@@ -3,6 +3,8 @@ import { EventName } from "./common.ts";
 
 export const UnsubscribeRequest = z.strictObject({
   header: z.strictObject({
+    version: z.literal(1).meta({ description: "Protocol version" }),
+    requestId: z.uuidv4(),
     messageType: z.literal("commandRequest"),
     messagePurpose: z.literal("unsubscribe"),
   }),
@@ -13,6 +15,8 @@ export const UnsubscribeRequest = z.strictObject({
 
 export const SubscribeRequest = z.strictObject({
   header: z.strictObject({
+    version: z.literal(1).meta({ description: "Protocol version" }),
+    requestId: z.uuidv4(),
     messageType: z.literal("commandRequest"),
     messagePurpose: z.literal("subscribe"),
   }),
@@ -23,11 +27,15 @@ export const SubscribeRequest = z.strictObject({
 
 export const CommandRequest = z.strictObject({
   header: z.strictObject({
+    version: z.literal(1).meta({ description: "Protocol version" }),
+    requestId: z.uuidv4(),
     messageType: z.literal("commandRequest"),
     messagePurpose: z.literal("commandRequest"),
   }),
   body: z.strictObject({
-    version: z.literal(1).meta({ description: "Protocol version" }),
+    version: z.string().nonempty().optional().meta({
+      description: "Minecraft version of the command syntax",
+    }),
     commandLine: z.string().nonempty().meta({
       description: "The Minecraft command to request (without slash prefix)",
     }),

@@ -2,7 +2,9 @@
   "name": "@bedrock-ws/schema",
   "version": "0.1.0",
   "exports": {
-    ".": "./lib/mod.ts"
+    ".": "./lib/mod.ts",
+    "./common": "./lib/common/mod.ts",
+    "./events": "./lib/events/mod.ts"
   },
   "tasks": {
     "json-schema": {

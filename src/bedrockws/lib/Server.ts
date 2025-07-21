@@ -1,9 +1,10 @@
-import type Request from "./Request.ts";
 import { EventEmitter } from "node:events";
 import type { Event, GameEvent } from "./events.ts";
 import { ConnectEvent, ReadyEvent } from "./events.ts";
 import Client from "./Client.ts";
 import { format } from "@std/datetime";
+import { WebSocketServer } from "ws";
+import type { Request } from "@bedrock-ws/bedrockws";
 
 export interface LaunchOptions {
   port: number;
@@ -24,59 +25,46 @@ export default class Server extends EventEmitter {
 
   /** Launches the server. */
   launch(options: LaunchOptions) {
-    // TODO: Deno.serve logs a message, perhaps set onListen to override that behavior
-    Deno.serve(
-      { ...options },
-      (request) => {
-        if (request.headers.get("upgrade") != "websocket") {
-          return new Response(null, { status: 501 });
-        }
+    const wss = new WebSocketServer({ ...options });
+    wss.on("connection", (socket, _request) => {
+      const client = new Client(socket, this);
+      this.clients.push(client);
 
-        const { socket, response } = Deno.upgradeWebSocket(request);
-        // TODO: maybe check if `response` is an error perhaps?
+      for (const eventName of this.pendingSubscriptions) {
+        client.subscribe(eventName);
+      }
+      this.emit(
+        "Connect",
+        new ConnectEvent({ server: this, client }),
+      );
 
-        const client = new Client(socket, this);
-        this.clients.push(client);
+      socket.on("close", (event) => {
+        console.debug(event);
+        this.emit("Disconnect");
+      });
 
-        socket.addEventListener("open", () => {
-          for (const eventName of this.pendingSubscriptions) {
-            client.subscribe(eventName);
-          }
-          this.emit(
-            "connect",
-            new ConnectEvent({ server: this, client }),
+      socket.on("error", (event) => {
+        // TODO
+        console.error(event);
+      });
+
+      socket.on("message", (message) => {
+        const data = JSON.parse(message.toString());
+        console.debug(data);
+        {
+          // TODO: used for debugging; remove this and also the datetime dep
+          const logDir = `${Deno.env.get("HOME")}/.cache/bedrockws-deno`;
+          const now = new Date();
+          Deno.writeTextFileSync(
+            `${logDir}/${format(now, "yyyy-MM-dd_HH-mm-ss_SSS.log")}`,
+            JSON.stringify(data, null, 2),
           );
-        });
-
-        socket.addEventListener("close", (event) => {
-          console.debug(event);
-          this.emit("disconnect");
-        });
-
-        socket.addEventListener("error", (event) => {
-          // TODO
-          console.error(event);
-        });
-
-        socket.addEventListener("message", (event) => {
-          const data = JSON.parse(event.data);
-          {
-            // TODO: used for debugging; remove this and also the datetime dep
-            const logDir = `${Deno.env.get("HOME")}/.cache/bedrockws-deno`;
-            const now = new Date();
-            Deno.writeTextFileSync(
-              `${logDir}/${format(now, "yyyy-MM-dd_HH-mm-ss_SSS.log")}`,
-              JSON.stringify(data, null, 2),
-            );
-          }
-          client.receive(data);
-        });
-
-        return response;
-      },
-    );
+        }
+        client.receive(data);
+      });
+    });
     this.emit(
-      "ready",
+      "Ready",
       new ReadyEvent({
         server: this,
         hostname: options.hostname,
@@ -97,8 +85,8 @@ export default class Server extends EventEmitter {
     eventHandler: Event[K],
   ): this {
     if (
-      eventName !== "ready" && eventName !== "connect" &&
-      eventName !== "disconnect"
+      eventName !== "Ready" && eventName !== "Connect" &&
+      eventName !== "Disconnect"
     ) {
       this.pendingSubscriptions.add(eventName);
     }

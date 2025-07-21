@@ -5,7 +5,7 @@ A Minecraft: Bedrock Edition WebSocket implementation in Deno/TypeScript.
 ```typescript
 const server = new Server();
 
-server.on("playerMessage", (event: PlayerMessageEvent) => {
+server.on("PlayerMessage", (event: PlayerMessageEvent) => {
   const { client, data } = event;
   if (Object.values(consts.names).includes(data.sender)) {
     return;

@@ -4,7 +4,7 @@
  * This is intended to try out hidden commands only executable by a WebSocket
  * client. These commands include:
  *
- * - `querytarget`: Returns data like the position of the target.
+ * - `querytarget`: This always fails.
  * - `geteduclientinfo`: This always fails.
  * - `getlocalplayername`: Returns the player name of the connected client.
  */
@@ -19,11 +19,11 @@ import type { RawText } from "@minecraft/server";
 
 const server = new Server();
 
-server.on("ready", (event: ReadyEvent) => {
+server.on("Ready", (event: ReadyEvent) => {
   console.log(`Ready at ${event.hostname}:${event.port}`);
 });
 
-server.on("connect", (event: ConnectEvent) => {
+server.on("Connect", (event: ConnectEvent) => {
   const { client } = event;
   const message: RawText = {
     rawtext: [
@@ -36,7 +36,7 @@ server.on("connect", (event: ConnectEvent) => {
   client.run(`tellraw @s ${JSON.stringify(message)}`);
 });
 
-server.on("playerMessage", async (event: PlayerMessageEvent) => {
+server.on("PlayerMessage", async (event: PlayerMessageEvent) => {
   const { client, data } = event;
   if (Object.values(consts.names).includes(data.sender)) {
     return;

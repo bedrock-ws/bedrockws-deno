@@ -4,16 +4,23 @@ import type { GameEvent } from "./events.ts";
 import {
   AdditionalContentLoadedEvent,
   PlayerMessageEvent,
-  PlayerTravelledEvent,
+  PlayerTeleportedEvent,
 } from "./events.ts";
-import type { Server, Response, Request } from "@bedrock-ws/bedrockws";
+import type { Request, Response, Server } from "@bedrock-ws/bedrockws";
 import type { WebSocket } from "ws";
 
-function isPlayerMessage(
+function isPlayerMessageEvent(
   res: Response,
 ): res is Extract<Response, { header: { eventName: "PlayerMessage" } }> {
   return res.header.messagePurpose === "event" &&
     res.header.eventName === "PlayerMessage";
+}
+
+function isPlayerTeleportedEvent(
+  res: Response,
+): res is Extract<Response, { header: { eventName: "PlayerTeleported" } }> {
+  return res.header.messagePurpose === "event" &&
+    res.header.eventName === "PlayerTeleported";
 }
 
 interface PendingRequest<O, E> {
@@ -84,9 +91,7 @@ export default class Client {
       }
     }
 
-    if (
-      isPlayerMessage(res)
-    ) {
+    if (isPlayerMessageEvent(res)) {
       const event = new PlayerMessageEvent({
         server: this.server,
         client: this,
@@ -94,6 +99,15 @@ export default class Client {
       });
       this.server.emit(res.header.eventName, event);
     }
+    if (isPlayerTeleportedEvent(res)) {
+      const event = new PlayerTeleportedEvent({
+        server: this.server,
+        client: this,
+        data: res.body,
+      });
+      this.server.emit(res.header.eventName, event);
+    }
+    // TODO: ...
   }
 
   /** Runs a command as the Minecraft client. */

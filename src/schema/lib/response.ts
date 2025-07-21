@@ -1,22 +1,16 @@
 import * as z from "zod/v4";
 import { CompatibilityVersion } from "./common.ts";
-import PlayerTravelled from "./events/PlayerTravelled.ts";
-import PlayerMessage from "./events/PlayerMessage.ts";
-import BlockBroken from "./events/BlockBroken.ts";
-
-function eventResponse<ItemType extends z.ZodType>(
-  eventName: string,
-  body: ItemType,
-) {
-  return z.strictObject({
-    header: z.strictObject({
-      messagePurpose: z.literal("event"),
-      version: CompatibilityVersion,
-      eventName: z.literal(eventName),
-    }),
-    body,
-  });
-}
+import {
+  AdditionalContentLoaded,
+  BlockBroken,
+  ItemUsed,
+  MobKilled,
+  PlayerBounced,
+  PlayerMessage,
+  PlayerTeleported,
+  PlayerTransform,
+  PlayerTravelled,
+} from "@bedrock-ws/schema/events";
 
 function commandResponse<Z extends z.ZodType>(
   body: Z,
@@ -43,9 +37,46 @@ export const CommandResponseBase = z.strictObject({
 
 export const EventResponse = z.union(
   [
-    //eventResponse("BlockBroken" as const, BlockBroken),
-    //eventResponse("PlayerMessage" as const, PlayerMessage),
-    //eventResponse("PlayerTravelled" as const, PlayerTravelled),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("AdditionalContentLoaded"),
+      }),
+      body: AdditionalContentLoaded,
+    }),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("BlockBroken"),
+      }),
+      body: BlockBroken,
+    }),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("ItemUsed"),
+      }),
+      body: ItemUsed,
+    }),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("MobKilled"),
+      }),
+      body: MobKilled,
+    }),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("PlayerBounced"),
+      }),
+      body: PlayerBounced,
+    }),
     z.strictObject({
       header: z.strictObject({
         messagePurpose: z.literal("event"),
@@ -53,6 +84,30 @@ export const EventResponse = z.union(
         eventName: z.literal("PlayerMessage"),
       }),
       body: PlayerMessage,
+    }),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("PlayerTeleported"),
+      }),
+      body: PlayerTeleported,
+    }),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("PlayerTransform"),
+      }),
+      body: PlayerTransform,
+    }),
+    z.strictObject({
+      header: z.strictObject({
+        messagePurpose: z.literal("event"),
+        version: CompatibilityVersion,
+        eventName: z.literal("PlayerTravelled"),
+      }),
+      body: PlayerTravelled,
     }),
   ] as const,
 );

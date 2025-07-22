@@ -23,5 +23,5 @@ You can configure the host and port in the `.env` file. See also
 <https://docs.deno.com/runtime/reference/env_variables/>.
 
 ```console
-deno run --env-file -A examples/echo.ts
+deno run --env-file=src/bedrockws/.env -A src/bedrockws/examples/echo.ts
 ```

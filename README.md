@@ -1,6 +1,9 @@
-# Bedrock WebSocket
-
-A Minecraft: Bedrock Edition WebSocket implementation in Deno/TypeScript.
+<p align="center">
+    <img align="center" width="30%" src="./assets/bedrockws-ts-iso.png" />
+    <img align="center" width="30%" src="./assets/bedrockws-js-iso.png" />
+    <h1 align="center">MCBE WebSocket Server</h1>
+    <p align="center">A Minecraft: Bedrock Edition WebSocket implementation in Deno/TypeScript.</p>
+</p>
 
 ```typescript
 import { consts, Server } from "@bedrock-ws/bedrockws";

@@ -2,6 +2,9 @@ import type Server from "./Server.ts";
 import type Client from "./Client.ts";
 import type {
   AdditionalContentLoaded,
+  BlockBroken,
+  BlockPlaced,
+  EndOfDay,
   ItemUsed,
   MobKilled,
   PlayerBounced,
@@ -34,8 +37,8 @@ export interface GameEvent {
   AppResumed: (event: unknown) => void;
   AppSuspended: (event: unknown) => void;
   AwardAchievement: (event: unknown) => void;
-  BlockBroken: (event: unknown) => void;
-  BlockPlaced: (event: unknown) => void;
+  BlockBroken: (event: BlockBrokenEvent) => void;
+  BlockPlaced: (event: BlockPlacedEvent) => void;
   BoardTextUpdated: (event: unknown) => void;
   BossKilled: (event: unknown) => void;
   CameraUsed: (event: unknown) => void;
@@ -43,7 +46,7 @@ export interface GameEvent {
   ConfigurationChanged: (event: unknown) => void;
   ConnectionFailed: (event: unknown) => void;
   CraftingSessionCompleted: (event: unknown) => void;
-  EndOfDay: (event: unknown) => void;
+  EndOfDay: (event: EndOfDayEvent) => void;
   EntitySpawned: (event: unknown) => void;
   FileTransmissionCancelled: (event: unknown) => void;
   FileTransmissionCompleted: (event: unknown) => void;
@@ -169,6 +172,92 @@ export class AdditionalContentLoadedEvent implements GameEventBase {
   }
 }
 
+export class BlockBrokenEvent implements GameEventBase {
+  server: Server;
+  client: Client;
+  data: z.infer<typeof BlockBroken>;
+
+  constructor(
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof BlockBroken>;
+    },
+  ) {
+    this.server = options.server;
+    this.client = options.client;
+    this.data = options.data;
+  }
+}
+
+export class BlockPlacedEvent implements GameEventBase {
+  server: Server;
+  client: Client;
+  data: z.infer<typeof BlockPlaced>;
+
+  constructor(
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof BlockPlaced>;
+    },
+  ) {
+    this.server = options.server;
+    this.client = options.client;
+    this.data = options.data;
+  }
+}
+
+export class EndOfDayEvent implements GameEventBase {
+  server: Server;
+  client: Client;
+  data: z.infer<typeof EndOfDay>;
+
+  constructor(
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof EndOfDay>;
+    },
+  ) {
+    this.server = options.server;
+    this.client = options.client;
+    this.data = options.data;
+  }
+}
+
+export class ItemUsedEvent implements GameEventBase {
+  server: Server;
+  client: Client;
+  data: z.infer<typeof ItemUsed>;
+
+  constructor(
+    options: { server: Server; client: Client; data: z.infer<typeof ItemUsed> },
+  ) {
+    this.server = options.server;
+    this.client = options.client;
+    this.data = options.data;
+  }
+}
+
+export class MobKilledEvent implements GameEventBase {
+  server: Server;
+  client: Client;
+  data: z.infer<typeof MobKilled>;
+
+  constructor(
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof MobKilled>;
+    },
+  ) {
+    this.server = options.server;
+    this.client = options.client;
+    this.data = options.data;
+  }
+}
+
 export class PlayerMessageEvent implements GameEventBase {
   server: Server;
   client: Client;
@@ -258,38 +347,6 @@ export class PlayerBouncedEvent implements GameEventBase {
       server: Server;
       client: Client;
       data: z.infer<typeof PlayerBounced>;
-    },
-  ) {
-    this.server = options.server;
-    this.client = options.client;
-    this.data = options.data;
-  }
-}
-
-export class ItemUsedEvent implements GameEventBase {
-  server: Server;
-  client: Client;
-  data: z.infer<typeof ItemUsed>;
-
-  constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof ItemUsed> },
-  ) {
-    this.server = options.server;
-    this.client = options.client;
-    this.data = options.data;
-  }
-}
-
-export class MobKilledEvent implements GameEventBase {
-  server: Server;
-  client: Client;
-  data: z.infer<typeof MobKilled>;
-
-  constructor(
-    options: {
-      server: Server;
-      client: Client;
-      data: z.infer<typeof MobKilled>;
     },
   ) {
     this.server = options.server;

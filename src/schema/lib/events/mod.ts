@@ -1,5 +1,7 @@
 export { default as AdditionalContentLoaded } from "./AdditionalContentLoaded.ts";
 export { default as BlockBroken } from "./BlockBroken.ts";
+export { default as BlockPlaced } from "./BlockPlaced.ts";
+export { default as EndOfDay } from "./EndOfDay.ts";
 export { default as ItemUsed } from "./ItemUsed.ts";
 export { default as MobKilled } from "./MobKilled.ts";
 export { default as PlayerBounced } from "./PlayerBounced.ts";

@@ -9,7 +9,7 @@ export default z.strictObject({
       z.literal(2).meta({ description: "End dimension" }),
     ] as const,
   ),
-  id: z.number().meta({ description: "The numeric ID of the entity" }),
+  id: z.int().meta({ description: "The numeric ID of the entity" }),
   position: z.strictObject({
     x: z.number(),
     y: z.number(),

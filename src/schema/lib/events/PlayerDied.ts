@@ -1,6 +1,5 @@
-// TODO
-
 import { z } from "zod/v4";
+import { Player } from "@bedrock-ws/schema/common";
 
 export default z.strictObject({
   cause: z.union(
@@ -26,4 +25,12 @@ export default z.strictObject({
       z.literal(28).meta({ description: "Stalactite" }),
     ] as const,
   ),
+  inRaid: z.boolean(),
+  killer: z.strictObject({
+    color: z.int(),
+    id: z.int(),
+    type: z.int(),
+    variant: z.int(),
+  }),
+  player: Player,
 });

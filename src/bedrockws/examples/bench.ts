@@ -10,7 +10,7 @@ const amount = 1_000;
 const server = new Server();
 
 server.on("PlayerMessage", async (event: PlayerMessageEvent) => {
-  if (Object.values(consts.names).includes(event.data.sender)) {
+  if ((Object.values(consts.names) as string[]).includes(event.data.sender)) {
     return;
   }
 

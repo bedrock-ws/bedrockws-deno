@@ -23,7 +23,7 @@ server.on("Connect", (event: ConnectEvent) => {
 });
 
 server.on("PlayerMessage", (event: PlayerMessageEvent) => {
-  if (Object.values(consts.names).includes(event.data.sender)) {
+  if ((Object.values(consts.names) as string[]).includes(event.data.sender)) {
     return;
   }
   const message = event.data.message === "ping" ? "pong" : event.data.message;

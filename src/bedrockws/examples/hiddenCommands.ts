@@ -38,7 +38,7 @@ server.on("Connect", (event: ConnectEvent) => {
 
 server.on("PlayerMessage", async (event: PlayerMessageEvent) => {
   const { client, data } = event;
-  if (Object.values(consts.names).includes(data.sender)) {
+  if ((Object.values(consts.names) as string[]).includes(event.data.sender)) {
     return;
   }
 

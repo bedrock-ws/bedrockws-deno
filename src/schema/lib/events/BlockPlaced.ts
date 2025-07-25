@@ -8,4 +8,6 @@ export default z.strictObject({
   placementMethod: z.int().nonnegative(), // TODO: enum; hand, command, ...
   player: Player,
   tool: Item,
+}).meta({
+  description: "This event only emits when the connected client triggers it",
 });

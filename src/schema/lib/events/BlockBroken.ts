@@ -9,4 +9,6 @@ export default z.strictObject({
   destructionMethod: z.int().nonnegative(), // TODO: enum; hand, explosion, tool, ...
   player: Player,
   tool: Item,
+}).meta({
+  description: "This event only emits when the connected client triggers it",
 });

@@ -27,3 +27,9 @@ You can configure the host and port in the `.env` file. See also
 ```console
 deno run --env-file=src/bedrockws/.env -A src/bedrockws/examples/echo.ts
 ```
+
+## References
+
+- <https://gist.github.com/jocopa3/5f718f4198f1ea91a37e3a9da468675c>
+- <https://github.com/Sandertv/mcwss/tree/master>
+- <https://www.s-anand.net/blog/programming-minecraft-with-websockets/>

@@ -1,4 +1,4 @@
-// TODO: turn this into a Map
+/** Name displayed for commands executed originating from the server. */
 export const names = {
   "nl_NL": "Extern",
   "fr_CA": "Externe",
@@ -29,6 +29,20 @@ export const names = {
   "el_GR": "Εξωτερικό",
   "de_DE": "Extern",
   "ja_JP": "外部",
-};
+} as const;
 
+/** 
+ * Translation key for name displayed for commands executed originating from
+ * the server.
+ */
+export const nameTranslationKey = "commands.origin.external";
+
+/**
+ * The maximum amount of commands the client can handle at once without
+ * responding.
+ *
+ * When the server requested this amount of commands and has not got any
+ * response back, the server needs to wait until one response is received
+ * before it can send the next request.
+ */
 export const maxCommandProcessing = 100;

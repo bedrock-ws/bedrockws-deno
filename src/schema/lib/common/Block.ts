@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { Aux } from "@bedrock-ws/schema/common";
+import Aux from "./Aux.ts";
 
 export default z.strictObject({
   aux: Aux,

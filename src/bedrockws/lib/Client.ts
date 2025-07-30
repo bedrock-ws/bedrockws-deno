@@ -1,27 +1,12 @@
 import { Semaphore } from "@asyncio/sync/semaphore";
 import * as consts from "./consts.ts";
 import type { GameEvent } from "./events.ts";
-import {
-  AdditionalContentLoadedEvent,
-  PlayerMessageEvent,
-  PlayerTeleportedEvent,
-} from "./events.ts";
+import { PlayerMessageEvent, PlayerTeleportedEvent } from "./events.ts";
 import type { Request, Response, Server } from "@bedrock-ws/bedrockws";
 import type { WebSocket } from "ws";
-
-function isPlayerMessageEvent(
-  res: Response,
-): res is Extract<Response, { header: { eventName: "PlayerMessage" } }> {
-  return res.header.messagePurpose === "event" &&
-    res.header.eventName === "PlayerMessage";
-}
-
-function isPlayerTeleportedEvent(
-  res: Response,
-): res is Extract<Response, { header: { eventName: "PlayerTeleported" } }> {
-  return res.header.messagePurpose === "event" &&
-    res.header.eventName === "PlayerTeleported";
-}
+import type { RawText } from "@minecraft/server";
+import type * as event from "@bedrock-ws/schema/events";
+import type { z } from "zod/v4";
 
 interface PendingRequest<O, E> {
   resolve: (value: O) => void;
@@ -71,6 +56,13 @@ export default class Client {
     });
   }
 
+  sendMessage(message: RawText | string, target: string = "@a") {
+    const rawText: RawText = typeof message === "string"
+      ? { rawtext: [{ text: message }] }
+      : message;
+    this.run(`tellraw ${target} ${JSON.stringify(rawText)}`);
+  }
+
   /** Handles a response from the Minecraft client. */
   receive(res: Response) {
     const requestId = (res.header.messagePurpose === "commandResponse")
@@ -91,21 +83,22 @@ export default class Client {
       }
     }
 
-    if (isPlayerMessageEvent(res)) {
-      const event = new PlayerMessageEvent({
-        server: this.server,
-        client: this,
-        data: res.body,
-      });
-      this.server.emit(res.header.eventName, event);
-    }
-    if (isPlayerTeleportedEvent(res)) {
-      const event = new PlayerTeleportedEvent({
-        server: this.server,
-        client: this,
-        data: res.body,
-      });
-      this.server.emit(res.header.eventName, event);
+    if (res.header.messagePurpose !== "event") return;
+
+    const eventName = res.header.eventName;
+
+    switch (eventName) {
+      case "PlayerMessage": {
+        const ev = new PlayerMessageEvent({
+          server: this.server,
+          client: this,
+          data: res.body as z.infer<typeof event.PlayerMessage>,
+        });
+        this.server.emit(res.header.eventName, ev);
+        break;
+      }
+      default:
+        throw eventName satisfies never
     }
     // TODO: ...
   }

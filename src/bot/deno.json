@@ -1,0 +1,11 @@
+{
+  "name": "@bedrock-ws/bot",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./lib/mod.ts"
+  },
+  "license": "MIT",
+  "imports": {
+    "shlex": "npm:shlex@^3.0.0"
+  }
+}

@@ -60,7 +60,9 @@ export interface GameEvent {
   MenuShown: (event: MenuShownEvent) => void;
   MobInteracted: (event: MobInteractedEvent) => void;
   MobKilled: (event: MobKilledEvent) => void;
-  MultiplayerConnectionStateChanged: (event: MultiplayerConnectionStateChangedEvent) => void;
+  MultiplayerConnectionStateChanged: (
+    event: MultiplayerConnectionStateChangedEvent,
+  ) => void;
   MultiplayerRoundEnd: (event: MultiplayerRoundEndEvent) => void;
   MultiplayerRoundStart: (event: MultiplayerRoundStartEvent) => void;
   NpcPropertiesUpdated: (event: NpcPropertiesUpdatedEvent) => void;
@@ -148,7 +150,11 @@ export class AdditionalContentLoadedEvent implements GameEventBase {
   data: z.infer<typeof event.AdditionalContentLoaded>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.AdditionalContentLoaded> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.AdditionalContentLoaded>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -162,7 +168,11 @@ export class AgentCommandEvent implements GameEventBase {
   data: z.infer<typeof event.AgentCommand>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.AgentCommand> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.AgentCommand>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -176,7 +186,11 @@ export class AgentCreatedEvent implements GameEventBase {
   data: z.infer<typeof event.AgentCreated>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.AgentCreated> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.AgentCreated>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -190,7 +204,11 @@ export class ApiInitEvent implements GameEventBase {
   data: z.infer<typeof event.ApiInit>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ApiInit> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ApiInit>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -204,7 +222,11 @@ export class AppPausedEvent implements GameEventBase {
   data: z.infer<typeof event.AppPaused>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.AppPaused> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.AppPaused>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -218,7 +240,11 @@ export class AppResumedEvent implements GameEventBase {
   data: z.infer<typeof event.AppResumed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.AppResumed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.AppResumed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -232,7 +258,11 @@ export class AppSuspendedEvent implements GameEventBase {
   data: z.infer<typeof event.AppSuspended>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.AppSuspended> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.AppSuspended>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -246,7 +276,11 @@ export class AwardAchievementEvent implements GameEventBase {
   data: z.infer<typeof event.AwardAchievement>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.AwardAchievement> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.AwardAchievement>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -260,7 +294,11 @@ export class BlockBrokenEvent implements GameEventBase {
   data: z.infer<typeof event.BlockBroken>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.BlockBroken> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.BlockBroken>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -274,7 +312,11 @@ export class BlockPlacedEvent implements GameEventBase {
   data: z.infer<typeof event.BlockPlaced>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.BlockPlaced> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.BlockPlaced>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -288,7 +330,11 @@ export class BoardTextUpdatedEvent implements GameEventBase {
   data: z.infer<typeof event.BoardTextUpdated>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.BoardTextUpdated> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.BoardTextUpdated>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -302,7 +348,11 @@ export class BossKilledEvent implements GameEventBase {
   data: z.infer<typeof event.BossKilled>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.BossKilled> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.BossKilled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -316,7 +366,11 @@ export class CameraUsedEvent implements GameEventBase {
   data: z.infer<typeof event.CameraUsed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.CameraUsed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.CameraUsed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -330,7 +384,11 @@ export class CauldronUsedEvent implements GameEventBase {
   data: z.infer<typeof event.CauldronUsed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.CauldronUsed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.CauldronUsed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -344,7 +402,11 @@ export class ConfigurationChangedEvent implements GameEventBase {
   data: z.infer<typeof event.ConfigurationChanged>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ConfigurationChanged> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ConfigurationChanged>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -358,7 +420,11 @@ export class ConnectionFailedEvent implements GameEventBase {
   data: z.infer<typeof event.ConnectionFailed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ConnectionFailed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ConnectionFailed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -372,7 +438,11 @@ export class CraftingSessionCompletedEvent implements GameEventBase {
   data: z.infer<typeof event.CraftingSessionCompleted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.CraftingSessionCompleted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.CraftingSessionCompleted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -386,7 +456,11 @@ export class EndOfDayEvent implements GameEventBase {
   data: z.infer<typeof event.EndOfDay>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.EndOfDay> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.EndOfDay>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -400,7 +474,11 @@ export class EntitySpawnedEvent implements GameEventBase {
   data: z.infer<typeof event.EntitySpawned>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.EntitySpawned> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.EntitySpawned>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -414,7 +492,11 @@ export class FileTransmissionCancelledEvent implements GameEventBase {
   data: z.infer<typeof event.FileTransmissionCancelled>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.FileTransmissionCancelled> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.FileTransmissionCancelled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -428,7 +510,11 @@ export class FileTransmissionCompletedEvent implements GameEventBase {
   data: z.infer<typeof event.FileTransmissionCompleted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.FileTransmissionCompleted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.FileTransmissionCompleted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -442,7 +528,11 @@ export class FileTransmissionStartedEvent implements GameEventBase {
   data: z.infer<typeof event.FileTransmissionStarted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.FileTransmissionStarted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.FileTransmissionStarted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -456,7 +546,11 @@ export class FirstTimeClientOpenEvent implements GameEventBase {
   data: z.infer<typeof event.FirstTimeClientOpen>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.FirstTimeClientOpen> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.FirstTimeClientOpen>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -470,7 +564,11 @@ export class FocusGainedEvent implements GameEventBase {
   data: z.infer<typeof event.FocusGained>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.FocusGained> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.FocusGained>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -484,7 +582,11 @@ export class FocusLostEvent implements GameEventBase {
   data: z.infer<typeof event.FocusLost>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.FocusLost> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.FocusLost>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -498,7 +600,11 @@ export class GameSessionCompleteEvent implements GameEventBase {
   data: z.infer<typeof event.GameSessionComplete>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.GameSessionComplete> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.GameSessionComplete>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -512,7 +618,11 @@ export class GameSessionStartEvent implements GameEventBase {
   data: z.infer<typeof event.GameSessionStart>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.GameSessionStart> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.GameSessionStart>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -526,7 +636,11 @@ export class HardwareInfoEvent implements GameEventBase {
   data: z.infer<typeof event.HardwareInfo>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.HardwareInfo> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.HardwareInfo>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -540,7 +654,11 @@ export class HasNewContentEvent implements GameEventBase {
   data: z.infer<typeof event.HasNewContent>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.HasNewContent> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.HasNewContent>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -554,7 +672,11 @@ export class ItemAcquiredEvent implements GameEventBase {
   data: z.infer<typeof event.ItemAcquired>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ItemAcquired> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ItemAcquired>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -568,7 +690,11 @@ export class ItemCraftedEvent implements GameEventBase {
   data: z.infer<typeof event.ItemCrafted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ItemCrafted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ItemCrafted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -582,7 +708,11 @@ export class ItemDestroyedEvent implements GameEventBase {
   data: z.infer<typeof event.ItemDestroyed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ItemDestroyed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ItemDestroyed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -596,7 +726,11 @@ export class ItemDroppedEvent implements GameEventBase {
   data: z.infer<typeof event.ItemDropped>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ItemDropped> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ItemDropped>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -610,7 +744,11 @@ export class ItemEnchantedEvent implements GameEventBase {
   data: z.infer<typeof event.ItemEnchanted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ItemEnchanted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ItemEnchanted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -624,7 +762,11 @@ export class ItemSmeltedEvent implements GameEventBase {
   data: z.infer<typeof event.ItemSmelted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ItemSmelted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ItemSmelted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -638,7 +780,11 @@ export class ItemUsedEvent implements GameEventBase {
   data: z.infer<typeof event.ItemUsed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ItemUsed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ItemUsed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -652,7 +798,11 @@ export class JoinCanceledEvent implements GameEventBase {
   data: z.infer<typeof event.JoinCanceled>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.JoinCanceled> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.JoinCanceled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -666,7 +816,11 @@ export class JukeboxUsedEvent implements GameEventBase {
   data: z.infer<typeof event.JukeboxUsed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.JukeboxUsed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.JukeboxUsed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -680,7 +834,11 @@ export class LicenseCensusEvent implements GameEventBase {
   data: z.infer<typeof event.LicenseCensus>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.LicenseCensus> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.LicenseCensus>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -694,7 +852,11 @@ export class MascotCreatedEvent implements GameEventBase {
   data: z.infer<typeof event.MascotCreated>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.MascotCreated> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.MascotCreated>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -708,7 +870,11 @@ export class MenuShownEvent implements GameEventBase {
   data: z.infer<typeof event.MenuShown>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.MenuShown> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.MenuShown>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -722,7 +888,11 @@ export class MobInteractedEvent implements GameEventBase {
   data: z.infer<typeof event.MobInteracted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.MobInteracted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.MobInteracted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -736,7 +906,11 @@ export class MobKilledEvent implements GameEventBase {
   data: z.infer<typeof event.MobKilled>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.MobKilled> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.MobKilled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -750,7 +924,11 @@ export class MultiplayerConnectionStateChangedEvent implements GameEventBase {
   data: z.infer<typeof event.MultiplayerConnectionStateChanged>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.MultiplayerConnectionStateChanged> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.MultiplayerConnectionStateChanged>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -764,7 +942,11 @@ export class MultiplayerRoundEndEvent implements GameEventBase {
   data: z.infer<typeof event.MultiplayerRoundEnd>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.MultiplayerRoundEnd> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.MultiplayerRoundEnd>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -778,7 +960,11 @@ export class MultiplayerRoundStartEvent implements GameEventBase {
   data: z.infer<typeof event.MultiplayerRoundStart>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.MultiplayerRoundStart> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.MultiplayerRoundStart>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -792,7 +978,11 @@ export class NpcPropertiesUpdatedEvent implements GameEventBase {
   data: z.infer<typeof event.NpcPropertiesUpdated>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.NpcPropertiesUpdated> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.NpcPropertiesUpdated>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -806,7 +996,11 @@ export class OptionsUpdatedEvent implements GameEventBase {
   data: z.infer<typeof event.OptionsUpdated>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.OptionsUpdated> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.OptionsUpdated>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -820,7 +1014,11 @@ export class PerformanceMetricsEvent implements GameEventBase {
   data: z.infer<typeof event.PerformanceMetrics>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PerformanceMetrics> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PerformanceMetrics>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -834,7 +1032,11 @@ export class PlayerBouncedEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerBounced>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerBounced> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerBounced>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -848,7 +1050,11 @@ export class PlayerDiedEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerDied>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerDied> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerDied>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -862,7 +1068,11 @@ export class PlayerJoinEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerJoin>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerJoin> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerJoin>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -876,7 +1086,11 @@ export class PlayerLeaveEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerLeave>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerLeave> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerLeave>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -890,7 +1104,11 @@ export class PlayerMessageEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerMessage>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerMessage> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerMessage>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -903,6 +1121,11 @@ export class PlayerMessageEvent implements GameEventBase {
       : message;
     this.client.run(`tellraw ${this.data.sender} ${JSON.stringify(rawText)}`);
   }
+
+  get receiver(): string | undefined {
+    const receiver = this.data.receiver;
+    return receiver === "" ? undefined : receiver;
+  }
 }
 
 export class PlayerTeleportedEvent implements GameEventBase {
@@ -911,7 +1134,11 @@ export class PlayerTeleportedEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerTeleported>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerTeleported> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerTeleported>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -925,7 +1152,11 @@ export class PlayerTransformEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerTransform>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerTransform> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerTransform>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -939,7 +1170,11 @@ export class PlayerTravelledEvent implements GameEventBase {
   data: z.infer<typeof event.PlayerTravelled>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PlayerTravelled> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PlayerTravelled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -953,7 +1188,11 @@ export class PortalBuiltEvent implements GameEventBase {
   data: z.infer<typeof event.PortalBuilt>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PortalBuilt> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PortalBuilt>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -967,7 +1206,11 @@ export class PortalUsedEvent implements GameEventBase {
   data: z.infer<typeof event.PortalUsed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PortalUsed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PortalUsed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -981,7 +1224,11 @@ export class PortfolioExportedEvent implements GameEventBase {
   data: z.infer<typeof event.PortfolioExported>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PortfolioExported> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PortfolioExported>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -995,7 +1242,11 @@ export class PotionBrewedEvent implements GameEventBase {
   data: z.infer<typeof event.PotionBrewed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PotionBrewed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PotionBrewed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1009,7 +1260,11 @@ export class PurchaseAttemptEvent implements GameEventBase {
   data: z.infer<typeof event.PurchaseAttempt>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PurchaseAttempt> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PurchaseAttempt>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1023,7 +1278,11 @@ export class PurchaseResolvedEvent implements GameEventBase {
   data: z.infer<typeof event.PurchaseResolved>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.PurchaseResolved> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.PurchaseResolved>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1037,7 +1296,11 @@ export class RegionalPopupEvent implements GameEventBase {
   data: z.infer<typeof event.RegionalPopup>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.RegionalPopup> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.RegionalPopup>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1051,7 +1314,11 @@ export class RespondedToAcceptContentEvent implements GameEventBase {
   data: z.infer<typeof event.RespondedToAcceptContent>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.RespondedToAcceptContent> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.RespondedToAcceptContent>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1065,7 +1332,11 @@ export class ScreenChangedEvent implements GameEventBase {
   data: z.infer<typeof event.ScreenChanged>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ScreenChanged> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ScreenChanged>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1079,7 +1350,11 @@ export class ScreenHeartbeatEvent implements GameEventBase {
   data: z.infer<typeof event.ScreenHeartbeat>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.ScreenHeartbeat> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.ScreenHeartbeat>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1093,7 +1368,11 @@ export class SignInToEduEvent implements GameEventBase {
   data: z.infer<typeof event.SignInToEdu>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.SignInToEdu> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.SignInToEdu>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1107,7 +1386,11 @@ export class SignInToXboxLiveEvent implements GameEventBase {
   data: z.infer<typeof event.SignInToXboxLive>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.SignInToXboxLive> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.SignInToXboxLive>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1121,7 +1404,11 @@ export class SignOutOfXboxLiveEvent implements GameEventBase {
   data: z.infer<typeof event.SignOutOfXboxLive>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.SignOutOfXboxLive> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.SignOutOfXboxLive>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1135,7 +1422,11 @@ export class SpecialMobBuiltEvent implements GameEventBase {
   data: z.infer<typeof event.SpecialMobBuilt>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.SpecialMobBuilt> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.SpecialMobBuilt>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1149,7 +1440,11 @@ export class StartClientEvent implements GameEventBase {
   data: z.infer<typeof event.StartClient>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.StartClient> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.StartClient>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1163,7 +1458,11 @@ export class StartWorldEvent implements GameEventBase {
   data: z.infer<typeof event.StartWorld>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.StartWorld> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.StartWorld>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1177,7 +1476,11 @@ export class TextToSpeechToggledEvent implements GameEventBase {
   data: z.infer<typeof event.TextToSpeechToggled>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.TextToSpeechToggled> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.TextToSpeechToggled>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1191,7 +1494,11 @@ export class UgcDownloadCompletedEvent implements GameEventBase {
   data: z.infer<typeof event.UgcDownloadCompleted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.UgcDownloadCompleted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.UgcDownloadCompleted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1205,7 +1512,11 @@ export class UgcDownloadStartedEvent implements GameEventBase {
   data: z.infer<typeof event.UgcDownloadStarted>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.UgcDownloadStarted> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.UgcDownloadStarted>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1219,7 +1530,11 @@ export class UploadSkinEvent implements GameEventBase {
   data: z.infer<typeof event.UploadSkin>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.UploadSkin> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.UploadSkin>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1233,7 +1548,11 @@ export class VehicleExitedEvent implements GameEventBase {
   data: z.infer<typeof event.VehicleExited>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.VehicleExited> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.VehicleExited>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1247,7 +1566,11 @@ export class WorldExportedEvent implements GameEventBase {
   data: z.infer<typeof event.WorldExported>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.WorldExported> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.WorldExported>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1261,7 +1584,11 @@ export class WorldFilesListedEvent implements GameEventBase {
   data: z.infer<typeof event.WorldFilesListed>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.WorldFilesListed> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.WorldFilesListed>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1275,7 +1602,11 @@ export class WorldGeneratedEvent implements GameEventBase {
   data: z.infer<typeof event.WorldGenerated>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.WorldGenerated> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.WorldGenerated>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1289,7 +1620,11 @@ export class WorldLoadedEvent implements GameEventBase {
   data: z.infer<typeof event.WorldLoaded>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.WorldLoaded> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.WorldLoaded>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;
@@ -1303,7 +1638,11 @@ export class WorldUnloadedEvent implements GameEventBase {
   data: z.infer<typeof event.WorldUnloaded>;
 
   constructor(
-    options: { server: Server; client: Client; data: z.infer<typeof event.WorldUnloaded> },
+    options: {
+      server: Server;
+      client: Client;
+      data: z.infer<typeof event.WorldUnloaded>;
+    },
   ) {
     this.server = options.server;
     this.client = options.client;

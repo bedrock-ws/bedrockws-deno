@@ -1,6 +1,7 @@
 {
   "workspace": [
     "./src/bedrockws",
+    "./src/bot",
     "./src/schema",
     "./src/ui"
   ],

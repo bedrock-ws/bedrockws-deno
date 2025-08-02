@@ -4,7 +4,15 @@ import * as ui from "@bedrock-ws/ui";
 import { lexCommandInput, parseCommand } from "./parser.ts";
 import { UnknownCommandError } from "./errors.ts";
 
+/**
+ * Configuration options for the bot.
+ */
 export interface BotOptions {
+  /**
+   * The prefix required to invoke commands.
+   *
+   * The prefix can be of any length including zero.
+   */
   commandPrefix: string;
 
   /**
@@ -58,7 +66,7 @@ export default class Bot extends Server {
       let parsedArgs;
       try {
         parsedArgs = parseCommand(
-        cmd[0].mendatoryParameters ?? [],
+        cmd[0].mandatoryParameters ?? [],
         cmd[0].optionalParameters ?? [],
         args,
       );
@@ -82,7 +90,7 @@ export default class Bot extends Server {
 
   /** Registers a new command. */
   cmd(command: Command, callback: CommandCallback) {
-    if (this.commands.map((value) => value[0].name).includes(command.name)) {
+    if (this.commands.map(([value, _]) => value.name).includes(command.name)) {
       throw new Error(
         `command with name ${command.name} is already registered`,
       );

@@ -3,8 +3,10 @@
   "specifiers": {
     "jsr:@asyncio/sync@^0.0.5": "0.0.5",
     "jsr:@melvdouc/xml-parser@~0.1.1": "0.1.1",
+    "jsr:@std/assert@*": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
     "jsr:@std/datetime@~0.225.5": "0.225.5",
+    "jsr:@std/html@^1.0.4": "1.0.4",
     "jsr:@std/internal@^1.0.6": "1.0.10",
     "jsr:@std/internal@^1.0.9": "1.0.10",
     "jsr:@std/path@^1.1.1": "1.1.1",
@@ -31,6 +33,9 @@
     },
     "@std/datetime@0.225.5": {
       "integrity": "9f650f6caec546b80172e95a4edb8478d5fe060c4c937f7ede242ffceab6efc9"
+    },
+    "@std/html@1.0.4": {
+      "integrity": "eff3497c08164e6ada49b7f81a28b5108087033823153d065e3f89467dd3d50e"
     },
     "@std/internal@1.0.10": {
       "integrity": "e3be62ce42cab0e177c27698e5d9800122f67b766a0bea6ca4867886cbde8cf7"
@@ -791,7 +796,8 @@
       "src/ui": {
         "dependencies": [
           "jsr:@melvdouc/xml-parser@~0.1.1",
-          "jsr:@std/assert@^1.0.13"
+          "jsr:@std/assert@^1.0.13",
+          "jsr:@std/html@^1.0.4"
         ]
       }
     }

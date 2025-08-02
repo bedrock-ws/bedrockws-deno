@@ -4,7 +4,11 @@ import {
   CommandParamType,
   type CommandRequest,
 } from "./command.ts";
-import { MissingArgumentError, TypeError, TooManyArgumentsError } from "./errors.ts";
+import {
+  MissingArgumentError,
+  TooManyArgumentsError,
+  TypeError,
+} from "./errors.ts";
 import * as shlex from "shlex";
 
 export function lexCommandInput(input: string): CommandRequest {
@@ -41,14 +45,24 @@ export function parseCommand(
       case CommandParamType.Boolean:
         result.push(parseBoolean(arg));
         break;
-      case CommandParamType.Float:
-        result.push(42); // TODO: parseInt(), parseFloat(), Number() suck
+      case CommandParamType.Float: {
+        const n = +arg;
+        if (isNaN(n)) {
+          throw new TypeError(`expected integer; got ${n}`);
+        }
+        result.push(n);
         break;
-      case CommandParamType.Integer:
-        result.push(42); // TODO: see above
+      }
+      case CommandParamType.Integer: {
+        const n = Number(arg);
+        if (!Number.isInteger(arg)) {
+          throw new TypeError(`expected integer; got ${n}`);
+        }
+        result.push(n);
         break;
+      }
       case CommandParamType.Json:
-        result.push(""); // TODO
+        result.push(JSON.parse(arg));
         break;
       case CommandParamType.Location:
         result.push(""); // TODO
@@ -59,7 +73,11 @@ export function parseCommand(
     }
   }
   if (args.length > 0) {
-    throw new TooManyArgumentsError(`too many arguments; expected ${mendatoryParams.length + optionalParams.length} arguments, got ${amountOfArgs}`)
+    throw new TooManyArgumentsError(
+      `too many arguments; expected ${
+        mendatoryParams.length + optionalParams.length
+      } arguments, got ${amountOfArgs}`,
+    );
   }
   return result;
 }

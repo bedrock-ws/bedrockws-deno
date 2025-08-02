@@ -3,7 +3,7 @@ import type { Command, CommandArgument, CommandOrigin } from "@bedrock-ws/bot";
 
 const bot = new Bot({ commandPrefix: "." });
 
-const greetCommand: Command = {
+const sinCommand: Command = {
   name: "sin",
   description: "Calculates the sine",
   mandatoryParameters: [
@@ -15,7 +15,7 @@ const greetCommand: Command = {
   }],
 };
 
-bot.cmd(greetCommand, (origin: CommandOrigin, ...args: CommandArgument[]) => {
+bot.cmd(sinCommand, (origin: CommandOrigin, ...args: CommandArgument[]) => {
   const { initiator, client } = origin;
   const n = args.shift() as number;
   client.sendMessage(`sin(${n}) = ${Math.sin(n)}`);

@@ -83,7 +83,7 @@ export default class Bot extends Server {
 
   private displayError(client: Client, player: string, error: Error) {
     client.sendMessage(
-      ui.style`<red><bold>${error.name}</bold>${error.message}`,
+      ui.style`<red><bold>${error.name}</bold>: ${error.message}</red>`,
       this.whisperErrors ? player : "@a",
     );
   }

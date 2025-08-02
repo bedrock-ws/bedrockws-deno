@@ -4,7 +4,7 @@
   "exports": {
     ".": "./lib/mod.ts"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "imports": {
     "shlex": "npm:shlex@^3.0.0"
   }

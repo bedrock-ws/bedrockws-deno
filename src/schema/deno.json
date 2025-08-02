@@ -17,7 +17,7 @@
       "command": "jsonschema2md -o docs -d schemas/"
     }
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "imports": {
     "@adobe/jsonschema2md": "npm:@adobe/jsonschema2md@^8.0.4",
     "@std/path": "jsr:@std/path@^1.1.1",

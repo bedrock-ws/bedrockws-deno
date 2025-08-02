@@ -5,7 +5,7 @@
     ".": "./lib/mod.ts",
     "./events": "./lib/events.ts"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "imports": {
     "@asyncio/sync": "jsr:@asyncio/sync@^0.0.5",
     "@minecraft/server": "npm:@minecraft/server@^2.0.0",

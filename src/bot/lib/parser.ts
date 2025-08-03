@@ -34,7 +34,7 @@ export function parseCommand(
   for (const [index, param] of params.entries()) {
     const arg = args.shift();
     if (arg === undefined) {
-      if (index + 1 < mendatoryParams.length) {
+      if (index + 1 <= mendatoryParams.length) {
         throw new MissingArgumentError(`missing argument for ${param.name}`);
       }
       result.push(undefined);

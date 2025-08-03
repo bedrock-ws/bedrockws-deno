@@ -16,9 +16,27 @@ const sinCommand: Command = {
 };
 
 bot.cmd(sinCommand, (origin: CommandOrigin, ...args: CommandArgument[]) => {
-  const { initiator, client } = origin;
+  const { client } = origin;
   const n = args.shift() as number;
   client.sendMessage(`sin(${n}) = ${Math.sin(n)}`);
+});
+
+const cosCommand: Command = {
+  name: "cos",
+  description: "Calculates the cosine",
+  mandatoryParameters: [
+    { type: CommandParamType.Float, name: "number" },
+  ],
+  examples: [{
+    description: "Calculate the cosine of 1",
+    args: ["1"],
+  }],
+};
+
+bot.cmd(cosCommand, (origin: CommandOrigin, ...args: CommandArgument[]) => {
+  const { client } = origin;
+  const n = args.shift() as number;
+  client.sendMessage(`cos(${n}) = ${Math.cos(n)}`);
 });
 
 bot.launch({

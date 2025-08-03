@@ -6,6 +6,7 @@
   },
   "license": "Apache-2.0",
   "imports": {
+    "@libs/qrcode": "jsr:@libs/qrcode@^3.0.0",
     "shlex": "npm:shlex@^3.0.0"
   }
 }

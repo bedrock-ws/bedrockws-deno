@@ -2,6 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@asyncio/sync@^0.0.5": "0.0.5",
+    "jsr:@libs/qrcode@3": "3.0.0",
     "jsr:@melvdouc/xml-parser@~0.1.1": "0.1.1",
     "jsr:@std/assert@*": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
@@ -21,6 +22,9 @@
   "jsr": {
     "@asyncio/sync@0.0.5": {
       "integrity": "4b2494dba5731d6210d57f9783fbd1802efea48dbfc681e837d217e9cc116a61"
+    },
+    "@libs/qrcode@3.0.0": {
+      "integrity": "f19ae517f67c33cd1c0ed3a54a46540980de45cb3327d09b21479a75d7222953"
     },
     "@melvdouc/xml-parser@0.1.1": {
       "integrity": "5c79d37c6471cb74efb344988317270b57b4f181decb873e441453db42eb6e5f"
@@ -783,6 +787,7 @@
       },
       "src/bot": {
         "dependencies": [
+          "jsr:@libs/qrcode@3",
           "npm:shlex@3"
         ]
       },

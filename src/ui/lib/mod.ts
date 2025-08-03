@@ -1,9 +1,10 @@
-// TODO: Escaping does not seems to be possible directly as every /§./ will
-//       either enable some style or not included in the output if invalid.
+// FIXME: xml trims whitespace; use another format like bbcode or write a
+//        custom parser
 
 import * as xml from "@melvdouc/xml-parser";
 import * as html from "@std/html";
 
+// TODO: doc
 export const codes = {
   colors: {
     /** Color code that represents #000000. */
@@ -64,6 +65,7 @@ export const codes = {
 
     materialResin: "§v",
   },
+
   formatting: {
     obfuscated: "§k",
 
@@ -75,8 +77,19 @@ export const codes = {
   },
 } as const;
 
+/**
+ * Strips all style codes like `§a` from a string.
+ */
 export function strip(text: string) {
   return text.replaceAll(/§./g, "");
+}
+
+export interface StyleOptions {
+  /** Whether to escape XML for interpolated values. */
+  escapeXml?: boolean;
+
+  /** Whether to strip style codes within interpolated values. */
+  stripCodes?: boolean;
 }
 
 /**
@@ -86,14 +99,33 @@ export function strip(text: string) {
  * style`foo <red>bar <bold>baz</bold> blah</red> blup`
  */
 export function style(template: TemplateStringsArray, ...params: unknown[]) {
-  let sanitized = "";
-  for (const i in template) {
-    const left = template[i];
-    const right = html.escape(strip(`${params[i] ?? ""}`));
-    sanitized += `${left}${right}`;
-  }
+  return styleWithOptions({})(
+    template,
+    ...params,
+  );
+}
 
-  return html.unescape(transformXML(xml.parse(sanitized), []));
+/**
+ * Styles text smartly with support for nested styles.
+ *
+ * @example
+ * styleWithOptions({ escapeXml: false, stripCodes: false })`foo <red>bar <bold>baz</bold> blah</red> blup`
+ */
+export function styleWithOptions(options: StyleOptions) {
+  return function (template: TemplateStringsArray, ...params: unknown[]) {
+    let sanitized = "";
+    for (const i in template) {
+      const left = template[i];
+
+      let right = `${params[i] ?? ""}`;
+      if (options.stripCodes ?? true) right = strip(right);
+      if (options.escapeXml ?? true) right = html.escape(right);
+
+      sanitized += `${left}${right}`;
+    }
+
+    return html.unescape(transformXML(xml.parse(sanitized), []));
+  };
 }
 
 function transformXML(nodes: xml.XmlNode[], restore: (string | undefined)[]) {
@@ -107,7 +139,9 @@ function transformXML(nodes: xml.XmlNode[], restore: (string | undefined)[]) {
     if (node.kind === "REGULAR_TAG_NODE") {
       index++;
       const codesWithLowercasedKeys = Object.fromEntries(
-        Object.entries({...codes.colors, ...codes.formatting}).map(([key, value]) => [key.toLowerCase(), value]),
+        Object.entries({ ...codes.colors, ...codes.formatting }).map((
+          [key, value],
+        ) => [key.toLowerCase(), value]),
       );
       const code = codesWithLowercasedKeys[node.tagName.toLowerCase()];
       result += code ?? "";

@@ -1,4 +1,6 @@
 import type { Client } from "@bedrock-ws/bedrockws";
+import type { Bot } from "@bedrock-ws/bot";
+import { style, styleWithOptions } from "@bedrock-ws/ui";
 
 export interface Command {
   /**
@@ -70,6 +72,9 @@ export interface CommandOrigin {
 
   /** The client that received the command. */
   readonly client: Client;
+
+  /** Reference to the bot this command belongs to. */
+  readonly bot: Bot;
 }
 
 export interface CommandParameter {
@@ -91,6 +96,8 @@ export interface CommandRequest {
   args: string[];
 }
 
+// TODO:Add config options like ordering of functions and which information
+//      to include.
 export class HelpCommand implements Command {
   readonly name = "help";
   readonly aliases = ["?"];
@@ -109,9 +116,42 @@ export class HelpCommand implements Command {
       args: [this.name],
     },
   ];
-  private commands: Command[];
 
-  constructor(commands: Command[] = []) {
-    this.commands = commands;
+  displayHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
+    const { client, bot } = origin;
+
+    const cmd = args.shift() as string | undefined;
+    // TODO: find command that matches the name and if name present only display
+    //       help for that command
+
+    for (const [cmd, _callback] of bot.cmds) {
+      let message =
+        style`<materialDiamond>${bot.commandPrefix}${cmd.name}</materialDiamond>`;
+      for (const mandatoryParam of cmd.mandatoryParameters ?? []) {
+        message = styleWithOptions({
+          stripCodes: false,
+        })`${message} &lt;${mandatoryParam.name}: ${mandatoryParam.type}&gt;`;
+      }
+      for (const optionalParam of cmd.optionalParameters ?? []) {
+        message = styleWithOptions({
+          stripCodes: false,
+        })`${message} [${optionalParam.name}: ${optionalParam.type}]`;
+      }
+      if (cmd.description !== null) {
+        message = styleWithOptions({
+          stripCodes: false,
+        })`${message}\n${cmd.description}`;
+      }
+      for (const example of cmd.examples ?? []) {
+        // TODO: syntax highlighting for args
+        message = styleWithOptions({
+          stripCodes: false,
+        })`${message}\n\n&gt; <materialCopper>${example.description}</materialCopper>\n&gt; ${bot.commandPrefix}${cmd.name} ${
+          example.args.join(" ")
+        }`;
+      }
+
+      client.sendMessage(message);
+    }
   }
 }

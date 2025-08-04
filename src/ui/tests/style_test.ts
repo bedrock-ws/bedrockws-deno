@@ -2,7 +2,7 @@ import { assertEquals, assertThrows } from "jsr:@std/assert";
 import { style } from "@bedrock-ws/ui";
 
 Deno.test("basic text", () => {
-  assertEquals(style`Hello World`, "Hello World");
+  assertEquals(style`Hello World`, "Hello World§r");
 });
 
 Deno.test("one color", () => {
@@ -16,9 +16,17 @@ Deno.test("nested styling", () => {
 Deno.test("deeply nested styling", () => {
   assertEquals(
     style`A<red>B<bold>C<italic>D</italic>E</bold>F</red>G`,
-    "A§cB§lC§oD§r§c§lE§r§cF§rG",
+    "A§cB§lC§oD§r§c§lE§r§cF§rG§r",
   );
 });
+
+Deno.test("space within element", () => {
+  assertEquals(style`<red>  Hello  </red>`, "§c  Hello  §r");
+});
+
+Deno.test("comment", () => {
+  assertEquals(style`a<!-- this is a comment -->b`, "ab§r");
+})
 
 Deno.test("reset node", () => {
   assertEquals(style`<red>A<reset>B</reset>C</red>`, "§cA§rB§r§cC§r");
@@ -39,5 +47,5 @@ Deno.test("different casing", () => {
 });
 
 Deno.test("injection", () => {
-  assertEquals(style`${"<red>"}A${"</red>"}`, "<red>A</red>");
+  assertEquals(style`${"<red>"}A${"</red>"}`, "<red>A</red>§r");
 });

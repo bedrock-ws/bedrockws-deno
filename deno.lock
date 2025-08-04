@@ -3,7 +3,6 @@
   "specifiers": {
     "jsr:@asyncio/sync@^0.0.5": "0.0.5",
     "jsr:@libs/qrcode@3": "3.0.0",
-    "jsr:@melvdouc/xml-parser@~0.1.1": "0.1.1",
     "jsr:@std/assert@*": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
     "jsr:@std/datetime@~0.225.5": "0.225.5",
@@ -13,8 +12,11 @@
     "jsr:@std/path@^1.1.1": "1.1.1",
     "npm:@adobe/jsonschema2md@^8.0.4": "8.0.4",
     "npm:@minecraft/server@2": "2.0.0_@minecraft+vanilla-data@1.21.90",
+    "npm:@rgrove/parse-xml@*": "4.2.0",
+    "npm:@rgrove/parse-xml@^4.2.0": "4.2.0",
     "npm:@types/node@*": "22.13.0",
     "npm:@types/ws@*": "8.18.1",
+    "npm:@xmldom/xmldom@*": "0.9.8",
     "npm:shlex@3": "3.0.0",
     "npm:ws@^8.18.3": "8.18.3",
     "npm:zod@^3.25.0": "3.25.71"
@@ -25,9 +27,6 @@
     },
     "@libs/qrcode@3.0.0": {
       "integrity": "f19ae517f67c33cd1c0ed3a54a46540980de45cb3327d09b21479a75d7222953"
-    },
-    "@melvdouc/xml-parser@0.1.1": {
-      "integrity": "5c79d37c6471cb74efb344988317270b57b4f181decb873e441453db42eb6e5f"
     },
     "@std/assert@1.0.13": {
       "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
@@ -89,6 +88,9 @@
     "@minecraft/vanilla-data@1.21.90": {
       "integrity": "sha512-Ca983n2C4mYWb3X+f73k4jCzxnBoxh88VQD4o8wfHbTFujpkO/RCWkvRWSE7fGBxrLF391OvRigKONGJ6SreJQ=="
     },
+    "@rgrove/parse-xml@4.2.0": {
+      "integrity": "sha512-UuBOt7BOsKVOkFXRe4Ypd/lADuNIfqJXv8GvHqtXaTYXPPKkj2nS2zPllVsrtRjcomDhIJVBnZwfmlI222WH8g=="
+    },
     "@types/debug@4.1.12": {
       "integrity": "sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==",
       "dependencies": [
@@ -124,6 +126,9 @@
       "dependencies": [
         "@types/node"
       ]
+    },
+    "@xmldom/xmldom@0.9.8": {
+      "integrity": "sha512-p96FSY54r+WJ50FIOsCOjyj/wavs8921hG5+kVMmZgKcvIKxMXHTrjNJvRgWa/zuX3B6t2lijLNFaOyuxUH+2A=="
     },
     "ansi-regex@6.1.0": {
       "integrity": "sha512-7HSX4QQb4CspciLpVFwyRe79O3xsIZDDLER21kERQ71oaPodF8jL725AgJMFAYbooIqolJoRLuM81SpeUkpkvA=="
@@ -800,9 +805,9 @@
       },
       "src/ui": {
         "dependencies": [
-          "jsr:@melvdouc/xml-parser@~0.1.1",
           "jsr:@std/assert@^1.0.13",
-          "jsr:@std/html@^1.0.4"
+          "jsr:@std/html@^1.0.4",
+          "npm:@rgrove/parse-xml@^4.2.0"
         ]
       }
     }

@@ -1,7 +1,7 @@
 // FIXME: xml trims whitespace; use another format like bbcode or write a
 //        custom parser
 
-import * as xml from "@melvdouc/xml-parser";
+import * as xml from "@rgrove/parse-xml";
 import * as html from "@std/html";
 
 // TODO: doc
@@ -124,7 +124,16 @@ export function styleWithOptions(options: StyleOptions) {
       sanitized += `${left}${right}`;
     }
 
-    return html.unescape(transformXML(xml.parse(sanitized), []));
+    const root = xml.parseXml(`<ROOT>${sanitized}</ROOT>`);
+    const { children } = root.children[0] as xml.XmlElement;
+    let rendered = html.unescape(transformXML(children, []));
+    if (
+      rendered.slice(rendered.length - codes.formatting.reset.length) !==
+        codes.formatting.reset
+    ) {
+      rendered += codes.formatting.reset;
+    }
+    return rendered;
   };
 }
 
@@ -134,27 +143,34 @@ function transformXML(nodes: xml.XmlNode[], restore: (string | undefined)[]) {
   let index = 0;
   for (const node of nodes) {
     const lastTagNode = index + 1 == nodes.filter((n) =>
-      n.kind === "REGULAR_TAG_NODE"
+      n.type === xml.XmlNode.TYPE_ELEMENT
     ).length;
-    if (node.kind === "REGULAR_TAG_NODE") {
+
+    if (node.type === xml.XmlNode.TYPE_ELEMENT) {
       index++;
+      const nodeElement = node as xml.XmlElement;
       const codesWithLowercasedKeys = Object.fromEntries(
         Object.entries({ ...codes.colors, ...codes.formatting }).map((
           [key, value],
         ) => [key.toLowerCase(), value]),
       );
-      const code = codesWithLowercasedKeys[node.tagName.toLowerCase()];
+      const code = codesWithLowercasedKeys[nodeElement.name.toLowerCase()];
       result += code ?? "";
       restore.push(code);
-      result += transformXML(node.children, restore);
+      result += transformXML(nodeElement.children, restore);
       if (lastTagNode) {
         restore.pop();
-        result += `§r${restore.filter((x) => x !== undefined).join("")}`;
+        result += `${codes.formatting.reset}${
+          restore.filter((x) => x !== undefined).join("")
+        }`;
       }
     }
-    if (node.kind === "TEXT_NODE") {
-      result += node.value;
+
+    if (node.type === xml.XmlNode.TYPE_TEXT) {
+      const nodeText = node as xml.XmlText;
+      result += nodeText.text;
     }
   }
+
   return result;
 }

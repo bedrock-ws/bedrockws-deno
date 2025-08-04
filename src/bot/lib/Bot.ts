@@ -35,7 +35,7 @@ export interface BotOptions {
 export default class Bot extends Server {
   readonly commandPrefix: string;
   readonly whisperErrors: boolean;
-  
+
   private commands: [Command, CommandCallback][];
 
   constructor(options: BotOptions) {
@@ -90,9 +90,18 @@ export default class Bot extends Server {
         return;
       }
 
-      const origin: CommandOrigin = { initiator: data.sender, client, bot: this };
+      const origin: CommandOrigin = {
+        initiator: data.sender,
+        client,
+        bot: this,
+      };
 
-      cmd[1](origin, ...parsedArgs);
+      try {
+       cmd[1](origin, ...parsedArgs);
+      } catch (e) {
+        // FIXME: application code may throw different types than Error!
+        this.displayError(client, data.sender, e as Error);
+      }
     });
   }
 
@@ -115,11 +124,12 @@ export default class Bot extends Server {
    * exists.
    */
   cmd(command: Command, callback: CommandCallback) {
-    // TODO: also check aliases
-    if (this.commands.map(([value, _]) => value.name).includes(command.name)) {
-      throw new Error(
-        `command with name ${command.name} is already registered`,
-      );
+    for (const name in [command.name, ...command.aliases ?? []]) {
+      if (this.searchCommand(name)) {
+        throw new Error(
+          `command with name ${name} is already registered`,
+        );
+      }
     }
     this.commands.push([command, callback]);
   }
@@ -135,6 +145,17 @@ export default class Bot extends Server {
       if ([cmd.name, ...cmd.aliases ?? []].includes(commandName)) {
         this.commands.splice(i, 1);
         break;
+      }
+    }
+  }
+
+  /**
+   * Search for a command and its callback by its name or alias.
+   */
+  searchCommand(commandName: string) {
+    for (const cmd of this.commands) {
+      if ([cmd[0].name, ...cmd[0].aliases ?? []].includes(commandName)) {
+        return cmd;
       }
     }
   }

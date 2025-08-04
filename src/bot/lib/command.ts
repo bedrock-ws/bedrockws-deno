@@ -120,11 +120,19 @@ export class HelpCommand implements Command {
   displayHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
     const { client, bot } = origin;
 
-    const cmd = args.shift() as string | undefined;
-    // TODO: find command that matches the name and if name present only display
-    //       help for that command
+    let commands;
 
-    for (const [cmd, _callback] of bot.cmds) {
+    const commandName = args.shift() as string | undefined;
+    if (commandName === undefined) {
+      commands = bot.cmds.map(([cmd, _callback]) => cmd);
+    } else {
+      const [cmd, _callback] = bot.searchCommand(commandName) ?? (() => {
+        throw Error(`no such command ${commandName}`);
+      })();
+      commands = [cmd];
+    }
+
+    for (const cmd of commands) {
       let message =
         style`<materialDiamond>${bot.commandPrefix}${cmd.name}</materialDiamond>`;
       for (const mandatoryParam of cmd.mandatoryParameters ?? []) {
@@ -146,9 +154,12 @@ export class HelpCommand implements Command {
         // TODO: syntax highlighting for args
         message = styleWithOptions({
           stripCodes: false,
-        })`${message}\n\n&gt; <materialCopper>${example.description}</materialCopper>\n&gt; ${bot.commandPrefix}${cmd.name} ${
+        })`${message}\n\n  <materialCopper>${example.description}</materialCopper>\n  ${bot.commandPrefix}${cmd.name} ${
           example.args.join(" ")
         }`;
+      }
+      if (cmd.examples?.length ?? 0 > 0) {
+        message += "\n\n";
       }
 
       client.sendMessage(message);

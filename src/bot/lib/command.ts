@@ -145,6 +145,18 @@ export class HelpCommand implements Command {
           stripCodes: false,
         })`${message} [${optionalParam.name}: ${optionalParam.type}]`;
       }
+      if ((cmd.aliases ?? []).length > 0) {
+        message = styleWithOptions({
+          stripCodes: false,
+        })`${message}\n(aliases: <materialDiamond>${cmd.aliases![0]}</materialDiamond>`;
+        for (const alias of cmd.aliases!.slice(1)) {
+          message = styleWithOptions({
+            stripCodes: false,
+          })`${message}, <materialDiamond>${alias}</materialDiamond>`;
+        }
+        message = styleWithOptions({ stripCodes: false })`${message})`;
+      }
+
       if (cmd.description !== null) {
         message = styleWithOptions({
           stripCodes: false,

@@ -5,6 +5,7 @@ const bot = new Bot({ commandPrefix: "." });
 
 const greetCommand: Command = {
   name: "greet",
+  aliases: ["sayhello", "welcome"],
   description: "Greets a player",
   optionalParameters: [
     { type: CommandParamType.String, name: "target" },

@@ -68,7 +68,7 @@ export default class Bot extends Server {
         this.displayError(client, data.sender, e as Error);
         return;
       }
-      const cmd = this.commands.find((cmd) => cmd[0].name === name);
+      const cmd = this.searchCommand(name);
       if (cmd === undefined) {
         this.displayError(
           client,

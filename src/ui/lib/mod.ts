@@ -1,6 +1,3 @@
-// FIXME: xml trims whitespace; use another format like bbcode or write a
-//        custom parser
-
 import * as xml from "@rgrove/parse-xml";
 import * as html from "@std/html";
 

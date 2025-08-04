@@ -31,7 +31,7 @@ export const names = {
   "ja_JP": "外部",
 } as const;
 
-/** 
+/**
  * Translation key for name displayed for commands executed originating from
  * the server.
  */

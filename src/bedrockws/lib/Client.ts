@@ -98,7 +98,7 @@ export default class Client {
         break;
       }
       default:
-        throw eventName satisfies never
+        throw eventName satisfies never;
     }
     // TODO: ...
   }

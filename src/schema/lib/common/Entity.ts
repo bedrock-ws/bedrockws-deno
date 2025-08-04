@@ -15,7 +15,9 @@ export default z.strictObject({
     y: z.number(),
     z: z.number(),
   }).meta({ description: "The position of the entity" }),
-  type: z.string().meta({ description: 'The type of entity (for example `"minecraft:player"`)' }),
+  type: z.string().meta({
+    description: 'The type of entity (for example `"minecraft:player"`)',
+  }),
   variant: z.number(),
   yRot: z.number(),
 });

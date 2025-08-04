@@ -148,7 +148,9 @@ export class HelpCommand implements Command {
       if ((cmd.aliases ?? []).length > 0) {
         message = styleWithOptions({
           stripCodes: false,
-        })`${message}\n(aliases: <materialDiamond>${cmd.aliases![0]}</materialDiamond>`;
+        })`${message}\n(aliases: <materialDiamond>${
+          cmd.aliases![0]
+        }</materialDiamond>`;
         for (const alias of cmd.aliases!.slice(1)) {
           message = styleWithOptions({
             stripCodes: false,

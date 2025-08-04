@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { Item, DetailedItem, Player } from "@bedrock-ws/schema/common";
+import { DetailedItem, Item, Player } from "@bedrock-ws/schema/common";
 
 export default z.strictObject({
   block: Item,

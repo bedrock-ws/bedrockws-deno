@@ -6,7 +6,7 @@ to the server.
 
 ## JSON Schema
 
-You can generate [JSON Schema][]s with these commands:
+You can generate [JSON Schema][JSON Schema]s with these commands:
 
 ```console
 deno task --quiet json-schema request
@@ -15,9 +15,9 @@ deno task --quiet json-schema response
 
 ## Versioning
 
-Minecraft is likely not going to update the WebSocket schema. It may happen
-that this library updates the schema but it will just be patch updates
-according to [SemVer][].
+Minecraft is likely not going to update the WebSocket schema. It may happen that
+this library updates the schema but it will just be patch updates according to
+[SemVer][SemVer].
 
 [JSON Schema]: https://json-schema.org/
 [SemVer]: https://semver.org/

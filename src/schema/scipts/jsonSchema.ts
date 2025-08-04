@@ -6,7 +6,7 @@ import * as z from "zod/v4";
 
 const target = Deno.args.at(0);
 
-let data
+let data;
 switch (target) {
   case "request":
     data = z.toJSONSchema(Request);
@@ -15,7 +15,7 @@ switch (target) {
     data = z.toJSONSchema(Response);
     break;
   default:
-    Deno.exit()
+    Deno.exit();
 }
 
 const jsonData = JSON.stringify(data);

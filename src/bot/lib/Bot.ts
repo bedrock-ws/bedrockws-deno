@@ -97,7 +97,7 @@ export default class Bot extends Server {
       };
 
       try {
-       cmd[1](origin, ...parsedArgs);
+        cmd[1](origin, ...parsedArgs);
       } catch (e) {
         // FIXME: application code may throw different types than Error!
         this.displayError(client, data.sender, e as Error);

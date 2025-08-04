@@ -26,7 +26,7 @@ Deno.test("space within element", () => {
 
 Deno.test("comment", () => {
   assertEquals(style`a<!-- this is a comment -->b`, "ab§r");
-})
+});
 
 Deno.test("reset node", () => {
   assertEquals(style`<red>A<reset>B</reset>C</red>`, "§cA§rB§r§cC§r");

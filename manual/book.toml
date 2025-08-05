@@ -1,0 +1,5 @@
+[book]
+authors = ["Jonas da Silva"]
+language = "en"
+src = "src"
+title = "MCBE WebSockets"

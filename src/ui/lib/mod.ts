@@ -1,75 +1,104 @@
 import * as xml from "@rgrove/parse-xml";
 import * as html from "@std/html";
 
-// TODO: doc
 export const codes = {
   colors: {
     /** Color code that represents #000000. */
     black: "§0",
 
-    /** Color code that represents  #0000AA. */
+    /** Color code that represents #0000AA. */
     darkBlue: "§1",
 
+    /** Color code that represents #00AA00. */
     darkGreen: "§2",
 
+    /** Color code that represents #00AAAA. */
     darkAqua: "§3",
 
+    /** Color code that represents #AA0000. */
     darkRed: "§4",
 
+    /** Color code that represents #AA00AA. */
     darkPurple: "§5",
 
+    /** Color code that represents #FFAA00. */
     gold: "§6",
 
+    /** Color code that represents #C6C6C6. */
     gray: "§7",
 
+    /** Color code that represents #555555. */
     darkGray: "§8",
 
+    /** Color code that represents #5555FF. */
     blue: "§9",
 
+    /** Color code that represents #55FF55. */
     green: "§a",
 
+    /** Color code that represents #55FFFF. */
     aqua: "§b",
 
+    /** Color code that represents #FF5555. */
     red: "§c",
 
+    /** Color code that represents #FF55FF. */
     lightPurple: "§d",
 
+    /** Color code that represents #FFFF55. */
     yellow: "§e",
 
+    /** Color code that represents #FFFFFF. */
     white: "§f",
 
+    /** Color code that represents #DDD605. */
     minecoinGold: "§g",
 
+    /** Color code that represents #E3D4D1. */
     materialQuartz: "§h",
 
+    /** Color code that represents #CECACA. */
     materialIron: "§i",
 
+    /** Color code that represents #443A3B. */
     materialNetherite: "§j",
 
+    /** Color code that represents #971607. */
     materialRedstone: "§m",
 
+    /** Color code that represents #B4684D. */
     materialCopper: "§n",
 
+    /** Color code that represents #DEB12D. */
     materialGold: "§p",
 
+    /** Color code that represents #119F36. */
     materialEmerald: "§q",
 
+    /** Color code that represents #2CBAA8. */
     materialDiamond: "§s",
 
+    /** Color code that represents #21497B. */
     materialLapis: "§t",
 
+    /** Color code that represents #9A5CC6. */
     materialAmethyst: "§u",
 
+    /** Color code that represents #EB7114. */
     materialResin: "§v",
   },
 
   formatting: {
+    /** Code to make text obfuscated. */
     obfuscated: "§k",
 
+    /** Code to make text bold. */
     bold: "§l",
 
+    /** Code to make text italic. */
     italic: "§o",
 
+    /** Reset style. */
     reset: "§r",
   },
 } as const;

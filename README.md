@@ -33,3 +33,9 @@ deno run --env-file=.env -A src/bedrockws/examples/echo.ts
 - <https://gist.github.com/jocopa3/5f718f4198f1ea91a37e3a9da468675c>
 - <https://github.com/Sandertv/mcwss/tree/master>
 - <https://www.s-anand.net/blog/programming-minecraft-with-websockets/>
+
+## License
+
+`bedrockws-deno` is licensed under Apache 2.0 with exceptions of `src/mapart`
+and `src/ui` which are licensed under MIT. Further information can be found
+in the license files of the subdirectories accordingly.

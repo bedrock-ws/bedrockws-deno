@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "license": "MIT",
+  "imports": {
+    "@std/fs": "jsr:@std/fs@^1.0.19",
+    "sharp": "npm:sharp@^0.34.3"
+  }
+}
+

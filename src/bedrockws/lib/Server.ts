@@ -1,8 +1,9 @@
+// TODO: method to quit server
+
 import { EventEmitter } from "node:events";
 import type { Event, GameEvent } from "./events.ts";
 import { ConnectEvent, ReadyEvent } from "./events.ts";
 import Client from "./Client.ts";
-import { format } from "@std/datetime";
 import { WebSocketServer } from "ws";
 import type { Request } from "@bedrock-ws/bedrockws";
 
@@ -50,16 +51,6 @@ export default class Server extends EventEmitter {
 
       socket.on("message", (message) => {
         const data = JSON.parse(message.toString());
-        console.debug(data);
-        {
-          // TODO: used for debugging; remove this and also the datetime dep
-          const logDir = `${Deno.env.get("HOME")}/.cache/bedrockws-deno`;
-          const now = new Date();
-          Deno.writeTextFileSync(
-            `${logDir}/${format(now, "yyyy-MM-dd_HH-mm-ss_SSS.log")}`,
-            JSON.stringify(data, null, 2),
-          );
-        }
         client.receive(data);
       });
     });

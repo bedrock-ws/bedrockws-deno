@@ -2,10 +2,8 @@
   "workspace": [
     "./src/bedrockws",
     "./src/bot",
+    "./src/mapart",
     "./src/schema",
     "./src/ui"
-  ],
-  "imports": {
-    "@std/datetime": "jsr:@std/datetime@^0.225.5"
-  }
+  ]
 }

@@ -12,6 +12,29 @@ import type {
   Request as RequestSchema,
   Response as ResponseSchema,
 } from "@bedrock-ws/schema";
+import type { CommandResponse } from "@bedrock-ws/schema/response";
 
+export class Response {
+  private readonly data: z.infer<typeof ResponseSchema>;
+
+  constructor(data: z.infer<typeof ResponseSchema>) {
+    this.data = data;
+  }
+
+  get ok() {
+    if (this.header.messagePurpose === "commandResponse") {
+      const data = this.data as Extract<z.infer<typeof ResponseSchema>, {"header": {"messagePurpose": "commandResponse"}}>;
+      return data.body.statusCode === 0;
+    }
+    return true;
+  }
+
+  get header() {
+    return this.data.header;
+  }
+
+  get body() {
+    return this.data.body;
+  }
+}
 export type Request = z.infer<typeof RequestSchema>;
-export type Response = z.infer<typeof ResponseSchema>;

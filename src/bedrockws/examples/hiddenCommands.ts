@@ -4,9 +4,19 @@
  * This is intended to try out hidden commands only executable by a WebSocket
  * client. These commands include:
  *
- * - `querytarget`: This always fails.
+ * - `querytarget`: Returns dimension, id, position, unique ID and y-rotation
+ *    of the queried target.
  * - `geteduclientinfo`: This always fails.
  * - `getlocalplayername`: Returns the player name of the connected client.
+ * - `gettopsolidblock`: Gets the position of the top non-air block below the
+ *   specified position.
+ *
+ * # References
+ *
+ * - <https://minecraft.wiki/w/Commands/querytarget>
+ * - <https://minecraft.wiki/w/Commands/getlocalplayername>
+ * - <https://minecraft.wiki/w/Commands/geteduclientinfo>
+ * - <https://minecraft.wiki/w/Commands/gettopsolidblock>
  */
 
 import { consts, Server } from "@bedrock-ws/bedrockws";

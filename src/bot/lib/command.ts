@@ -6,7 +6,7 @@ export interface Command {
   /**
    * The name of the command.
    *
-   * This must not be empty.
+   * This must not be empty and must not contain spaces.
    */
   name: string;
 

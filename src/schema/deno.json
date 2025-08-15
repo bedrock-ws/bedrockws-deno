@@ -4,7 +4,9 @@
   "exports": {
     ".": "./lib/mod.ts",
     "./common": "./lib/common/mod.ts",
-    "./events": "./lib/events/mod.ts"
+    "./events": "./lib/events/mod.ts",
+    "./request": "./lib/request.ts",
+    "./response": "./lib/response.ts"
   },
   "tasks": {
     "json-schema": {

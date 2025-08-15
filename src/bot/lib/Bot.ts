@@ -12,7 +12,8 @@ export interface BotOptions {
   /**
    * The prefix required to invoke commands.
    *
-   * The prefix can be of any length including zero.
+   * The prefix can be of any length including zero. The prefix must not begin
+   * with a slash (`/`).
    */
   commandPrefix: string;
 

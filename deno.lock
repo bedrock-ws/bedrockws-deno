@@ -5,11 +5,14 @@
     "jsr:@libs/qrcode@3": "3.0.0",
     "jsr:@std/assert@*": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
+    "jsr:@std/datetime@~0.225.5": "0.225.5",
     "jsr:@std/fs@^1.0.19": "1.0.19",
     "jsr:@std/html@^1.0.4": "1.0.4",
+    "jsr:@std/internal@^1.0.10": "1.0.10",
     "jsr:@std/internal@^1.0.6": "1.0.10",
     "jsr:@std/internal@^1.0.9": "1.0.10",
-    "jsr:@std/path@^1.1.1": "1.1.1",
+    "jsr:@std/path@^1.1.1": "1.1.2",
+    "jsr:@std/path@^1.1.2": "1.1.2",
     "npm:@adobe/jsonschema2md@^8.0.4": "8.0.4",
     "npm:@minecraft/server@2": "2.0.0_@minecraft+vanilla-data@1.21.90",
     "npm:@rgrove/parse-xml@*": "4.2.0",
@@ -35,11 +38,14 @@
         "jsr:@std/internal@^1.0.6"
       ]
     },
+    "@std/datetime@0.225.5": {
+      "integrity": "9f650f6caec546b80172e95a4edb8478d5fe060c4c937f7ede242ffceab6efc9"
+    },
     "@std/fs@1.0.19": {
       "integrity": "051968c2b1eae4d2ea9f79a08a3845740ef6af10356aff43d3e2ef11ed09fb06",
       "dependencies": [
         "jsr:@std/internal@^1.0.9",
-        "jsr:@std/path"
+        "jsr:@std/path@^1.1.1"
       ]
     },
     "@std/html@1.0.4": {
@@ -52,6 +58,12 @@
       "integrity": "fe00026bd3a7e6a27f73709b83c607798be40e20c81dde655ce34052fd82ec76",
       "dependencies": [
         "jsr:@std/internal@^1.0.9"
+      ]
+    },
+    "@std/path@1.1.2": {
+      "integrity": "c0b13b97dfe06546d5e16bf3966b1cadf92e1cc83e56ba5476ad8b498d9e3038",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.10"
       ]
     }
   },
@@ -1006,6 +1018,8 @@
       "src/bedrockws": {
         "dependencies": [
           "jsr:@asyncio/sync@^0.0.5",
+          "jsr:@std/datetime@~0.225.5",
+          "jsr:@std/path@^1.1.2",
           "npm:@minecraft/server@2",
           "npm:@types/ws@*",
           "npm:ws@^8.18.3",

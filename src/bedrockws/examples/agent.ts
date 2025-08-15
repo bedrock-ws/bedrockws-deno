@@ -18,11 +18,12 @@ server.on("Connect", (event) => {
   client.run("agent create");
 });
 
-server.on("PlayerMessage", (event) => {
+server.on("PlayerMessage", async (event) => {
   const { client, data } = event;
   const prefix = "agent ";
   if (!data.message.startsWith(prefix)) return;
-  client.run(data.message);
+  const response = await client.run(data.message);
+  console.log(response);
 })
 
 server.launch({

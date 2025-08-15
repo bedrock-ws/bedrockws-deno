@@ -85,6 +85,7 @@ import {
   WorldLoaded,
   WorldUnloaded,
 } from "@bedrock-ws/schema/events";
+import Position from "./common/Position.ts";
 
 export const CommandResponseBodyBase = z.strictObject({
   statusCode: z.number().meta({
@@ -632,16 +633,24 @@ export const CommandResponseWithDetails = z.strictObject({
   description: "The response of getlocalplayername and querytarget commands",
 });
 
-export const CommandResponseError = z.strictObject({
+export const CommandResponseOther = z.strictObject({
   header: CommandResponseHeader,
   body: CommandResponseBodyBase.extend({}),
-}).meta({ description: "The response when an error occured" });
+}).meta({ description: "The base of an response" });
+
+export const CommandResponseAgentGetPosition = z.strictObject({
+  header: CommandResponseHeader,
+  body: CommandResponseBodyBase.extend({
+    position: Position,
+  })
+})
 
 export const CommandResponse = z.union(
   [
     CommandResponseTellCommand,
     CommandResponseWithDetails,
-    CommandResponseError,
+    CommandResponseAgentGetPosition,
+    CommandResponseOther,
   ] as const,
 );
 

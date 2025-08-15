@@ -9,6 +9,8 @@
   "imports": {
     "@asyncio/sync": "jsr:@asyncio/sync@^0.0.5",
     "@minecraft/server": "npm:@minecraft/server@^2.0.0",
+    "@std/datetime": "jsr:@std/datetime@^0.225.5",
+    "@std/path": "jsr:@std/path@^1.1.2",
     "ws": "npm:ws@^8.18.3",
     "@types/ws": "npm:@types/ws",
     "zod": "npm:zod@^3.25.0"

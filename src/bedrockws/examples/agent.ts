@@ -18,6 +18,13 @@ server.on("Connect", (event) => {
   client.run("agent create");
 });
 
+server.on("PlayerMessage", (event) => {
+  const { client, data } = event;
+  const prefix = "agent ";
+  if (!data.message.startsWith(prefix)) return;
+  client.run(data.message);
+})
+
 server.launch({
   hostname: Deno.env.get("BEDROCKWS_DENO_HOST")!,
   port: parseInt(Deno.env.get("BEDROCKWS_DENO_PORT")!),

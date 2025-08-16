@@ -136,7 +136,6 @@ export default class Client {
     // Send the request as soon as the queue has enough space.
     await this.commandSemaphore.acquire();
     const data = JSON.stringify(req);
-    console.debug(data);
     this.socket.send(data);
 
     return new Promise((resolve, reject) => {

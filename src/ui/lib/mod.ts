@@ -165,7 +165,6 @@ export function styleWithOptions(options: StyleOptions) {
 
 function transformXML(nodes: xml.XmlNode[], restore: (string | undefined)[]) {
   let result = "";
-  console.debug({ nodes });
   let index = 0;
   for (const node of nodes) {
     const lastTagNode = index + 1 == nodes.filter((n) =>

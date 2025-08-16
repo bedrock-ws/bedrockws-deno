@@ -2,14 +2,17 @@
 // TODO: option for custom palette
 
 import { Bot, CommandParamType } from "@bedrock-ws/bot";
+import * as ui from "@bedrock-ws/ui";
 import blockPalette from "./block_palette.json" with { type: "json" };
 import sharp from "sharp";
 import { exists } from "@std/fs/exists";
+import { Client } from "@bedrock-ws/bedrockws";
 
 type Vec3 = { x: number; y: number; z: number };
 type Rgb = [number, number, number];
 
 const mapSize = 128;
+const preferredTickingAreaNameLength = 15;
 
 /**
  * Finds out the nearest edge coordinate of a map (top left of map).
@@ -61,6 +64,33 @@ function rgbToHex(r: number, g: number, b: number) {
   return ((r << 16) | (g << 8) | b << 0).toString(16).padStart(6, "0");
 }
 
+function generateNoise(length: number) {
+  let result = "";
+  const noiseChars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  for (let i = 0; i < length; i++) {
+    const index = Math.floor(Math.random() * noiseChars.length);
+    result += noiseChars.charAt(index);
+  }
+  return result;
+}
+
+enum LogLevel {
+  Error,
+  Success,
+}
+
+function logChat(client: Client, level: LogLevel, message: string) {
+  if (level === LogLevel.Error) {
+    client.sendMessage(
+      ui.style`<darkGray>[<red>error</red>]</darkGray> ${message}`,
+    );
+  } else if (level === LogLevel.Success) {
+    client.sendMessage(ui.style`<darkGray[<green>success</green>] ${message}`);
+  } else {
+    level satisfies never;
+  }
+}
+
 const bot = new Bot({ commandPrefix: "-" });
 
 bot.cmd({
@@ -69,57 +99,81 @@ bot.cmd({
   optionalParameters: [
     { name: "resize_method", type: CommandParamType.String },
     { name: "downsize_kernel", type: CommandParamType.String },
+    { name: "background_color", type: CommandParamType.String },
   ],
 }, async (origin, ...args) => {
   const { client } = origin;
 
   const path = args.shift() as string;
-  const resizeMethod = (args.shift() as string | undefined) ?? "inside";
+  const resizeMethod = (args.shift() as string | undefined) ?? "contain";
   const downsizeKernel = (args.shift() as string | undefined) ?? "nearest";
+  const backgroundColor = (args.shift() as string | undefined) ?? "white";
 
   if (!await exists(path, { isFile: true })) {
-    // TODO: emit error
+    logChat(client, LogLevel.Error, `No file found at ${path}`);
     return;
   }
+
   // TODO: validate path is in supplied ROOT
 
   const playerPosition = (await client.queryPlayer()).position;
   const edgeCoordinates = nearestMapEdge(playerPosition);
 
+  const tickingAreaNamePrefix = "mapart_";
+  const tickingAreaName = tickingAreaNamePrefix +
+    generateNoise(
+      Math.max(
+        0,
+        preferredTickingAreaNameLength - tickingAreaNamePrefix.length,
+      ),
+    );
+
   // We use 0 here for the height because it is irrelevant for a ticking
   // area.
-  // TODO: Validate this.
+  // TODO: verify this.
   const response = await client.run(
     `tickingarea add ${edgeCoordinates.x} 0 ${edgeCoordinates.z} ${
       edgeCoordinates.x + mapSize
-    } 0 ${edgeCoordinates.z + mapSize} `,
+    } 0 ${edgeCoordinates.z + mapSize} ${tickingAreaName}`,
   );
-  console.debug({ response });
-  // TODO: abort with error message if the command fails, because it means there
-  //       are too many ticking areas
+  console.debug(response, response.ok);
   if (!response.ok) {
-    // TODO: emit error
+    logChat(
+      client,
+      LogLevel.Error,
+      "Failed to create ticking area. Probable cause is that the maximum amount of ticking areas have been used already. It is required to delete one ticking area.",
+    );
     return;
   }
 
   // TODO: lock player
-  // TODO: resize image
   // TODO: mind alpha channel
-  const data = await sharp(path).raw().toBuffer();
+  const image = sharp(path).resize(mapSize, mapSize, {
+    fit: resizeMethod,
+    kernel: downsizeKernel,
+    background: backgroundColor,
+  });
+  const data = await image.raw().toBuffer();
   const pixels = new Uint8ClampedArray(data.buffer);
   const palette = Object.keys(blockPalette).map(hexToRgb);
   for (let i = 0; i < pixels.length; i += 3) {
-    // TODO: map pixel to block and place
+    // TODO: progress bar might slow it down; instead print in termnial if it
+    //       in fact does
+    const progress = i / pixels.length;
+    const barsAmount = 20;
+    const progressDisplay = `${":solid_star:".repeat(barsAmount * progress)}${
+      ":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))
+    } ${Math.floor(progress * 100)}%`;
+    client.run(`title @a actionbar ${progressDisplay}`);
+
     const [r, g, b] = pixels.subarray(i, i + 3);
     const targetRgb = nearestColor([r, g, b], palette)!;
-    console.debug({ targetRgb });
     const targetHex = rgbToHex(...targetRgb).toUpperCase();
-    console.debug({ targetHex });
     const block = blockPalette[targetHex as keyof typeof blockPalette];
-    console.debug({ block });
+    console.debug({block});
   }
 
-  // TODO: remove ticking area
+  client.run(`tickingarea remove ${tickingAreaName}`);
 });
 
 bot.launch({

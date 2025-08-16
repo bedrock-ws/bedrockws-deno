@@ -6,7 +6,7 @@ import type { Event, GameEvent } from "./events.ts";
 import { ConnectEvent, ReadyEvent } from "./events.ts";
 import Client from "./Client.ts";
 import { WebSocketServer } from "ws";
-import type { Request } from "@bedrock-ws/bedrockws";
+import { Response, type Request } from "@bedrock-ws/bedrockws";
 import * as path from "@std/path";
 import * as datetime from "@std/datetime";
 
@@ -57,7 +57,8 @@ export default class Server extends EventEmitter {
         if (Deno.env.get("BEDROCKWS_DENO_TELEMETRY") === "1") {
           logResponse(data);
         }
-        client.receive(data);
+        const response = new Response(data);
+        client.receive(response);
       });
     });
     this.emit(
@@ -96,7 +97,7 @@ function logResponse(data: object) {
   Deno.mkdirSync(logDir, { recursive: true });
   const now = new Date();
   Deno.writeTextFileSync(
-    path.join(logDir, datetime.format(now, "yyyy-MM-dd_HH-mm-ss_SSS.log.json")),
+    path.join(logDir, `${datetime.format(now, "yyyy-MM-dd_HH-mm-ss_SSS")}.log.json`),
     JSON.stringify(data, null, 2),
   );
 }

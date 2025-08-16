@@ -12,7 +12,8 @@ import type {
   Request as RequestSchema,
   Response as ResponseSchema,
 } from "@bedrock-ws/schema";
-import type { CommandResponse } from "@bedrock-ws/schema/response";
+
+// TODO: move Response and Request to separate modules
 
 export class Response {
   private readonly data: z.infer<typeof ResponseSchema>;
@@ -37,4 +38,5 @@ export class Response {
     return this.data.body;
   }
 }
-export type Request = z.infer<typeof RequestSchema>;
+
+export type Request = z.infer<typeof RequestSchema>; // TODO: make this a class

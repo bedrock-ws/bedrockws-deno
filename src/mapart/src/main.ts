@@ -1,5 +1,9 @@
 // TODO: command for pixelart and mapart separately
 // TODO: option for custom palette
+// TODO: prevent snow from spawning on blocks
+// TODO: teleport to edge of next map art
+// TODO: do not find nearest edge but rather edge for the map area the player
+//       is currently **in**
 
 import { Bot, CommandParamType } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
@@ -10,8 +14,18 @@ import { Client } from "@bedrock-ws/bedrockws";
 
 type Vec3 = { x: number; y: number; z: number };
 type Rgb = [number, number, number];
+type LogLevel = "success" | "error";
+interface PaletteEntry {
+  normal: Rgb;
+  dark: Rgb;
+  darker: Rgb;
+  darkest: Rgb;
+}
+type Shade = keyof PaletteEntry;
 
 const mapSize = 128;
+const heightBase = 100;
+const shadeOffset = 2;
 const preferredTickingAreaNameLength = 15;
 
 /**
@@ -32,22 +46,40 @@ function nearestMapEdge(location: Vec3): Vec3 {
  *
  * This function only returns `undefined` when the palette is empty.
  */
-function nearestColor(color: Rgb, palette: Rgb[]): Rgb | undefined {
-  let nearest: { difference: number; color: Rgb } | undefined = undefined;
-  for (const availableColor of palette) {
-    const difference = Math.sqrt(
-      Math.abs(availableColor[0] - color[0]) ** 2 +
-        Math.abs(availableColor[1] - color[1]) ** 2 +
-        Math.abs(availableColor[2] - color[2]) ** 2,
-    );
-    if (difference === 0) {
-      return color;
-    }
-    if (nearest === undefined || nearest.difference > difference) {
-      nearest = { difference, color: availableColor };
+function nearestColor(
+  color: Rgb,
+  palette: PaletteEntry[],
+): { shadedColor: Rgb; originalColor: Rgb; shade: Shade } | undefined {
+  let nearest: {
+    difference: number;
+    shadedColor: Rgb;
+    originalColor: Rgb;
+    shade: Shade;
+  } | undefined = undefined;
+  for (const availableColors of palette) {
+    for (
+      const [shadeString, availableColor] of Object.entries(availableColors)
+    ) {
+      const shade = shadeString as Shade;
+      const difference = Math.sqrt(
+        (availableColor[0] - color[0]) ** 2 +
+          (availableColor[1] - color[1]) ** 2 +
+          (availableColor[2] - color[2]) ** 2,
+      );
+      const data = {
+        shadedColor: availableColor,
+        originalColor: availableColors["normal"],
+        shade,
+      };
+      if (difference === 0) {
+        return data;
+      }
+      if (nearest === undefined || nearest.difference > difference) {
+        nearest = { difference, ...data };
+      }
     }
   }
-  return nearest?.color;
+  return nearest === undefined ? undefined : { ...nearest };
 }
 
 function hexToRgb(hexString: string): Rgb {
@@ -60,8 +92,9 @@ function hexToRgb(hexString: string): Rgb {
   ];
 }
 
-function rgbToHex(r: number, g: number, b: number) {
-  return ((r << 16) | (g << 8) | b << 0).toString(16).padStart(6, "0");
+function rgbToHex(color: Rgb) {
+  return ((color[0] << 16) | (color[1] << 8) | color[2] << 0).toString(16)
+    .padStart(6, "0");
 }
 
 function generateNoise(length: number) {
@@ -74,20 +107,50 @@ function generateNoise(length: number) {
   return result;
 }
 
-enum LogLevel {
-  Error,
-  Success,
+/**
+ * Returns an array of the possible shades of a base map color.
+ *
+ * @see https://minecraft.wiki/w/Map_item_format#Map_colors
+ */
+function withShades(color: Rgb): PaletteEntry {
+  return {
+    darker: applyShade(color, "darker"),
+    darkest: applyShade(color, "darkest"),
+    normal: applyShade(color, "normal"),
+    dark: applyShade(color, "dark"),
+  };
+}
+
+function applyShade(color: Rgb, shade: Shade): Rgb {
+  let multiplier;
+  switch (shade) {
+    case "normal":
+      multiplier = 1;
+      break;
+    case "dark":
+      multiplier = 0.53;
+      break;
+    case "darker":
+      multiplier = 0.71;
+      break;
+    case "darkest":
+      multiplier = 0.86;
+      break;
+  }
+  return [
+    Math.floor(color[0] * multiplier),
+    Math.floor(color[1] * multiplier),
+    Math.floor(color[2] * multiplier),
+  ];
 }
 
 function logChat(client: Client, level: LogLevel, message: string) {
-  if (level === LogLevel.Error) {
+  if (level === "error") {
     client.sendMessage(
       ui.style`<darkGray>[<red>error</red>]</darkGray> ${message}`,
     );
-  } else if (level === LogLevel.Success) {
+  } else if (level === "success") {
     client.sendMessage(ui.style`<darkGray[<green>success</green>] ${message}`);
-  } else {
-    level satisfies never;
   }
 }
 
@@ -110,7 +173,7 @@ bot.cmd({
   const backgroundColor = (args.shift() as string | undefined) ?? "white";
 
   if (!await exists(path, { isFile: true })) {
-    logChat(client, LogLevel.Error, `No file found at ${path}`);
+    logChat(client, "error", `No file found at ${path}`);
     return;
   }
 
@@ -136,17 +199,19 @@ bot.cmd({
       edgeCoordinates.x + mapSize
     } 0 ${edgeCoordinates.z + mapSize} ${tickingAreaName}`,
   );
-  console.debug(response, response.ok);
   if (!response.ok) {
     logChat(
       client,
-      LogLevel.Error,
+      "error",
       "Failed to create ticking area. Probable cause is that the maximum amount of ticking areas have been used already. It is required to delete one ticking area.",
     );
     return;
   }
 
-  // TODO: lock player
+  await client.run(
+    `tp ${edgeCoordinates.x} ${heightBase} ${edgeCoordinates.z}`,
+  );
+
   // TODO: mind alpha channel
   const image = sharp(path).resize(mapSize, mapSize, {
     fit: resizeMethod,
@@ -155,22 +220,59 @@ bot.cmd({
   });
   const data = await image.raw().toBuffer();
   const pixels = new Uint8ClampedArray(data.buffer);
-  const palette = Object.keys(blockPalette).map(hexToRgb);
-  for (let i = 0; i < pixels.length; i += 3) {
-    // TODO: progress bar might slow it down; instead print in termnial if it
-    //       in fact does
-    const progress = i / pixels.length;
-    const barsAmount = 20;
-    const progressDisplay = `${":solid_star:".repeat(barsAmount * progress)}${
-      ":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))
-    } ${Math.floor(progress * 100)}%`;
-    client.run(`title @a actionbar ${progressDisplay}`);
+  const palette = Object.keys(blockPalette).map((hex) =>
+    withShades(hexToRgb(hex))
+  );
+  console.debug(palette);
 
-    const [r, g, b] = pixels.subarray(i, i + 3);
-    const targetRgb = nearestColor([r, g, b], palette)!;
-    const targetHex = rgbToHex(...targetRgb).toUpperCase();
-    const block = blockPalette[targetHex as keyof typeof blockPalette];
-    console.debug({block});
+  let previousShade: Shade | undefined = undefined;
+  let step = 0;
+  for (let z = 0; z < mapSize; z++) {
+    for (let x = 0; x < mapSize; x++) {
+      // TODO: progress bar might slow it down; instead print in termnial if it
+      //       in fact does
+      const progress = step / mapSize ** 2;
+      const barsAmount = 20;
+      const progressDisplay = `${":solid_star:".repeat(barsAmount * progress)}${
+        ":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))
+      } ${Math.floor(progress * 100)}%`;
+      client.run(`title @a actionbar ${progressDisplay}`);
+
+      const [r, g, b] = pixels.subarray(step * 3, step * 3 + 3);
+      const { originalColor, shade } = nearestColor([r, g, b], palette)!;
+      previousShade = shade;
+      const hexKey = rgbToHex(originalColor).toUpperCase();
+      let block = blockPalette[hexKey as keyof typeof blockPalette];
+
+      // TODO: use switch, it's more readable
+      const y = previousShade === undefined
+        ? 0
+        : previousShade === "normal"
+        ? 0
+        : previousShade === "dark"
+        ? shadeOffset
+        : previousShade === "darker"
+        ? shadeOffset * 2
+        : previousShade === "darkest"
+        ? shadeOffset * 3
+        : 0;
+
+      if (typeof block !== "string") {
+        const topBlock = block.top;
+        client.run(
+          `execute positioned ${edgeCoordinates.x} ${edgeCoordinates.y} ${edgeCoordinates.z} run setblock ~${x} ~${
+            y + 1
+          } ~${z} ${topBlock}`,
+        );
+        block = block.self;
+      }
+
+      client.run(
+        `execute positioned ${edgeCoordinates.x} ${heightBase} ${edgeCoordinates.z} run setblock ~${x} ~${y} ~${z} ${block}`,
+      );
+
+      step++;
+    }
   }
 
   client.run(`tickingarea remove ${tickingAreaName}`);

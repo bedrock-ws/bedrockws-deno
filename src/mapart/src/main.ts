@@ -7,7 +7,7 @@
 
 import { Bot, CommandParamType } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
-import blockPalette from "./block_palette.json" with { type: "json" };
+import blockPalette from "./palettes/map_palette.json" with { type: "json" };
 import sharp from "sharp";
 import { exists } from "@std/fs/exists";
 import { Client } from "@bedrock-ws/bedrockws";
@@ -274,6 +274,7 @@ bot.cmd({
       step++;
     }
   }
+  // TODO: one extra row of any block
 
   client.run(`tickingarea remove ${tickingAreaName}`);
 });

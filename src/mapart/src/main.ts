@@ -2,8 +2,6 @@
 // TODO: option for custom palette
 // TODO: prevent snow from spawning on blocks
 // TODO: teleport to edge of next map art
-// TODO: do not find nearest edge but rather edge for the map area the player
-//       is currently **in**
 
 import { Bot, CommandParamType } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
@@ -29,15 +27,15 @@ const shadeOffset = 2;
 const preferredTickingAreaNameLength = 15;
 
 /**
- * Finds out the nearest edge coordinate of a map (top left of map).
+ * Finds out the edge coordinates of the map area the player is currently in.
  */
-function nearestMapEdge(location: Vec3): Vec3 {
+function localMapEdge(location: Vec3): Vec3 {
   // (0, 0) is the bottom right block of the middle of the map. (-64, -64) is
   // the corner of the map at (0, 0). A map has a height and width of 128
   // blocks.
   const { x, y, z } = location;
   const closest = (n: number) =>
-    mapSize / 2 + mapSize * Math.round((n - mapSize / 2) / mapSize);
+    mapSize / 2 + mapSize * Math.floor((n - mapSize / 2) / mapSize);
   return { x: closest(x), y, z: closest(z) };
 }
 
@@ -180,7 +178,7 @@ bot.cmd({
   // TODO: validate path is in supplied ROOT
 
   const playerPosition = (await client.queryPlayer()).position;
-  const edgeCoordinates = nearestMapEdge(playerPosition);
+  const edgeCoordinates = localMapEdge(playerPosition);
 
   const tickingAreaNamePrefix = "mapart_";
   const tickingAreaName = tickingAreaNamePrefix +

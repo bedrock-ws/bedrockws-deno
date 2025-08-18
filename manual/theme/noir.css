@@ -1,0 +1,29 @@
+.noir {
+  font-family: "Inter";
+
+  --bg: black;
+  --fg: white;
+
+  --sidebar-bg: #222;
+  --sidebar-fg: white;
+  --sidebar-non-existant: #777;
+  --sidebar-active: white;
+
+  --table-border-color: none;
+  --table-header-bg: #222;
+  --table-alternate-bg: #222;
+  /* TODO: rest */
+}
+
+.noir a {
+  text-decoration-line: underline;
+}
+
+.noir .chapter li a.active {
+  font-style: italic;
+}
+
+.noir .chapter li:not(:has(a)) {
+  text-decoration-line: line-through;
+  text-decoration-style: wavy;
+}

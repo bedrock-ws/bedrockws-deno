@@ -25,3 +25,7 @@ To establish a WebSocket on a world hosted on console, you need an additional
 mobile or desktop device (or a friend that has one) that has Minecraft on it.
 This device can join the world hosted on the console and then connect to the
 WebSocket server.
+
+> [!IMPORTANT]
+> On PlayStation 4 and 5, a PlayStation Plus subscription is required for
+> Online play. This includes online play in the local network.

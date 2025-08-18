@@ -1,7 +1,6 @@
 // TODO: command for pixelart and mapart separately
 // TODO: option for custom palette
 // TODO: prevent snow from spawning on blocks
-// TODO: teleport to edge of next map art
 
 import { Bot, CommandParamType } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
@@ -206,10 +205,6 @@ bot.cmd({
     return;
   }
 
-  await client.run(
-    `tp ${edgeCoordinates.x} ${heightBase} ${edgeCoordinates.z}`,
-  );
-
   // TODO: mind alpha channel
   const image = sharp(path).resize(mapSize, mapSize, {
     fit: resizeMethod,
@@ -223,6 +218,13 @@ bot.cmd({
   );
   console.debug(palette);
 
+  const setBlock = (x: number, y: number, z: number, block: string) => {
+    client.run(
+      `execute positioned ${edgeCoordinates.x} ${edgeCoordinates.y} ${edgeCoordinates.z} run setblock ~${x} ~${y} ~${z} ${block}`,
+    );
+  };
+
+  let block;
   let previousShade: Shade | undefined = undefined;
   let step = 0;
   for (let z = 0; z < mapSize; z++) {
@@ -236,43 +238,48 @@ bot.cmd({
       } ${Math.floor(progress * 100)}%`;
       client.run(`title @a actionbar ${progressDisplay}`);
 
-      const [r, g, b] = pixels.subarray(step * 3, step * 3 + 3);
-      const { originalColor, shade } = nearestColor([r, g, b], palette)!;
-      previousShade = shade;
-      const hexKey = rgbToHex(originalColor).toUpperCase();
-      let block = blockPalette[hexKey as keyof typeof blockPalette];
+      let y;
+      switch (previousShade) {
+        case undefined:
+          y = 0;
+          break;
+        case "normal":
+          y = 0;
+          break;
+        case "dark":
+          y = shadeOffset;
+          break;
+        case "darker":
+          y = shadeOffset * 2;
+          break;
+        case "darkest":
+          y = shadeOffset * 3;
+          break;
+        default:
+          y = 0;
+      }
 
-      // TODO: use switch, it's more readable
-      const y = previousShade === undefined
-        ? 0
-        : previousShade === "normal"
-        ? 0
-        : previousShade === "dark"
-        ? shadeOffset
-        : previousShade === "darker"
-        ? shadeOffset * 2
-        : previousShade === "darkest"
-        ? shadeOffset * 3
-        : 0;
+      if (z == mapSize) {
+        block = "stone";
+      } else {
+        const [r, g, b] = pixels.subarray(step * 3, step * 3 + 3);
+        const { originalColor, shade } = nearestColor([r, g, b], palette)!;
+        previousShade = shade;
+        const hexKey = rgbToHex(originalColor).toUpperCase();
+        block = blockPalette[hexKey as keyof typeof blockPalette];
+      }
 
       if (typeof block !== "string") {
         const topBlock = block.top;
-        client.run(
-          `execute positioned ${edgeCoordinates.x} ${edgeCoordinates.y} ${edgeCoordinates.z} run setblock ~${x} ~${
-            y + 1
-          } ~${z} ${topBlock}`,
-        );
+        setBlock(x, y + 1, z, topBlock);
         block = block.self;
       }
 
-      client.run(
-        `execute positioned ${edgeCoordinates.x} ${heightBase} ${edgeCoordinates.z} run setblock ~${x} ~${y} ~${z} ${block}`,
-      );
+      setBlock(x, y, z, block);
 
       step++;
     }
   }
-  // TODO: one extra row of any block
 
   client.run(`tickingarea remove ${tickingAreaName}`);
 });

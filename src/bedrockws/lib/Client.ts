@@ -178,7 +178,7 @@ export default class Client {
     const requestId = (res.header.messagePurpose === "commandResponse")
       ? res.header.requestId
       : undefined;
-    const isError = res.header.messagePurpose === "error";
+    const isError = !res.ok;
     const isResponse = res.header.messagePurpose === "commandResponse";
     if (isResponse && requestId !== undefined) {
       this.commandSemaphore.release();

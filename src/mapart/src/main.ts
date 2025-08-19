@@ -1,6 +1,10 @@
 // TODO: command for pixelart and mapart separately
 // TODO: option for custom palette
 // TODO: prevent snow from spawning on blocks
+// TODO: map arts look too pixelated, use some blurry filter
+// TODO: does not work for RGBA channels
+// TODO: update status bar when done
+// TODO: test if tickingarea error handing works
 
 import { Bot, CommandParamType } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
@@ -24,6 +28,7 @@ const mapSize = 128;
 const heightBase = 100;
 const shadeOffset = 2;
 const preferredTickingAreaNameLength = 15;
+const barsAmount = 20;
 
 /**
  * Finds out the edge coordinates of the map area the player is currently in.
@@ -166,7 +171,7 @@ bot.cmd({
 
   const path = args.shift() as string;
   const resizeMethod = (args.shift() as string | undefined) ?? "contain";
-  const downsizeKernel = (args.shift() as string | undefined) ?? "nearest";
+  const downsizeKernel = (args.shift() as string | undefined) ?? "mitchell";
   const backgroundColor = (args.shift() as string | undefined) ?? "white";
 
   if (!await exists(path, { isFile: true })) {
@@ -190,13 +195,13 @@ bot.cmd({
 
   // We use 0 here for the height because it is irrelevant for a ticking
   // area.
-  // TODO: verify this.
-  const response = await client.run(
-    `tickingarea add ${edgeCoordinates.x} 0 ${edgeCoordinates.z} ${
-      edgeCoordinates.x + mapSize
-    } 0 ${edgeCoordinates.z + mapSize} ${tickingAreaName}`,
-  );
-  if (!response.ok) {
+  try {
+    await client.run(
+      `tickingarea add ${edgeCoordinates.x} 0 ${edgeCoordinates.z} ${
+        edgeCoordinates.x + mapSize
+      } 0 ${edgeCoordinates.z + mapSize} ${tickingAreaName}`,
+    );
+  } catch {
     logChat(
       client,
       "error",
@@ -216,27 +221,30 @@ bot.cmd({
   const palette = Object.keys(blockPalette).map((hex) =>
     withShades(hexToRgb(hex))
   );
-  console.debug(palette);
 
   const setBlock = (x: number, y: number, z: number, block: string) => {
     client.run(
-      `execute positioned ${edgeCoordinates.x} ${edgeCoordinates.y} ${edgeCoordinates.z} run setblock ~${x} ~${y} ~${z} ${block}`,
-    );
+      `execute positioned ${edgeCoordinates.x} ${heightBase} ${edgeCoordinates.z} run setblock ~${x} ~${y} ~${z} ${block}`,
+    ).catch(console.error); // TODO: log in chat
+  };
+
+  const displayProgress = (progress: number) => {
+    const progressDisplay = `${progress === 1 ? ui.codes.colors.green : ""}${":solid_star:".repeat(barsAmount * progress)}${
+      ":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))
+    } ${Math.floor(progress * 100)}%`;
+    client.run(`title @a actionbar ${progressDisplay}`);
   };
 
   let block;
   let previousShade: Shade | undefined = undefined;
   let step = 0;
-  for (let z = 0; z < mapSize; z++) {
-    for (let x = 0; x < mapSize; x++) {
-      // TODO: progress bar might slow it down; instead print in termnial if it
+  let pixelIndex = pixels.length / 3;
+  for (let z = mapSize - 1; z >= -1; z--) {
+    for (let x = mapSize - 1; x >= 0; x--) {
+      // TODO: progress bar might slow it down; instead print in terminal if it
       //       in fact does
       const progress = step / mapSize ** 2;
-      const barsAmount = 20;
-      const progressDisplay = `${":solid_star:".repeat(barsAmount * progress)}${
-        ":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))
-      } ${Math.floor(progress * 100)}%`;
-      client.run(`title @a actionbar ${progressDisplay}`);
+      displayProgress(progress);
 
       let y;
       switch (previousShade) {
@@ -259,10 +267,10 @@ bot.cmd({
           y = 0;
       }
 
-      if (z == mapSize) {
+      if (z == -1) {
         block = "stone";
       } else {
-        const [r, g, b] = pixels.subarray(step * 3, step * 3 + 3);
+        const [r, g, b] = pixels.subarray(pixelIndex * 3, pixelIndex * 3 + 3);
         const { originalColor, shade } = nearestColor([r, g, b], palette)!;
         previousShade = shade;
         const hexKey = rgbToHex(originalColor).toUpperCase();
@@ -278,8 +286,10 @@ bot.cmd({
       setBlock(x, y, z, block);
 
       step++;
+      pixelIndex--;
     }
   }
+  displayProgress(1);
 
   client.run(`tickingarea remove ${tickingAreaName}`);
 });

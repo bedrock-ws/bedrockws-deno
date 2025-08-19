@@ -23,6 +23,9 @@ export class Response {
   }
 
   get ok() {
+    if (this.header.messagePurpose === "error") {
+      return false;
+    }
     if (this.header.messagePurpose === "commandResponse") {
       const data = this.data as Extract<z.infer<typeof ResponseSchema>, {"header": {"messagePurpose": "commandResponse"}}>;
       return data.body.statusCode === 0;

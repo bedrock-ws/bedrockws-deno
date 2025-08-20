@@ -129,6 +129,16 @@ export default class Client {
     );
   }
 
+  /**
+   * Closes the WebSocket connection.
+   */
+  close(options?: {code: number, reason: string}) {
+    // FIXME: neither emits "close"/"disconnect" event nor makes Minecraft tell
+    //        that the connection closed but no further events are triggered
+    //        and the connection eventually closes with code 1006
+    this.socket.close(options?.code, options?.reason);
+  }
+
   /** Sends a request to the Minecraft client. */
   async send(req: Request): Promise<Response> {
     const requestId = req.header.requestId;

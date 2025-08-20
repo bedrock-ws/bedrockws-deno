@@ -12,7 +12,7 @@ export interface ServerEvent {
 /** Events the client can trigger. */
 export interface ClientEvent {
   Connect: (event: ConnectEvent) => void;
-  Disconnect: (event: unknown) => void;
+  Disconnect: (event: DisconnectEvent) => void;
 }
 
 /** Events the game can trigger. */
@@ -141,6 +141,18 @@ export class ConnectEvent implements GameEventBase {
   constructor(options: { server: Server; client: Client }) {
     this.server = options.server;
     this.client = options.client;
+  }
+}
+
+export class DisconnectEvent implements GameEventBase {
+  server: Server;
+  client: Client;
+  code: number;
+
+  constructor(options: { server: Server; client: Client, code: number }) {
+    this.server = options.server;
+    this.client = options.client;
+    this.code = options.code;
   }
 }
 

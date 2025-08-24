@@ -28,4 +28,4 @@ WebSocket server.
 
 > [!IMPORTANT]
 > On PlayStation 4 and 5, a PlayStation Plus subscription is required for
-> Online play. This includes online play in the local network.
+> online play. This includes online play in the local network.

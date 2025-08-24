@@ -6,6 +6,10 @@ title = "MCBE WebSockets"
 
 [output.html]
 smart-punctuation = true
-additional-css = ["./theme/noir.css", "./theme/github-dark.css"]
+additional-css = [
+  "./theme/noir.css",
+  "./theme/blanc.css",
+  "./theme/github-dark.css",
+]
 
 [preprocessor.alerts]

@@ -963,7 +963,11 @@ export default class Client {
     // TODO: ...
   }
 
-  /** Runs a command as the Minecraft client. */
+  /** 
+   * Runs a command as the Minecraft client.
+   *
+   * The command should not include the slash prefix.
+   */
   async run(command: string): Promise<Response> {
     const identifier = crypto.randomUUID();
     return await this.send({

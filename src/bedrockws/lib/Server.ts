@@ -17,7 +17,7 @@ export interface LaunchOptions {
 
 export default class Server extends EventEmitter {
   /** Every client connected to the server. */
-  protected clients: Client[];
+  readonly clients: Client[];
 
   /** Events that should be subscribed to as soon as a connection is established. */
   protected pendingSubscriptions: Set<keyof GameEvent> = new Set();

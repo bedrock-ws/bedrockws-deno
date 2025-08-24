@@ -162,6 +162,7 @@ bot.cmd({
   name: "mapart",
   mandatoryParameters: [{ name: "path", type: CommandParamType.String }],
   optionalParameters: [
+    { name: "flat", type: CommandParamType.Boolean },
     { name: "resize_method", type: CommandParamType.String },
     { name: "downsize_kernel", type: CommandParamType.String },
     { name: "background_color", type: CommandParamType.String },
@@ -170,6 +171,7 @@ bot.cmd({
   const { client } = origin;
 
   const path = args.shift() as string;
+  const flat = (args.shift() as boolean | undefined) ?? false;
   const resizeMethod = (args.shift() as string | undefined) ?? "contain";
   const downsizeKernel = (args.shift() as string | undefined) ?? "mitchell";
   const backgroundColor = (args.shift() as string | undefined) ?? "white";
@@ -229,9 +231,11 @@ bot.cmd({
   };
 
   const displayProgress = (progress: number) => {
-    const progressDisplay = `${progress === 1 ? ui.codes.colors.green : ""}${":solid_star:".repeat(barsAmount * progress)}${
-      ":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))
-    } ${Math.floor(progress * 100)}%`;
+    const progressDisplay = `${progress === 1 ? ui.codes.colors.green : ""}${
+      ":solid_star:".repeat(barsAmount * progress)
+    }${":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))} ${
+      Math.floor(progress * 100)
+    }%`;
     client.run(`title @a actionbar ${progressDisplay}`);
   };
 
@@ -247,24 +251,28 @@ bot.cmd({
       displayProgress(progress);
 
       let y;
-      switch (previousShade) {
-        case undefined:
-          y = 0;
-          break;
-        case "normal":
-          y = 0;
-          break;
-        case "dark":
-          y = shadeOffset;
-          break;
-        case "darker":
-          y = shadeOffset * 2;
-          break;
-        case "darkest":
-          y = shadeOffset * 3;
-          break;
-        default:
-          y = 0;
+      if (flat) {
+        y = 0;
+      } else {
+        switch (previousShade) {
+          case undefined:
+            y = 0;
+            break;
+          case "normal":
+            y = 0;
+            break;
+          case "dark":
+            y = shadeOffset;
+            break;
+          case "darker":
+            y = shadeOffset * 2;
+            break;
+          case "darkest":
+            y = shadeOffset * 3;
+            break;
+          default:
+            y = 0;
+        }
       }
 
       if (z == -1) {

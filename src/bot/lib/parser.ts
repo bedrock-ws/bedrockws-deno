@@ -1,14 +1,9 @@
-import {
-  type CommandArgument,
-  type CommandParameter,
-  CommandParamType,
-  type CommandRequest,
+import type {
+  CommandArgument,
+  CommandParameter,
+  CommandRequest,
 } from "./command.ts";
-import {
-  MissingArgumentError,
-  TooManyArgumentsError,
-  TypeError,
-} from "./errors.ts";
+import { MissingArgumentError, TooManyArgumentsError } from "./errors.ts";
 import * as shlex from "shlex";
 
 export function lexCommandInput(input: string): CommandRequest {
@@ -17,60 +12,35 @@ export function lexCommandInput(input: string): CommandRequest {
   return { name, args };
 }
 
-function parseBoolean(value: string): boolean {
-  if (value === "true") return true;
-  if (value === "false") return false;
-  throw new TypeError(`expected boolean; got ${value}`);
-}
-
 export function parseCommand(
-  mendatoryParams: readonly CommandParameter[],
-  optionalParams: readonly CommandParameter[],
+  mendatoryParams: readonly CommandParameter<unknown>[],
+  optionalParams: readonly CommandParameter<unknown>[],
   args: string[],
 ) {
   const amountOfArgs = args.length;
   const params = mendatoryParams.concat(optionalParams);
   const result: CommandArgument[] = [];
-  for (const [index, param] of params.entries()) {
-    const arg = args.shift();
-    if (arg === undefined) {
-      if (index + 1 <= mendatoryParams.length) {
-        throw new MissingArgumentError(`missing argument for ${param.name}`);
+  paramIter: for (const [index, param] of params.entries()) {
+    const take = param.type.take ?? 1;
+    const localArgs: string[] = [];
+    for (let i = 0; i < take; i++) {
+      const arg = args.shift();
+      if (arg === undefined) {
+        if (index + 1 <= mendatoryParams.length) {
+          throw new MissingArgumentError(`missing argument for ${param.name}`);
+        }
+        if (args.length > 0) {
+          // TODO: error because in this scenario we for example provided only
+          //       one of multiple required words
+        }
+        result.push(undefined);
+        continue paramIter;
       }
-      result.push(undefined);
-      continue;
+      localArgs.push(arg);
     }
 
-    switch (param.type) {
-      case CommandParamType.Boolean:
-        result.push(parseBoolean(arg));
-        break;
-      case CommandParamType.Float: {
-        const n = +arg;
-        if (isNaN(n)) {
-          throw new TypeError(`expected integer; got ${n}`);
-        }
-        result.push(n);
-        break;
-      }
-      case CommandParamType.Integer: {
-        const n = Number(arg);
-        if (!Number.isInteger(arg)) {
-          throw new TypeError(`expected integer; got ${n}`);
-        }
-        result.push(n);
-        break;
-      }
-      case CommandParamType.Json:
-        result.push(JSON.parse(arg));
-        break;
-      case CommandParamType.Location:
-        result.push(""); // TODO
-        break;
-      case CommandParamType.String:
-        result.push(arg);
-        break;
-    }
+    const convertedArg = param.type.converter(localArgs);
+    result.push(convertedArg);
   }
   if (args.length > 0) {
     throw new TooManyArgumentsError(

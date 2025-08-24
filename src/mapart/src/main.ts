@@ -6,7 +6,7 @@
 // TODO: update status bar when done
 // TODO: test if tickingarea error handing works
 
-import { Bot, CommandParamType } from "@bedrock-ws/bot";
+import { booleanParamType, Bot, CommandParamType, stringParamType } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
 import blockPalette from "./palettes/map_palette.json" with { type: "json" };
 import sharp from "sharp";
@@ -160,12 +160,12 @@ const bot = new Bot({ commandPrefix: "-" });
 
 bot.cmd({
   name: "mapart",
-  mandatoryParameters: [{ name: "path", type: CommandParamType.String }],
+  mandatoryParameters: [{ name: "path", type: stringParamType }],
   optionalParameters: [
-    { name: "flat", type: CommandParamType.Boolean },
-    { name: "resize_method", type: CommandParamType.String },
-    { name: "downsize_kernel", type: CommandParamType.String },
-    { name: "background_color", type: CommandParamType.String },
+    { name: "flat", type: booleanParamType },
+    { name: "resize_method", type: stringParamType },
+    { name: "downsize_kernel", type: stringParamType },
+    { name: "background_color", type: stringParamType },
   ],
 }, async (origin, ...args) => {
   const { client } = origin;

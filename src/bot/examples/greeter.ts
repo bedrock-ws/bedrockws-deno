@@ -1,4 +1,4 @@
-import { Bot, CommandParamType } from "@bedrock-ws/bot";
+import { Bot, stringParamType } from "@bedrock-ws/bot";
 import type { Command, CommandArgument, CommandOrigin } from "@bedrock-ws/bot";
 
 const bot = new Bot({ commandPrefix: "." });
@@ -8,7 +8,7 @@ const greetCommand: Command = {
   aliases: ["sayhello", "welcome"],
   description: "Greets a player",
   optionalParameters: [
-    { type: CommandParamType.String, name: "target" },
+    { type: stringParamType, name: "target" },
   ],
   examples: [{
     description: "Greet a player named Steve",

@@ -3,7 +3,7 @@
  * chat.
  */
 
-import { Bot, CommandParamType } from "@bedrock-ws/bot";
+import { Bot, stringParamType } from "@bedrock-ws/bot";
 import type { Command, CommandArgument, CommandOrigin } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
 import { qrcode } from "@libs/qrcode";
@@ -14,7 +14,7 @@ const qrCommand: Command = {
   name: "qr",
   description: "Generates a QR code in the chat",
   mandatoryParameters: [
-    { type: CommandParamType.String, name: "data" },
+    { type: stringParamType, name: "data" },
   ],
   examples: [
     {

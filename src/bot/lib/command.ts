@@ -1,6 +1,7 @@
 import type { Client } from "@bedrock-ws/bedrockws";
 import type { Bot } from "@bedrock-ws/bot";
 import { style, styleWithOptions } from "@bedrock-ws/ui";
+import { TypeError } from "./errors.ts";
 
 export interface Command {
   /**
@@ -23,14 +24,14 @@ export interface Command {
   /**
    * Parameters that are required when invoking the command.
    */
-  mandatoryParameters?: CommandParameter[];
+  mandatoryParameters?: CommandParameter<unknown>[];
 
   /**
    * Optional parameters of the command.
    *
    * These will be appended to the mandatory parameters.
    */
-  optionalParameters?: CommandParameter[];
+  optionalParameters?: CommandParameter<unknown>[];
 
   /**
    * Examples that explain usage of the command.
@@ -43,14 +44,14 @@ export interface CommandUsageExample {
   args: string[];
 }
 
-export enum CommandParamType {
-  /** `true` or `false`. */
-  Boolean = "Boolean",
-  Float = "Float",
-  Integer = "Integer",
-  Json = "Json",
-  Location = "Location",
-  String = "String",
+export interface CommandParamType<T> {
+  /** The name to represent the type. */
+  name: string;
+
+  converter: (raw: string[]) => T;
+
+  /** The number of words this parameter type consumes. */
+  take?: number;
 }
 
 export interface Location {
@@ -59,7 +60,7 @@ export interface Location {
   z: { coord: number; relative: boolean };
 }
 
-export type CommandArgument = string | number | boolean | undefined | Location;
+export type CommandArgument = unknown;
 
 export type CommandCallback = (
   origin: CommandOrigin,
@@ -77,12 +78,89 @@ export interface CommandOrigin {
   readonly bot: Bot;
 }
 
-export interface CommandParameter {
+export interface CommandParameter<T> {
   /** The type of the parameter. */
-  type: CommandParamType;
+  type: CommandParamType<T>;
 
   /** The name of the parameter. */
   name: string;
+}
+
+export const stringParamType: CommandParamType<string> = {
+  name: "string",
+  converter: ([value]) => value,
+};
+
+export const booleanParamType: CommandParamType<boolean> = {
+  name: "boolean",
+  converter: ([value]) => {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    throw new TypeError(`expected boolean; got ${value}`);
+  },
+};
+
+export const floatParamType: CommandParamType<number> = {
+  name: "float",
+  converter: ([value]) => {
+    return stringToFloat(value);
+  },
+};
+
+export const integerParamType: CommandParamType<number> = {
+  name: "integer",
+  converter: ([value]) => {
+    return stringToInteger(value);
+  },
+};
+
+export const jsonParamType: CommandParamType<number> = {
+  name: "json",
+  converter: ([value]) => {
+    return JSON.parse(value);
+  },
+};
+
+export const locationParamType: CommandParamType<[number, number, number]> = {
+  name: "x y z",
+  take: 3,
+  converter: ([x, y, z]) => {
+    return [
+      stringToFloat(x),
+      stringToFloat(y),
+      stringToFloat(z),
+    ];
+  },
+};
+
+export const blockLocationParamType: CommandParamType<
+  [number, number, number]
+> = {
+  name: "x y z",
+  take: 3,
+  converter: ([x, y, z]) => {
+    return [
+      stringToInteger(x),
+      stringToInteger(y),
+      stringToInteger(z),
+    ];
+  },
+};
+
+function stringToFloat(value: string) {
+  const n = +value;
+  if (isNaN(n)) {
+    throw new TypeError(`expected integer; got ${n}`);
+  }
+  return n;
+}
+
+function stringToInteger(value: string) {
+  const n = Number(value);
+  if (!Number.isInteger(n)) {
+    throw new TypeError(`expected integer; got ${n}`);
+  }
+  return n;
 }
 
 /**
@@ -103,7 +181,7 @@ export class HelpCommand implements Command {
   readonly aliases = ["?"];
   readonly description = "Display help for all or a certain command";
   readonly optionalParameters = [{
-    type: CommandParamType.String,
+    type: stringParamType,
     name: "command",
   }];
   readonly examples = [
@@ -138,12 +216,12 @@ export class HelpCommand implements Command {
       for (const mandatoryParam of cmd.mandatoryParameters ?? []) {
         message = styleWithOptions({
           stripCodes: false,
-        })`${message} &lt;${mandatoryParam.name}: ${mandatoryParam.type}&gt;`;
+        })`${message} &lt;${mandatoryParam.name}: ${mandatoryParam.type.name}&gt;`;
       }
       for (const optionalParam of cmd.optionalParameters ?? []) {
         message = styleWithOptions({
           stripCodes: false,
-        })`${message} [${optionalParam.name}: ${optionalParam.type}]`;
+        })`${message} [${optionalParam.name}: ${optionalParam.type.name}]`;
       }
       if ((cmd.aliases ?? []).length > 0) {
         message = styleWithOptions({

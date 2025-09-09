@@ -25,7 +25,7 @@ interface PaletteEntry {
 type Shade = keyof PaletteEntry;
 
 const mapSize = 128;
-const heightBase = 100;
+const heightBase = 200; // TODO: should not conflict with world generation
 const shadeOffset = 2;
 const preferredTickingAreaNameLength = 15;
 const barsAmount = 20;
@@ -197,6 +197,7 @@ bot.cmd({
 
   // We use 0 here for the height because it is irrelevant for a ticking
   // area.
+  // TODO: +1 for the extra stone row on the edge
   try {
     await client.run(
       `tickingarea add ${edgeCoordinates.x} 0 ${edgeCoordinates.z} ${

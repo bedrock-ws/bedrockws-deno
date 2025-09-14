@@ -3,7 +3,6 @@
 // TODO: prevent snow from spawning on blocks
 // TODO: map arts look too pixelated, use some blurry filter
 // TODO: does not work for RGBA channels
-// TODO: update status bar when done
 // TODO: test if tickingarea error handing works
 
 import { booleanParamType, Bot, CommandParamType, stringParamType } from "@bedrock-ws/bot";
@@ -175,6 +174,16 @@ bot.cmd({
   const resizeMethod = (args.shift() as string | undefined) ?? "contain";
   const downsizeKernel = (args.shift() as string | undefined) ?? "mitchell";
   const backgroundColor = (args.shift() as string | undefined) ?? "white";
+
+  if (resizeMethod !== "cover" && resizeMethod !== "contain" && resizeMethod !== "fill" && resizeMethod !== "inside" && resizeMethod !== "outside") {
+    logChat(client, "error", `Invalid value ${resizeMethod} for parameter resize_method`);
+    return;
+  }
+
+  if (downsizeKernel !== "nearest" && downsizeKernel !== "linear" && downsizeKernel !== "cubic" && downsizeKernel !== "mitchell" && downsizeKernel !== "lanczos2" && downsizeKernel !== "lanczos3" && downsizeKernel !== "mks2013" && downsizeKernel !== "mks2021") {
+    logChat(client, "error", `Invalid value ${downsizeKernel} for parameter downsize_kernel`);
+    return;
+  }
 
   if (!await exists(path, { isFile: true })) {
     logChat(client, "error", `No file found at ${path}`);

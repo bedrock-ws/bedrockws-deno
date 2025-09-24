@@ -101,6 +101,18 @@ interface PendingRequest<O, E> {
 
 const TargetQueryDetail = targetquery.TargetQueryDetails.unwrap();
 
+/**
+ * Additional options for {@link Client#run}.
+ */
+export interface RunOptions {
+  /**
+   * The Minecraft version the command syntax relies on.
+   *
+   * If omitted, this likely defaults to the current version of the client.
+   */
+  minecraftVersion?: string;
+}
+
 /** Representation of a Minecraft client connected to the WebSocket server. */
 export default class Client {
   /** The WebSocket connection with the server. */
@@ -960,7 +972,6 @@ export default class Client {
       default:
         throw eventName satisfies never;
     }
-    // TODO: ...
   }
 
   /** 
@@ -968,7 +979,7 @@ export default class Client {
    *
    * The command should not include the slash prefix.
    */
-  async run(command: string): Promise<Response> {
+  async run(command: string, options?: RunOptions): Promise<Response> {
     const identifier = crypto.randomUUID();
     return await this.send({
       header: {
@@ -978,7 +989,7 @@ export default class Client {
         messagePurpose: "commandRequest",
       },
       body: {
-        // TODO: verion property
+        version: options?.minecraftVersion,
         commandLine: command,
         origin: {
           type: "player",

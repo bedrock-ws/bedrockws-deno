@@ -1,5 +1,3 @@
-// TODO: method to quit server
-
 import { EventEmitter } from "node:events";
 import * as os from "node:os";
 import type { Event, GameEvent } from "./events.ts";

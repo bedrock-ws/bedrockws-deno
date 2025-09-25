@@ -28,6 +28,12 @@ You can configure the host and port in the `.env` file. See also
 deno run --env-file=.env -A src/bedrockws/examples/echo.ts
 ```
 
+## Logging/Telemetry
+
+Set the environment variable `BEDROCKWS_DENO_TELEMETRY` to `1` to enable
+logging. Messages received from the Minecraft client(s) will be stored in
+`.cache/bedrockws-deno` in your home directory.
+
 ## References
 
 - <https://gist.github.com/jocopa3/5f718f4198f1ea91a37e3a9da468675c>

@@ -19,6 +19,8 @@ export default class Server extends EventEmitter {
   /** Every client connected to the server. */
   readonly clients: Client[];
 
+  protected wss: WebSocketServer | undefined;
+
   /** Events that should be subscribed to as soon as a connection is established. */
   protected pendingSubscriptions: Set<keyof GameEvent> = new Set();
 
@@ -27,10 +29,19 @@ export default class Server extends EventEmitter {
     this.clients = [];
   }
 
+  /**
+   * Closes the server.
+   *
+   * This has no effect when the server is not running.
+   * */
+  close() {
+    this.wss?.close();
+  }
+
   /** Launches the server. */
   launch(options: LaunchOptions) {
-    const wss = new WebSocketServer({ ...options });
-    wss.on("connection", (socket, _request) => {
+    this.wss = new WebSocketServer({ ...options });
+    this.wss.on("connection", (socket, _request) => {
       const client = new Client(socket, this);
       this.clients.push(client);
 

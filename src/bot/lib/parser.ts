@@ -3,7 +3,11 @@ import type {
   CommandParameter,
   CommandRequest,
 } from "./command.ts";
-import { MissingArgumentError, TooManyArgumentsError } from "./errors.ts";
+import {
+  MissingArgumentError,
+  PartialArgumentError,
+  TooManyArgumentsError,
+} from "./errors.ts";
 import * as shlex from "shlex";
 
 export function lexCommandInput(input: string): CommandRequest {
@@ -30,8 +34,9 @@ export function parseCommand(
           throw new MissingArgumentError(`missing argument for ${param.name}`);
         }
         if (args.length > 0) {
-          // TODO: error because in this scenario we for example provided only
-          //       one of multiple required words
+          throw new PartialArgumentError(
+            `argument for ${param.name} only partially provided`,
+          );
         }
         result.push(undefined);
         continue paramIter;

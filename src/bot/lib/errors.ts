@@ -25,6 +25,15 @@ export class MissingArgumentError extends Error {
   }
 }
 
+export class PartialArgumentError extends Error {
+  constructor(m: string) {
+    super(m);
+    this.name = this.constructor.name;
+
+    Object.setPrototypeOf(this, PartialArgumentError.prototype);
+  }
+}
+
 export class UnknownCommandError extends Error {
   constructor(m: string) {
     super(m);

@@ -6,7 +6,11 @@ export default z.strictObject({
   count: z.int().nonnegative().meta({
     description: "The amount of block that have been destroyed",
   }),
-  destructionMethod: z.int().nonnegative(), // TODO: enum; hand, explosion, tool, ...
+  destructionMethod: z.union([
+    // It seems as this is the only method. Methods like explosions are not
+    // tracked. Not even destroying farm land by jumping on it counts.
+    z.literal(0).meta({description: "Destroyed by hand"}),
+  ] as const),
   player: Player,
   tool: DetailedItem,
 }).meta({

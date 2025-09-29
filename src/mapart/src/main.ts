@@ -1,14 +1,9 @@
-// TODO: command for pixelart and mapart separately
 // TODO: option for custom palette
 // TODO: prevent snow from spawning on blocks
-// TODO: map arts look too pixelated, use some blurry filter
-// TODO: does not work for RGBA channels
-// TODO: test if tickingarea error handing works
 
 import {
   booleanParamType,
   Bot,
-  CommandParamType,
   stringParamType,
 } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
@@ -164,12 +159,27 @@ const bot = new Bot({ commandPrefix: "-" });
 
 bot.cmd({
   name: "mapart",
+  description: "Generate a map art from an image. See also: https://sharp.pixelplumbing.com/api-resize/ for the resizing methods",
   mandatoryParameters: [{ name: "path", type: stringParamType }],
   optionalParameters: [
     { name: "flat", type: booleanParamType },
     { name: "resize_method", type: stringParamType },
     { name: "downsize_kernel", type: stringParamType },
     { name: "background_color", type: stringParamType },
+  ],
+  examples: [
+    {
+      description: "Crop the image to fit on a map",
+      args: ["image.jpg", "false", "cover"],
+    },
+    {
+      description: "Add blue borders around image to fit on a map",
+      args: ["image.jpg", "false", "contain", "mitchell", "blue"],
+    },
+    {
+      description: "Stretch image to fit on a map",
+      args: ["image.jpg", "false", "fill"],
+    },
   ],
 }, async (origin, ...args) => {
   const { client } = origin;
@@ -182,8 +192,7 @@ bot.cmd({
 
   if (
     resizeMethod !== "cover" && resizeMethod !== "contain" &&
-    resizeMethod !== "fill" && resizeMethod !== "inside" &&
-    resizeMethod !== "outside"
+    resizeMethod !== "fill"
   ) {
     logChat(
       client,
@@ -212,6 +221,7 @@ bot.cmd({
     return;
   }
 
+  // TODO: join path relative to ROOT
   // TODO: validate path is in supplied ROOT
 
   const playerPosition = (await client.queryPlayer()).position;

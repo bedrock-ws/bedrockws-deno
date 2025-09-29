@@ -5,7 +5,12 @@
 // TODO: does not work for RGBA channels
 // TODO: test if tickingarea error handing works
 
-import { booleanParamType, Bot, CommandParamType, stringParamType } from "@bedrock-ws/bot";
+import {
+  booleanParamType,
+  Bot,
+  CommandParamType,
+  stringParamType,
+} from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
 import blockPalette from "./palettes/map_palette.json" with { type: "json" };
 import sharp from "sharp";
@@ -175,13 +180,30 @@ bot.cmd({
   const downsizeKernel = (args.shift() as string | undefined) ?? "mitchell";
   const backgroundColor = (args.shift() as string | undefined) ?? "white";
 
-  if (resizeMethod !== "cover" && resizeMethod !== "contain" && resizeMethod !== "fill" && resizeMethod !== "inside" && resizeMethod !== "outside") {
-    logChat(client, "error", `Invalid value ${resizeMethod} for parameter resize_method`);
+  if (
+    resizeMethod !== "cover" && resizeMethod !== "contain" &&
+    resizeMethod !== "fill" && resizeMethod !== "inside" &&
+    resizeMethod !== "outside"
+  ) {
+    logChat(
+      client,
+      "error",
+      `Invalid value ${resizeMethod} for parameter resize_method`,
+    );
     return;
   }
 
-  if (downsizeKernel !== "nearest" && downsizeKernel !== "linear" && downsizeKernel !== "cubic" && downsizeKernel !== "mitchell" && downsizeKernel !== "lanczos2" && downsizeKernel !== "lanczos3" && downsizeKernel !== "mks2013" && downsizeKernel !== "mks2021") {
-    logChat(client, "error", `Invalid value ${downsizeKernel} for parameter downsize_kernel`);
+  if (
+    downsizeKernel !== "nearest" && downsizeKernel !== "linear" &&
+    downsizeKernel !== "cubic" && downsizeKernel !== "mitchell" &&
+    downsizeKernel !== "lanczos2" && downsizeKernel !== "lanczos3" &&
+    downsizeKernel !== "mks2013" && downsizeKernel !== "mks2021"
+  ) {
+    logChat(
+      client,
+      "error",
+      `Invalid value ${downsizeKernel} for parameter downsize_kernel`,
+    );
     return;
   }
 
@@ -222,12 +244,11 @@ bot.cmd({
     return;
   }
 
-  // TODO: mind alpha channel
   const image = sharp(path).resize(mapSize, mapSize, {
     fit: resizeMethod,
     kernel: downsizeKernel,
     background: backgroundColor,
-  });
+  }).ensureAlpha();
   const data = await image.raw().toBuffer();
   const pixels = new Uint8ClampedArray(data.buffer);
   const palette = Object.keys(blockPalette).map((hex) =>
@@ -249,10 +270,11 @@ bot.cmd({
     client.run(`title @a actionbar ${progressDisplay}`);
   };
 
+  const channels = 4;
   let block;
   let previousShade: Shade | undefined = undefined;
   let step = 0;
-  let pixelIndex = pixels.length / 3;
+  let pixelIndex = pixels.length / channels;
   for (let z = mapSize - 1; z >= -1; z--) {
     for (let x = mapSize - 1; x >= 0; x--) {
       // TODO: progress bar might slow it down; instead print in terminal if it
@@ -288,7 +310,10 @@ bot.cmd({
       if (z == -1) {
         block = "stone";
       } else {
-        const [r, g, b] = pixels.subarray(pixelIndex * 3, pixelIndex * 3 + 3);
+        const [r, g, b] = pixels.subarray(
+          pixelIndex * channels,
+          pixelIndex * channels + channels,
+        );
         const { originalColor, shade } = nearestColor([r, g, b], palette)!;
         previousShade = shade;
         const hexKey = rgbToHex(originalColor).toUpperCase();

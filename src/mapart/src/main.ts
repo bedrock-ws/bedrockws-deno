@@ -1,3 +1,4 @@
+// TODO: move this out into a separate repo containing several commands.
 // TODO: option for custom palette
 // TODO: prevent snow from spawning on blocks
 

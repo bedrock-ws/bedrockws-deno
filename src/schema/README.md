@@ -4,6 +4,10 @@ This library contains the schema definitions of both requests accepted by the
 Minecraft client through WebSocket and the schema sent by the Minecraft client
 to the server.
 
+> [!IMPORTANT]
+> A lot of events are no longer supported in recent Minecraft versions or were
+> never supported outside the Education Edition.
+
 ## JSON Schema
 
 You can generate [JSON Schema][JSON Schema]s with these commands:

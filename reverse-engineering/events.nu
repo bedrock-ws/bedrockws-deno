@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 
 # This is a list of events where the schema is unknown.
-let unknown_events = [
+const unknown_events = [
   "AdditionalContentLoaded"
   "AgentCommand"
   "AgentCreated"
@@ -73,16 +73,21 @@ let unknown_events = [
   "WorldUnloaded"
 ]
 
-let logs_path = "~/.cache/bedrockws-deno/" | path expand
-let data_of_interest = ls $logs_path
-  | get name
-  | each { open }
-  | where header.eventName in $unknown_events
-if ($data_of_interest | is-not-empty) {
-  let output_file_name = "revealed_event_schemas.json"
-  $data_of_interest | to json | save $output_file_name
-  print $"Discovered new schemas! If you want to support the development of this
-project, open an issue at github.com/bedrock-ws/bedrockws-deno with the contents
-of the file ($output_file_name) or the file itself or alternatively send an
-email to bedrock-ws@proton.me"
+# Look for received messages of events where the schema is unknown.
+def main []: nothing -> nothing {
+  let logs_path = "~/.cache/bedrockws-deno/" | path expand
+  let data_of_interest = ls $logs_path
+    | get name
+    | each { open }
+    | where header.messagePurpose == "event" and header.eventName in $unknown_events
+  if ($data_of_interest | is-not-empty) {
+    let output_file_name = "revealed_event_schemas.json"
+    $data_of_interest | to json | save $output_file_name
+    print $"Discovered new schemas! If you want to support the development of this
+  project, open an issue at github.com/bedrock-ws/bedrockws-deno with the contents
+  of the file ($output_file_name) or the file itself or alternatively send an
+  email to bedrock-ws@proton.me"
+  } else {
+    print "Nothing interesting found"
+  }
 }

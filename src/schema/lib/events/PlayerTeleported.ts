@@ -8,6 +8,9 @@ export default z.strictObject({
       z.literal(3).meta({ description: "Teleport command" }),
     ] as const,
   ).meta({ description: "The method used for teleporting" }),
-  itemType: z.int().optional(), // TODO
+  itemType: z.int().meta({
+    description:
+      "The item type used for the teleportation. This seems to always be 1 unless using a chorus fruit, then it's 87",
+  }),
   metersTravelled: z.number(),
 });

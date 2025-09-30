@@ -5,7 +5,11 @@ export default z.strictObject({
   block: Item,
   count: z.int().positive(),
   placedUnderwater: z.boolean(),
-  placementMethod: z.int().nonnegative(), // TODO: enum; hand, command, ...
+  placementMethod: z.union(
+    [
+      z.literal(0).meta({ description: "The block was placed by hand" }),
+    ] as const,
+  ).meta({ description: "The method used to place the block" }),
   player: Player,
   tool: DetailedItem,
 }).meta({

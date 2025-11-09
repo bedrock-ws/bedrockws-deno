@@ -11,7 +11,7 @@
   "tasks": {
     "json-schema": {
       "description": "Generates the JSON schema for the request/response; either of them must be passed as an argument",
-      "command": "deno run ./scipts/jsonSchema.ts"
+      "command": "deno run ./scripts/jsonSchema.ts"
     },
     "json-schema-markdown": {
       "description": "Generates Markdown documentation from the JSON schemas",

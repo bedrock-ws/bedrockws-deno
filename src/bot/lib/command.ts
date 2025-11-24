@@ -293,8 +293,9 @@ export class HelpCommand implements Command {
   ];
 
   displayHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
+    // TODO: maybe migrate to a template engine
     // TODO: display description of params
-    // TODO: just use += if rhs does not make use of markup
+    // TODO: just use += for string concat but keep escaping § and xml in mind
     const { client, bot } = origin;
 
     let commands;
@@ -358,22 +359,40 @@ export class HelpCommand implements Command {
         })`${message}\n${cmd.description}`;
       }
 
+      const parameters = (cmd.mandatoryParameters ?? []).concat(
+        cmd.optionalParameters ?? [],
+      );
+      if (parameters.length > 0) {
+        message = styleWithOptions({stripCodes: false})`${message}\n\n  <materialGold><bold>Parameters</bold></materialGold>`;
+        for (const parameter of parameters) {
+          message = styleWithOptions({stripCodes: false})`${message}\n  <materialGold>${parameter.name}</materialGold>`;
+          // TODO: show whether required/optional
+          // TODO: display type
+          if (parameter.description !== undefined) {
+            message = styleWithOptions({stripCodes: false})`${message}\n  ${parameter.description}`;
+          }
+          message += "\n";
+        }
+      }
+
       const hasExamples = cmd.examples?.length ?? 0 > 0;
       if (hasExamples) {
-        message = styleWithOptions({ stripCodes: false })`${message}\n\n  <materialCopper><bold>Examples</materialCopper></bold>\n`
+        message = styleWithOptions({
+          stripCodes: false,
+        })`${message}\n\n  <materialCopper><bold>Examples</bold></materialCopper>`;
       }
       for (const example of cmd.examples ?? []) {
         // TODO: syntax highlighting for args
         message = styleWithOptions({
           stripCodes: false,
-        })`${message}  <materialCopper>${example.description}</materialCopper>\n  ${bot.commandPrefix}${cmd.name} ${
+        })`${message}\n  <materialCopper>${example.description}</materialCopper>\n  ${bot.commandPrefix}${cmd.name} ${
           example.args.join(" ")
-        }`;
+        }\n`;
       }
-      if (hasExamples) {
-        message += "\n\n";
-      }
+      
+      message += "\n";
 
+      // TODO: trim array: remove blank start and blank end lines
       for (const line of message.split("\n")) {
         client.sendMessage(`${line}\n`);
       }

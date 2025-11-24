@@ -162,7 +162,7 @@ const bot = new Bot({ commandPrefix: "-" });
 bot.cmd({
   name: "mapart",
   description:
-    "Generate a map art from an image. See also: https://sharp.pixelplumbing.com/api-resize/ for the resizing methods",
+    ui.style`Generate a map art from an image. See also: <darkAqua>https://sharp.pixelplumbing.com/api-resize/</darkAqua> for the resizing methods`,
   mandatoryParameters: [{ name: "path", type: stringParamType }],
   optionalParameters: [
     // TODO: custom types/converters for enum values

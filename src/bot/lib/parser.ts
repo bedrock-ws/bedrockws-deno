@@ -1,7 +1,8 @@
 import type {
   CommandArgument,
-  CommandParameter,
   CommandRequest,
+  MandatoryCommandParameter,
+  OptionalCommandParameter,
 } from "./command.ts";
 import {
   MissingArgumentError,
@@ -17,10 +18,10 @@ export function lexCommandInput(input: string): CommandRequest {
 }
 
 export function parseCommand(
-  mendatoryParams: readonly CommandParameter<unknown>[],
-  optionalParams: readonly CommandParameter<unknown>[],
+  mendatoryParams: readonly MandatoryCommandParameter<unknown>[],
+  optionalParams: readonly OptionalCommandParameter<unknown>[],
   args: string[],
-) {
+): CommandArgument[] {
   const amountOfArgs = args.length;
   const params = mendatoryParams.concat(optionalParams);
   const result: CommandArgument[] = [];
@@ -29,19 +30,39 @@ export function parseCommand(
     const localArgs: string[] = [];
     for (let i = 0; i < take; i++) {
       const arg = args.shift();
-      if (arg === undefined) {
-        if (index + 1 <= mendatoryParams.length) {
-          throw new MissingArgumentError(`missing argument for ${param.name}`);
-        }
-        if (args.length > 0) {
-          throw new PartialArgumentError(
-            `argument for ${param.name} only partially provided`,
-          );
-        }
+
+      if (arg !== undefined) {
+        localArgs.push(arg);
+        continue;
+      }
+
+      if (index + 1 <= mendatoryParams.length) {
+        throw new MissingArgumentError(`missing argument for ${param.name}`);
+      }
+      if (args.length > 0) {
+        throw new PartialArgumentError(
+          `argument for ${param.name} only partially provided`,
+        );
+      }
+      const paramDefault =
+        optionalParams[mendatoryParams.length + index].default;
+
+      if (paramDefault === undefined) {
         result.push(undefined);
         continue paramIter;
+      } else if ("raw" in paramDefault) {
+        localArgs.push(...paramDefault.raw);
+        break;
+      } else if ("value" in paramDefault) {
+        result.push(paramDefault.value);
+        continue paramIter;
+      } else if ("factory" in paramDefault) {
+        result.push(paramDefault.factory());
+        continue paramIter;
       }
-      localArgs.push(arg);
+
+      // Ensure we exhaustively matched every variant of the parameter default.
+      const _: never = paramDefault;
     }
 
     const convertedArg = param.type.converter(localArgs);

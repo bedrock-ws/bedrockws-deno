@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "jsr:@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { style } from "@bedrock-ws/ui";
 
 Deno.test("basic text", () => {

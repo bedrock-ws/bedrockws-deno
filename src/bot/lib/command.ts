@@ -2,6 +2,7 @@ import type { Client } from "@bedrock-ws/bedrockws";
 import type { Bot } from "@bedrock-ws/bot";
 import { style, styleWithOptions } from "@bedrock-ws/ui";
 import { TypeError } from "./errors.ts";
+import * as shlex from "shlex";
 
 export interface Command {
   /**
@@ -24,14 +25,14 @@ export interface Command {
   /**
    * Parameters that are required when invoking the command.
    */
-  mandatoryParameters?: CommandParameter<unknown>[];
+  mandatoryParameters?: MandatoryCommandParameter<unknown>[];
 
   /**
    * Optional parameters of the command.
    *
    * These will be appended to the mandatory parameters.
    */
-  optionalParameters?: CommandParameter<unknown>[];
+  optionalParameters?: OptionalCommandParameter<unknown>[];
 
   /**
    * Examples that explain usage of the command.
@@ -84,13 +85,54 @@ export interface CommandParameter<T> {
 
   /** The name of the parameter. */
   name: string;
+
+  /** The description of the parameter. */
+  description?: string;
 }
 
+export interface MandatoryCommandParameter<T> extends CommandParameter<T> {}
+
+export interface OptionalCommandParameter<T> extends CommandParameter<T> {
+  /** The default value of the parameter. */
+  default?: CommandParameterDefault<T>; // TODO: maybe support both raw (string) and converted value
+}
+
+export type CommandParameterDefault<T> =
+  | CommandParameterDefaultRaw
+  | CommandParameterDefaultValue<T>
+  | CommandParameterDefaultFactory<T>;
+
+interface CommandParameterDefaultWithOptionalRepresentation {
+  representation?: string;
+}
+
+export interface CommandParameterDefaultFactory<T>
+  extends CommandParameterDefaultWithOptionalRepresentation {
+  factory: () => T;
+}
+
+export interface CommandParameterDefaultRaw {
+  raw: string[];
+}
+
+export interface CommandParameterDefaultValue<T>
+  extends CommandParameterDefaultWithOptionalRepresentation {
+  value: T;
+}
+
+/**
+ * Parameter type that keeps the input value as-is.
+ */
 export const stringParamType: CommandParamType<string> = {
   name: "string",
   converter: ([value]) => value,
 };
 
+/**
+ * Parameter type that parses the input value as a boolean.
+ *
+ * Only `true` and `false` are valid input values.
+ */
 export const booleanParamType: CommandParamType<boolean> = {
   name: "boolean",
   converter: ([value]) => {
@@ -100,6 +142,10 @@ export const booleanParamType: CommandParamType<boolean> = {
   },
 };
 
+/**
+ * Parameter type that parses the input value as a number (both integer and
+ * float).
+ */
 export const floatParamType: CommandParamType<number> = {
   name: "float",
   converter: ([value]) => {
@@ -107,6 +153,9 @@ export const floatParamType: CommandParamType<number> = {
   },
 };
 
+/**
+ * Parameter type that parses the input value as an integer.
+ */
 export const integerParamType: CommandParamType<number> = {
   name: "integer",
   converter: ([value]) => {
@@ -114,6 +163,9 @@ export const integerParamType: CommandParamType<number> = {
   },
 };
 
+/**
+ * Parameter type that parses the input value as JSON data.
+ */
 export const jsonParamType: CommandParamType<number> = {
   name: "json",
   converter: ([value]) => {
@@ -121,44 +173,88 @@ export const jsonParamType: CommandParamType<number> = {
   },
 };
 
-export const locationParamType: CommandParamType<[number, number, number]> = {
+/**
+ * Parameter type that parses x, y and z entity coordinates.
+ *
+ * This parameter type supports relative coordinates prefixed with `~`. If you
+ * intend to parse block coordinates, use {@link blockLocationParamType}
+ * instead.
+ */
+export const locationParamType: CommandParamType<Location> = {
   name: "x y z",
   take: 3,
   converter: ([x, y, z]) => {
-    return [
-      stringToFloat(x),
-      stringToFloat(y),
-      stringToFloat(z),
-    ];
+    return {
+      x: stringToCoordinate(x, { blockCoordinates: false }),
+      y: stringToCoordinate(y, { blockCoordinates: false }),
+      z: stringToCoordinate(z, { blockCoordinates: false }),
+    };
   },
 };
 
+/**
+ * Parameter type that parses x, y and z block coordinates.
+ *
+ * This parameter type supports relative coordinates prefixed with `~`. If you
+ * intend to parse entity coordinates, use {@link locationParamType} instead.
+ */
 export const blockLocationParamType: CommandParamType<
-  [number, number, number]
+  Location
 > = {
   name: "x y z",
   take: 3,
   converter: ([x, y, z]) => {
-    return [
-      stringToInteger(x),
-      stringToInteger(y),
-      stringToInteger(z),
-    ];
+    return {
+      x: stringToCoordinate(x, { blockCoordinates: true }),
+      y: stringToCoordinate(y, { blockCoordinates: true }),
+      z: stringToCoordinate(z, { blockCoordinates: true }),
+    };
   },
 };
 
 function stringToFloat(value: string) {
   const n = +value;
   if (isNaN(n)) {
-    throw new TypeError(`expected integer; got ${n}`);
+    throw new TypeError(`expected integer; got ${value}`);
   }
   return n;
+}
+
+interface StringToCoordinateOptions {
+  /** Block coordinates require integers instead of floats. */
+  blockCoordinates: boolean;
+}
+
+function stringToCoordinate(value: string, options: StringToCoordinateOptions) {
+  const relativePrefix = "~";
+  let relative = false;
+  let numericValue = value;
+  if (value.startsWith(relativePrefix)) {
+    relative = true;
+    numericValue = value.slice(relativePrefix.length);
+  }
+
+  let coord: number;
+  if (options.blockCoordinates) {
+    try {
+      coord = stringToInteger(numericValue);
+    } catch {
+      throw new TypeError(`expected block coordinate; got ${value}`);
+    }
+  } else {
+    try {
+      coord = stringToFloat(numericValue);
+    } catch {
+      throw new TypeError(`expected coordinate; got ${value}`);
+    }
+  }
+  return { coord, relative };
 }
 
 function stringToInteger(value: string) {
   const n = Number(value);
   if (!Number.isInteger(n)) {
-    throw new TypeError(`expected integer; got ${n}`);
+    throw new TypeError(`expected integer; got ${value}`);
   }
   return n;
 }
@@ -183,6 +279,7 @@ export class HelpCommand implements Command {
   readonly optionalParameters = [{
     type: stringParamType,
     name: "command",
+    description: "The command to display the help of",
   }];
   readonly examples = [
     {
@@ -196,6 +293,8 @@ export class HelpCommand implements Command {
   ];
 
   displayHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
+    // TODO: display description of params
+    // TODO: just use += if rhs does not make use of markup
     const { client, bot } = origin;
 
     let commands;
@@ -221,7 +320,23 @@ export class HelpCommand implements Command {
       for (const optionalParam of cmd.optionalParameters ?? []) {
         message = styleWithOptions({
           stripCodes: false,
-        })`${message} [${optionalParam.name}: ${optionalParam.type.name}]`;
+        })`${message} [${optionalParam.name}: ${optionalParam.type.name}`;
+        let defaultDisplay = "";
+        if (optionalParam.default !== undefined) {
+          if ("raw" in optionalParam.default) {
+            defaultDisplay += ` = ${
+              optionalParam.default.raw.map(shlex.quote).join(" ")
+            }`;
+          } else if (
+            "representation" in optionalParam.default &&
+            optionalParam.default.representation !== undefined
+          ) {
+            defaultDisplay += ` = ${optionalParam.default.representation}`;
+          } else if ("value" in optionalParam.default) {
+            defaultDisplay += ` = ${optionalParam.default.value}`;
+          }
+        }
+        message += `${defaultDisplay}]`;
       }
       if ((cmd.aliases ?? []).length > 0) {
         message = styleWithOptions({
@@ -242,19 +357,26 @@ export class HelpCommand implements Command {
           stripCodes: false,
         })`${message}\n${cmd.description}`;
       }
+
+      const hasExamples = cmd.examples?.length ?? 0 > 0;
+      if (hasExamples) {
+        message = styleWithOptions({ stripCodes: false })`${message}\n\n  <materialCopper><bold>Examples</materialCopper></bold>\n`
+      }
       for (const example of cmd.examples ?? []) {
         // TODO: syntax highlighting for args
         message = styleWithOptions({
           stripCodes: false,
-        })`${message}\n\n  <materialCopper>${example.description}</materialCopper>\n  ${bot.commandPrefix}${cmd.name} ${
+        })`${message}  <materialCopper>${example.description}</materialCopper>\n  ${bot.commandPrefix}${cmd.name} ${
           example.args.join(" ")
         }`;
       }
-      if (cmd.examples?.length ?? 0 > 0) {
+      if (hasExamples) {
         message += "\n\n";
       }
 
-      client.sendMessage(message);
+      for (const line of message.split("\n")) {
+        client.sendMessage(`${line}\n`);
+      }
     }
   }
 }

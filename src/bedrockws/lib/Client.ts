@@ -172,6 +172,8 @@ export default class Client {
    * separately as there is a low character limit for sending messages.
    */
   sendMessage(message: RawText | string, target: string = "@a") {
+    // TODO: perhaps by default intelligently split lines of input if it
+    //       exceeds message limit
     const rawText: RawText = typeof message === "string"
       ? { rawtext: [{ text: message }] }
       : message;

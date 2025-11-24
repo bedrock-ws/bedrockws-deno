@@ -5,6 +5,7 @@
 import {
   booleanParamType,
   Bot,
+  integerParamType,
   stringParamType,
 } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
@@ -160,13 +161,44 @@ const bot = new Bot({ commandPrefix: "-" });
 
 bot.cmd({
   name: "mapart",
-  description: "Generate a map art from an image. See also: https://sharp.pixelplumbing.com/api-resize/ for the resizing methods",
+  description:
+    "Generate a map art from an image. See also: https://sharp.pixelplumbing.com/api-resize/ for the resizing methods",
   mandatoryParameters: [{ name: "path", type: stringParamType }],
   optionalParameters: [
-    { name: "flat", type: booleanParamType },
-    { name: "resize_method", type: stringParamType },
-    { name: "downsize_kernel", type: stringParamType },
-    { name: "background_color", type: stringParamType },
+    // TODO: custom types/converters for enum values
+    {
+      name: "flat",
+      type: booleanParamType,
+      description:
+        "Whether to place all blocks on one layer (may reduce details)",
+      default: { value: false },
+    },
+    {
+      name: "resize_method",
+      type: stringParamType,
+      description: "The resizing method for non-square images",
+      default: { value: "contain" },
+    },
+    {
+      name: "downsize_kernel",
+      type: stringParamType,
+      description: "The algorithm used for downscaling images",
+      default: { value: "mitchell" },
+    },
+    {
+      name: "background_color",
+      type: stringParamType,
+      description:
+        "The background color used when resizing or for transparent pixels",
+      default: { value: "white" },
+    },
+    {
+      name: "alpha_threshold",
+      type: integerParamType,
+      description:
+        "The minimum alpha value (0-255) to consider a pixel as transparent",
+      default: { value: 128 },
+    },
   ],
   examples: [
     {
@@ -181,15 +213,20 @@ bot.cmd({
       description: "Stretch image to fit on a map",
       args: ["image.jpg", "false", "fill"],
     },
+    {
+      description: "Use red blocks for (only) fully transparent pixels",
+      args: ["image.png", "false", "fill", "mitchell", "red", "255"],
+    },
   ],
 }, async (origin, ...args) => {
   const { client } = origin;
 
   const path = args.shift() as string;
-  const flat = (args.shift() as boolean | undefined) ?? false;
-  const resizeMethod = (args.shift() as string | undefined) ?? "contain";
-  const downsizeKernel = (args.shift() as string | undefined) ?? "mitchell";
-  const backgroundColor = (args.shift() as string | undefined) ?? "white";
+  const flat = args.shift() as boolean;
+  const resizeMethod = args.shift() as string;
+  const downsizeKernel = args.shift() as string;
+  const backgroundColor = args.shift() as string;
+  const alphaThreshold = args.shift() as string;
 
   if (
     resizeMethod !== "cover" && resizeMethod !== "contain" &&
@@ -273,9 +310,11 @@ bot.cmd({
   };
 
   const displayProgress = (progress: number) => {
+    const progressSymbolDone = "█";
+    const progressSymbolLeft = "█";
     const progressDisplay = `${progress === 1 ? ui.codes.colors.green : ""}${
-      ":solid_star:".repeat(barsAmount * progress)
-    }${":hollow_star:".repeat(Math.ceil(barsAmount * (1 - progress)))} ${
+      progressSymbolDone.repeat(barsAmount * progress)
+    }${progressSymbolLeft.repeat(Math.ceil(barsAmount * (1 - progress)))} ${
       Math.floor(progress * 100)
     }%`;
     client.run(`title @a actionbar ${progressDisplay}`);
@@ -321,7 +360,7 @@ bot.cmd({
       if (z == -1) {
         block = "stone";
       } else {
-        const [r, g, b] = pixels.subarray(
+        const [r, g, b, alpha] = pixels.subarray(
           pixelIndex * channels,
           pixelIndex * channels + channels,
         );

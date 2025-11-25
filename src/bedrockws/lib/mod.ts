@@ -1,4 +1,4 @@
-// TODO: remove all console.* calls
+// TODO: remove all console.* calls and use proper logging
 // TODO: encryption; see also: https://github.com/Sandertv/mcwss/blob/master/encryption.go
 
 export { default as Client } from "./Client.ts";

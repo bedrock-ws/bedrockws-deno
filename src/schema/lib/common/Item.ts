@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import Aux from "./Aux.ts";
+import Aux from "./AuxValue.ts";
 
 export default z.strictObject({
   aux: Aux,

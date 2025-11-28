@@ -6,7 +6,9 @@ const commandPrefix = "!";
 
 Deno.test("only help command", async () => {
   const helpCommand = new HelpCommand();
-  const actual = HelpCommand.renderHelp([helpCommand], { commandPrefix });
+  const actual = HelpCommand.renderHelp(HelpCommand.defaultTemplate(), [
+    helpCommand,
+  ], { commandPrefix });
   assertEquals(
     actual,
     ui.render(
@@ -19,7 +21,9 @@ Deno.test("only help command", async () => {
 
 Deno.test("single bare subcommand", async () => {
   const cmd: Command = { name: "foo" };
-  const actual = HelpCommand.renderHelp([cmd], { commandPrefix });
+  const actual = HelpCommand.renderHelp(HelpCommand.defaultTemplate(), [cmd], {
+    commandPrefix,
+  });
   assertEquals(
     actual,
     ui.render(
@@ -35,7 +39,9 @@ Deno.test("unquoted example argument", async () => {
     name: "Hello",
     examples: [{ description: "Greets John Doe", args: ["John Doe"] }],
   };
-  const actual = HelpCommand.renderHelp([cmd], { commandPrefix });
+  const actual = HelpCommand.renderHelp(HelpCommand.defaultTemplate(), [cmd], {
+    commandPrefix,
+  });
   assertEquals(
     actual,
     ui.render(

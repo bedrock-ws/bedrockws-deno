@@ -96,7 +96,7 @@ export interface MandatoryCommandParameter<T> extends CommandParameter<T> {}
 
 export interface OptionalCommandParameter<T> extends CommandParameter<T> {
   /** The default value of the parameter. */
-  default?: CommandParameterDefault<T>; // TODO: maybe support both raw (string) and converted value
+  default?: CommandParameterDefault<T>;
 }
 
 export type CommandParameterDefault<T> =
@@ -276,6 +276,10 @@ export interface CommandRequest {
   args: string[];
 }
 
+export interface HelpCommandOptions {
+  helpTemplate?: HandlebarsTemplateDelegate;
+}
+
 // TODO:Add config options like ordering of functions and which information
 //      to include.
 export class HelpCommand implements Command {
@@ -297,23 +301,25 @@ export class HelpCommand implements Command {
       args: [this.name],
     },
   ];
+  private readonly helpTemplate: HandlebarsTemplateDelegate;
+
+  constructor(options?: HelpCommandOptions) {
+    const helpTemplate = options?.helpTemplate;
+    if (helpTemplate === undefined) {
+      this.helpTemplate = HelpCommand.defaultTemplate();
+    } else {
+      this.helpTemplate = helpTemplate;
+    }
+  }
 
   /**
    * Renders a help message from an array of commands.
    */
-  static renderHelp(commands: Command[], options: RenderHelpOptions) {
-    Handlebars.registerHelper("shlexQuote", shlex.quote);
-    Handlebars.registerHelper(
-      "concat",
-      (...arrays: unknown[]): unknown =>
-        Array.prototype.concat(...arrays.slice(0, -1)),
-    );
-    Handlebars.registerHelper("unset", (value) => {
-      return value === undefined || value === null;
-    });
-
-    // TODO: compile once and re-use compiled template
-    const template = Handlebars.compile(helpTemplate, { strict: true });
+  static renderHelp(
+    template: HandlebarsTemplateDelegate,
+    commands: Command[],
+    options: RenderHelpOptions,
+  ) {
     return ui.render(
       template({
         commands: commands.map((command) => {
@@ -332,6 +338,21 @@ export class HelpCommand implements Command {
     );
   }
 
+  static defaultTemplate(): HandlebarsTemplateDelegate {
+    const hbs = Handlebars.create();
+    hbs.registerHelper("shlexQuote", shlex.quote);
+    hbs.registerHelper(
+      "concat",
+      (...arrays: unknown[]): unknown =>
+        Array.prototype.concat(...arrays.slice(0, -1)),
+    );
+    hbs.registerHelper(
+      "unset",
+      (value) => value === undefined || value === null,
+    );
+    return hbs.compile(helpTemplate, { strict: true });
+  }
+
   runHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
     const { client, bot } = origin;
 
@@ -347,7 +368,7 @@ export class HelpCommand implements Command {
       commands = [cmd];
     }
 
-    const message = HelpCommand.renderHelp(commands, {
+    const message = HelpCommand.renderHelp(this.helpTemplate, commands, {
       commandPrefix: bot.commandPrefix,
     });
 

@@ -1,0 +1,75 @@
+{{!
+  NOTE: Embedded values such as description may contain style modifiers such as
+        a description. It is advised to avoid wrapping such values within style
+        elements.
+  NOTE: To make the use of templates easier, wrap all text spans within `t`
+        tags. Line breaks (`\n`) are created with `br` tags. All text outside
+        `t` tags will raise a warning. Any white space within `t` tags is *NOT*
+        ignored.
+}}
+{{#each commands as |cmd|}}
+  {{#unless @first}}
+    <br />
+    <br />
+  {{/unless}}
+  <t><materialDiamond>{{@root.commandPrefix}}{{cmd.name}}</materialDiamond></t>
+  {{#each mandatoryParameters as |mandatoryParam| }}
+    <t> &lt;{{mandatoryParam.name}}: {{mandatoryParam.type.name}}&gt;</t>
+  {{/each }}
+  {{#each optionalParameters as |optionalParam|}}
+    <t> [</t>
+    <t>{{optionalParam.name}}: {{optionalParam.type.name}}</t>
+    {{#if optionalParam.default}}
+      {{#if optionalParam.default.raw}}
+        <t> = {{#each optionalParam.default.raw}}{{shlexQuote @key}}{{/each}}</t>
+      {{else if (unset optionalParam.default.representation)}}
+        <t> = {{optionalParam.default.representation}}</t>
+      {{ else if (unset optionalParam.default.value) }}
+        <t> = {{optionalParam.default.value}}</t>
+      {{/if}}
+    {{/if}}
+    <t>]</t>
+  {{/each}}
+  {{#if cmd.aliases }}
+    <br />
+    <t>(aliases: </t>
+    {{#each cmd.aliases as |alias|}}
+      {{#unless @first}}
+        <t>, </t>
+      {{/unless}}
+      <t><materialDiamond>{{alias}}</materialDiamond></t>
+    {{/each}}
+    <t>)</t>
+  {{/if}}
+  {{#if cmd.description }}
+    <br />
+    <t>{{cmd.description}}</t>
+  {{/if}}
+  {{#each (concat cmd.mandatoryParameters cmd.optionalParameters) as |param|}}
+    <br />
+    <br />
+    {{#if @first}}
+      <t>  <materialGold><bold>Parameters</bold></materialGold></t>
+      <br />
+    {{/if}}
+    <t>  <materialGold>{{param.name}}: {{param.type.name}}</materialGold></t>
+    {{#unless (unset param.description)}}
+      <br />
+      <t>  {{param.description}}</t>
+    {{/unless}}
+  {{/each}}
+  {{#each cmd.examples as |example|}}
+    <br />
+    <br />
+    {{#if @first}}
+      <t>  <materialCopper><bold>Examples</bold></materialCopper></t>
+      <br />
+    {{/if}}
+    <t>  <materialCopper>{{example.description}}</materialCopper></t>
+    <br />
+    <t>  {{@root.commandPrefix}}{{cmd.name}}</t>
+    {{#each example.args}}
+      <t> {{shlexQuote this}}</t>
+    {{/each}}
+  {{/each}}
+{{/each}}

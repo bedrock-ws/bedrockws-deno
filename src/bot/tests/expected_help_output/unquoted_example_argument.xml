@@ -1,0 +1,6 @@
+<materialDiamond>!Hello</materialDiamond>
+
+  <materialCopper><bold>Examples</bold></materialCopper>
+  <materialCopper>Greets John Doe</materialCopper>
+  !Hello 'John Doe'
+

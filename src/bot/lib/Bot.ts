@@ -48,7 +48,7 @@ export default class Bot extends Server {
     this.whisperErrors = options.whisperErrors ?? false;
     if (options.helpCommand ?? true) {
       const helpCommand = new HelpCommand();
-      this.commands.push([helpCommand, helpCommand.displayHelp]);
+      this.commands.push([helpCommand, helpCommand.runHelp]);
     }
 
     this.on("PlayerMessage", (event) => {

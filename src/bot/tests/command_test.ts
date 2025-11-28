@@ -113,7 +113,7 @@ Deno.test("optional parameter with default factory", () => {
       {
         name: "b",
         type: blockLocationParamType,
-        default: { raw: ["42", "69", "420"] },
+        default: { raw: ["42", "69", "~420"] },
       },
     ],
   };
@@ -123,7 +123,11 @@ Deno.test("optional parameter with default factory", () => {
       cmd.optionalParameters!,
       [],
     ),
-    [42, [42, 69, 420]],
+    [42, {
+      x: { coord: 42, relative: false },
+      y: { coord: 69, relative: false },
+      z: { coord: 420, relative: true },
+    }],
   );
 });
 
@@ -142,8 +146,12 @@ Deno.test("parameter with variadic input", () => {
     parseCommand(
       cmd.mandatoryParameters!,
       cmd.optionalParameters!,
-      ["12", "33", "42"],
+      ["12", "33", "~42"],
     ),
-    [[12, 33, 42]],
+    [{
+      x: { coord: 12, relative: false },
+      y: { coord: 33, relative: false },
+      z: { coord: 42, relative: true },
+    }],
   );
 });

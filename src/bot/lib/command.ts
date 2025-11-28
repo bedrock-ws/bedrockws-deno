@@ -1,8 +1,10 @@
 import type { Client } from "@bedrock-ws/bedrockws";
 import type { Bot } from "@bedrock-ws/bot";
-import { style, styleWithOptions } from "@bedrock-ws/ui";
+import * as ui from "@bedrock-ws/ui";
 import { TypeError } from "./errors.ts";
 import * as shlex from "shlex";
+import helpTemplate from "./help.hbs" with { type: "text" };
+import Handlebars from "handlebars";
 
 export interface Command {
   /**
@@ -259,6 +261,10 @@ function stringToInteger(value: string) {
   return n;
 }
 
+export interface RenderHelpOptions {
+  commandPrefix: string;
+}
+
 /**
  * A command request by a player after the input has been tokenized.
  *
@@ -292,10 +298,41 @@ export class HelpCommand implements Command {
     },
   ];
 
-  displayHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
-    // TODO: maybe migrate to a template engine
-    // TODO: display description of params
-    // TODO: just use += for string concat but keep escaping § and xml in mind
+  /**
+   * Renders a help message from an array of commands.
+   */
+  static renderHelp(commands: Command[], options: RenderHelpOptions) {
+    Handlebars.registerHelper("shlexQuote", shlex.quote);
+    Handlebars.registerHelper(
+      "concat",
+      (...arrays: unknown[]): unknown =>
+        Array.prototype.concat(...arrays.slice(0, -1)),
+    );
+    Handlebars.registerHelper("unset", (value) => {
+      return value === undefined || value === null;
+    });
+
+    // TODO: compile once and re-use compiled template
+    const template = Handlebars.compile(helpTemplate, { strict: true });
+    return ui.render(
+      template({
+        commands: commands.map((command) => {
+          // replace undefined with empty arrays where it makes sense
+          return {
+            mandatoryParameters: command.mandatoryParameters ?? [],
+            optionalParameters: command.optionalParameters ?? [],
+            examples: command.examples ?? [],
+            aliases: command.aliases ?? [],
+            ...command,
+          };
+        }),
+        commandPrefix: options.commandPrefix,
+      }),
+      { requireTextWithinTags: true },
+    );
+  }
+
+  runHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
     const { client, bot } = origin;
 
     let commands;
@@ -310,92 +347,12 @@ export class HelpCommand implements Command {
       commands = [cmd];
     }
 
-    for (const cmd of commands) {
-      let message =
-        style`<materialDiamond>${bot.commandPrefix}${cmd.name}</materialDiamond>`;
-      for (const mandatoryParam of cmd.mandatoryParameters ?? []) {
-        message = styleWithOptions({
-          stripCodes: false,
-        })`${message} &lt;${mandatoryParam.name}: ${mandatoryParam.type.name}&gt;`;
-      }
-      for (const optionalParam of cmd.optionalParameters ?? []) {
-        message = styleWithOptions({
-          stripCodes: false,
-        })`${message} [${optionalParam.name}: ${optionalParam.type.name}`;
-        let defaultDisplay = "";
-        if (optionalParam.default !== undefined) {
-          if ("raw" in optionalParam.default) {
-            defaultDisplay += ` = ${
-              optionalParam.default.raw.map(shlex.quote).join(" ")
-            }`;
-          } else if (
-            "representation" in optionalParam.default &&
-            optionalParam.default.representation !== undefined
-          ) {
-            defaultDisplay += ` = ${optionalParam.default.representation}`;
-          } else if ("value" in optionalParam.default) {
-            defaultDisplay += ` = ${optionalParam.default.value}`;
-          }
-        }
-        message += `${defaultDisplay}]`;
-      }
-      if ((cmd.aliases ?? []).length > 0) {
-        message = styleWithOptions({
-          stripCodes: false,
-        })`${message}\n(aliases: <materialDiamond>${
-          cmd.aliases![0]
-        }</materialDiamond>`;
-        for (const alias of cmd.aliases!.slice(1)) {
-          message = styleWithOptions({
-            stripCodes: false,
-          })`${message}, <materialDiamond>${alias}</materialDiamond>`;
-        }
-        message = styleWithOptions({ stripCodes: false })`${message})`;
-      }
+    const message = HelpCommand.renderHelp(commands, {
+      commandPrefix: bot.commandPrefix,
+    });
 
-      if (cmd.description !== null) {
-        message = styleWithOptions({
-          stripCodes: false,
-        })`${message}\n${cmd.description}`;
-      }
-
-      const parameters = (cmd.mandatoryParameters ?? []).concat(
-        cmd.optionalParameters ?? [],
-      );
-      if (parameters.length > 0) {
-        message = styleWithOptions({stripCodes: false})`${message}\n\n  <materialGold><bold>Parameters</bold></materialGold>`;
-        for (const parameter of parameters) {
-          message = styleWithOptions({stripCodes: false})`${message}\n  <materialGold>${parameter.name}</materialGold>`;
-          // TODO: show whether required/optional
-          // TODO: display type
-          if (parameter.description !== undefined) {
-            message = styleWithOptions({stripCodes: false})`${message}\n  ${parameter.description}`;
-          }
-          message += "\n";
-        }
-      }
-
-      const hasExamples = cmd.examples?.length ?? 0 > 0;
-      if (hasExamples) {
-        message = styleWithOptions({
-          stripCodes: false,
-        })`${message}\n\n  <materialCopper><bold>Examples</bold></materialCopper>`;
-      }
-      for (const example of cmd.examples ?? []) {
-        // TODO: syntax highlighting for args
-        message = styleWithOptions({
-          stripCodes: false,
-        })`${message}\n  <materialCopper>${example.description}</materialCopper>\n  ${bot.commandPrefix}${cmd.name} ${
-          example.args.join(" ")
-        }\n`;
-      }
-      
-      message += "\n";
-
-      // TODO: trim array: remove blank start and blank end lines
-      for (const line of message.split("\n")) {
-        client.sendMessage(`${line}\n`);
-      }
+    for (const line of message.split("\n")) {
+      client.sendMessage(`${line}\n`);
     }
   }
 }

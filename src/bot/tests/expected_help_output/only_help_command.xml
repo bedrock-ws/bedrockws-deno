@@ -1,0 +1,14 @@
+<materialDiamond>!help</materialDiamond> [command: string]
+(aliases: <materialDiamond>?</materialDiamond>)
+Display help for all or a certain command
+
+  <materialGold><bold>Parameters</bold></materialGold>
+  <materialGold>command: string</materialGold>
+  The command to display the help of
+
+  <materialCopper><bold>Examples</bold></materialCopper>
+  <materialCopper>Display help for all commands</materialCopper>
+  !help
+
+  <materialCopper>Display help for the help command</materialCopper>
+  !help help

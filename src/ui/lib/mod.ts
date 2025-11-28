@@ -150,50 +150,102 @@ export function styleWithOptions(options: StyleOptions) {
       sanitized += `${left}${right}`;
     }
 
-    const root = xml.parseXml(`<ROOT>${sanitized}</ROOT>`);
-    const { children } = root.children[0] as xml.XmlElement;
-    let rendered = html.unescape(transformXML(children, []));
-    if (
-      rendered.slice(rendered.length - codes.formatting.reset.length) !==
-        codes.formatting.reset
-    ) {
-      rendered += codes.formatting.reset;
-    }
-    return rendered;
+    return render(sanitized);
   };
 }
 
-function transformXML(nodes: xml.XmlNode[], restore: (string | undefined)[]) {
+export interface RenderOptions {
+  /** Whether text is required to be within text tags. */
+  requireTextWithinTags?: boolean;
+}
+
+/**
+ * Renders an XML formatted string.
+ */
+export function render(text: string, options?: RenderOptions) {
+  const requireTextWithinTags = options?.requireTextWithinTags ?? false;
+
+  const root = xml.parseXml(`<ROOT>${text}</ROOT>`);
+  const { children } = root.children[0] as xml.XmlElement;
+  let rendered = html.unescape(
+    transformXML(children, {
+      restore: [],
+      requireTextWithinTags,
+      isWithinTextTag: false,
+    }),
+  );
+  if (
+    rendered.slice(rendered.length - codes.formatting.reset.length) !==
+      codes.formatting.reset
+  ) {
+    rendered += codes.formatting.reset;
+  }
+  return rendered;
+}
+
+const textTagName = "t";
+const lineBreakTagName = "br";
+
+interface TransformXMLOptions extends RenderOptions {
+  /** An array of styles to restore when child elements end. */
+  restore: (string | undefined)[];
+
+  /** Whether the parser is currently within a text tag. */
+  isWithinTextTag: boolean;
+}
+
+/**
+ * Renders the XML markup by applying the styles accordingly.
+ */
+function transformXML(nodes: xml.XmlNode[], options: TransformXMLOptions) {
+  const { restore, requireTextWithinTags, isWithinTextTag } = options;
   let result = "";
   let index = 0;
   for (const node of nodes) {
-    const lastTagNode = index + 1 == nodes.filter((n) =>
-      n.type === xml.XmlNode.TYPE_ELEMENT
-    ).length;
-
     if (node.type === xml.XmlNode.TYPE_ELEMENT) {
       index++;
       const nodeElement = node as xml.XmlElement;
+      const tagName = nodeElement.name;
+      if (tagName === textTagName) {
+        result += transformXML(nodeElement.children, {
+          restore,
+          requireTextWithinTags,
+          isWithinTextTag: true,
+        });
+        continue;
+      } else if (tagName === lineBreakTagName) {
+        result += "\n";
+        continue;
+      }
       const codesWithLowercasedKeys = Object.fromEntries(
         Object.entries({ ...codes.colors, ...codes.formatting }).map((
           [key, value],
         ) => [key.toLowerCase(), value]),
       );
-      const code = codesWithLowercasedKeys[nodeElement.name.toLowerCase()];
+      const code = codesWithLowercasedKeys[tagName.toLowerCase()];
       result += code ?? "";
       restore.push(code);
-      result += transformXML(nodeElement.children, restore);
-      if (lastTagNode) {
-        restore.pop();
-        result += `${codes.formatting.reset}${
-          restore.filter((x) => x !== undefined).join("")
-        }`;
-      }
+      result += transformXML(nodeElement.children, {
+        restore,
+        requireTextWithinTags,
+        isWithinTextTag,
+      });
+      restore.pop();
+      result += codes.formatting.reset;
+      result += restore.filter((x) => x !== undefined).join("");
     }
 
     if (node.type === xml.XmlNode.TYPE_TEXT) {
       const nodeText = node as xml.XmlText;
-      result += nodeText.text;
+      const { text } = nodeText;
+      const blank = text.trim() === "";
+      if (requireTextWithinTags && !isWithinTextTag) {
+        if (!blank) {
+          throw new Error("text must not be outside text tags");
+        }
+      } else {
+        result += nodeText.text;
+      }
     }
   }
 

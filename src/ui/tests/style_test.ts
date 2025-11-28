@@ -1,8 +1,12 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { style } from "@bedrock-ws/ui";
+import { render, RenderOptions, style } from "@bedrock-ws/ui";
 
 Deno.test("basic text", () => {
   assertEquals(style`Hello World`, "Hello World§r");
+});
+
+Deno.test("pre-sanitized", () => {
+  assertEquals(render("<red>A<bold>B</bold>C</red>"), "§cA§lB§r§cC§r");
 });
 
 Deno.test("one color", () => {
@@ -49,3 +53,27 @@ Deno.test("different casing", () => {
 Deno.test("injection", () => {
   assertEquals(style`${"<red>"}A${"</red>"}`, "<red>A</red>§r");
 });
+
+Deno.test("multiple instances", () => {
+  assertEquals(style`<red>A</red>B<red>C</red>`, "§cA§rB§cC§r");
+});
+
+Deno.test("text outside text tag", () => {
+  const options: RenderOptions = { requireTextWithinTags: true };
+  assertThrows(() => render("Hello World", options));
+  assertThrows(() => render("Hello <t>World</t>", options));
+  assertThrows(() => render("<t>Hello</t> World", options));
+});
+
+Deno.test("text within text tag", () => {
+  const options: RenderOptions = { requireTextWithinTags: true };
+  assertEquals(render("<t>Hello</t> <t>World</t>", options), "HelloWorld§r");
+  assertEquals(
+    render("<t>Hello</t>\n \t<t>World</t>", options),
+    "HelloWorld§r",
+  );
+});
+
+Deno.test("line break tag", () => {
+  assertEquals(render("Hello<br />World"), "Hello\nWorld§r");
+})

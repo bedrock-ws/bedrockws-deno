@@ -21,7 +21,7 @@ export class Response {
     this.data = data;
   }
 
-  get ok() {
+  get ok(): boolean {
     if (this.header.messagePurpose === "error") {
       return false;
     }

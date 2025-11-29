@@ -358,7 +358,7 @@ export class HelpCommand implements Command {
     template: HandlebarsTemplateDelegate,
     commands: Command[],
     options: RenderHelpOptions,
-  ) {
+  ): string {
     return ui.render(
       template({
         commands: commands.map((command) => {
@@ -396,7 +396,7 @@ export class HelpCommand implements Command {
   /**
    * Runs the help command.
    */
-  runHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
+  runHelp(origin: CommandOrigin, ...args: CommandArgument[]): void {
     const { client, bot } = origin;
 
     let commands;

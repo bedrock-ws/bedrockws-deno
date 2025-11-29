@@ -111,7 +111,7 @@ export default class Bot extends Server {
     return this.commands;
   }
 
-  private displayError(client: Client, player: string, error: Error) {
+  private displayError(client: Client, player: string, error: Error): void {
     console.error({
       message: error.message,
       name: error.name,
@@ -130,7 +130,7 @@ export default class Bot extends Server {
    * This functions throws an error if a command with the same name already
    * exists.
    */
-  cmd(command: Command, callback: CommandCallback) {
+  cmd(command: Command, callback: CommandCallback): void {
     for (const name in [command.name, ...command.aliases ?? []]) {
       if (this.searchCommand(name)) {
         throw new Error(
@@ -146,7 +146,7 @@ export default class Bot extends Server {
    *
    * This function does nothing if there is no command with the supplied name.
    */
-  removeCommand(commandName: string) {
+  removeCommand(commandName: string): void {
     for (let i = 0; i < this.commands.length; i++) {
       const cmd = this.commands[i][0];
       if ([cmd.name, ...cmd.aliases ?? []].includes(commandName)) {
@@ -159,7 +159,7 @@ export default class Bot extends Server {
   /**
    * Search for a command and its callback by its name or alias.
    */
-  searchCommand(commandName: string) {
+  searchCommand(commandName: string): readonly [Command, CommandCallback] | undefined {
     for (const cmd of this.commands) {
       if ([cmd[0].name, ...cmd[0].aliases ?? []].includes(commandName)) {
         return cmd;

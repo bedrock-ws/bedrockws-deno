@@ -15,7 +15,9 @@
     },
     "json-schema-markdown": {
       "description": "Generates Markdown documentation from the JSON schemas",
-      "dependencies": ["json-schema"],
+      "dependencies": [
+        "json-schema"
+      ],
       "command": "jsonschema2md -o docs -d schemas/"
     }
   },
@@ -24,5 +26,12 @@
     "@adobe/jsonschema2md": "npm:@adobe/jsonschema2md@^8.0.4",
     "@std/path": "jsr:@std/path@^1.1.1",
     "zod": "npm:zod@^3.25.0"
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-slow-types"
+      ]
+    }
   }
 }

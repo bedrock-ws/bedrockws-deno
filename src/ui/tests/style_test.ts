@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { render, RenderOptions, style } from "@bedrock-ws/ui";
+import { render, type RenderOptions, style } from "@bedrock-ws/ui";
 
 Deno.test("basic text", () => {
   assertEquals(style`Hello World`, "Hello World§r");

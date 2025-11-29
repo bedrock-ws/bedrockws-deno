@@ -106,7 +106,7 @@ export const codes = {
 /**
  * Strips all style codes like `§a` from a string.
  */
-export function strip(text: string) {
+export function strip(text: string): string {
   return text.replaceAll(/§./g, "");
 }
 
@@ -124,7 +124,10 @@ export interface StyleOptions {
  * @example
  * style`foo <red>bar <bold>baz</bold> blah</red> blup`
  */
-export function style(template: TemplateStringsArray, ...params: unknown[]) {
+export function style(
+  template: TemplateStringsArray,
+  ...params: unknown[]
+): string {
   return styleWithOptions({})(
     template,
     ...params,
@@ -137,7 +140,9 @@ export function style(template: TemplateStringsArray, ...params: unknown[]) {
  * @example
  * styleWithOptions({ escapeXml: false, stripCodes: false })`foo <red>bar <bold>baz</bold> blah</red> blup`
  */
-export function styleWithOptions(options: StyleOptions) {
+export function styleWithOptions(
+  options: StyleOptions,
+): (template: TemplateStringsArray, ...params: unknown[]) => string {
   return function (template: TemplateStringsArray, ...params: unknown[]) {
     let sanitized = "";
     for (const i in template) {
@@ -162,7 +167,7 @@ export interface RenderOptions {
 /**
  * Renders an XML formatted string.
  */
-export function render(text: string, options?: RenderOptions) {
+export function render(text: string, options?: RenderOptions): string {
   const requireTextWithinTags = options?.requireTextWithinTags ?? false;
 
   const root = xml.parseXml(`<ROOT>${text}</ROOT>`);

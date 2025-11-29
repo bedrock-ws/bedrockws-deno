@@ -6,6 +6,11 @@ import * as shlex from "shlex";
 import helpTemplate from "./help.hbs" with { type: "text" };
 import Handlebars from "handlebars";
 
+/**
+ * A command for a bot.
+ *
+ * Commands can be invoked used by players and perform some action.
+ */
 export interface Command {
   /**
    * The name of the command.
@@ -42,18 +47,37 @@ export interface Command {
   examples?: CommandUsageExample[];
 }
 
+/**
+ * A single example describing the usage of a command.
+ */
 export interface CommandUsageExample {
   description: string;
   args: string[];
 }
 
+/**
+ * A type for a command parameter.
+ *
+ * A parameter type is responsible for consuming the raw input and converting
+ * it to another structure.
+ */
 export interface CommandParamType<T> {
   /** The name to represent the type. */
   name: string;
 
+  /**
+   * The conversion of the raw input into another structure.
+   */
   converter: (raw: string[]) => T;
 
-  /** The number of words this parameter type consumes. */
+  /**
+   * The number of words this parameter type consumes.
+   *
+   * Most converters only take a single word. A parameter type like
+   * {@link blockLocationParamType} for example accepts three words which
+   * almost matches the way Minecraft commands parse coordinates. A parameter
+   * type must take at least one word. By default it takes exactly one.
+   * */
   take?: number;
 }
 
@@ -63,6 +87,9 @@ export interface Location {
   z: { coord: number; relative: boolean };
 }
 
+/**
+ * The type of a parsed command argument.
+ */
 export type CommandArgument = unknown;
 
 export type CommandCallback = (
@@ -105,20 +132,29 @@ export type CommandParameterDefault<T> =
   | CommandParameterDefaultFactory<T>;
 
 interface CommandParameterDefaultWithOptionalRepresentation {
+  /**
+   * The textual representation of the default.
+   *
+   * This is useful when the default value is evaluated dynamically or the
+   * textual representation of the default value is not as understandable.
+   */
   representation?: string;
 }
 
 export interface CommandParameterDefaultFactory<T>
   extends CommandParameterDefaultWithOptionalRepresentation {
+  /** A callback to evaluate the default value whenever it is needed. */
   factory: () => T;
 }
 
 export interface CommandParameterDefaultRaw {
+  /** The raw default values passed onto the converter of the parameter type. */
   raw: string[];
 }
 
 export interface CommandParameterDefaultValue<T>
   extends CommandParameterDefaultWithOptionalRepresentation {
+  /** The default value. */
   value: T;
 }
 
@@ -282,6 +318,9 @@ export interface HelpCommandOptions {
 
 // TODO: Add config options like ordering of functions and which information
 //       to include.
+/**
+ * A help command that displays help for other commands registered by the bot.
+ */
 export class HelpCommand implements Command {
   readonly name = "help";
   readonly aliases = ["?"];
@@ -354,6 +393,9 @@ export class HelpCommand implements Command {
     return hbs.compile(helpTemplate, { strict: true });
   }
 
+  /**
+   * Runs the help command.
+   */
   runHelp(origin: CommandOrigin, ...args: CommandArgument[]) {
     const { client, bot } = origin;
 

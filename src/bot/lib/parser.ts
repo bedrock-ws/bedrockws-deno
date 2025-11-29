@@ -44,8 +44,7 @@ export function parseCommand(
           `argument for ${param.name} only partially provided`,
         );
       }
-      const paramDefault =
-        optionalParams[mendatoryParams.length + index].default;
+      const paramDefault = (param as OptionalCommandParameter<unknown>).default;
 
       if (paramDefault === undefined) {
         result.push(undefined);

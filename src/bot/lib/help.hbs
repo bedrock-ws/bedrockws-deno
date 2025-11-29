@@ -22,10 +22,10 @@
     {{#if optionalParam.default}}
       {{#if optionalParam.default.raw}}
         <t> = {{#each optionalParam.default.raw}}{{shlexQuote @key}}{{/each}}</t>
-      {{else if (unset optionalParam.default.representation)}}
+      {{else if (defined optionalParam.default.representation)}}
         <t> = {{optionalParam.default.representation}}</t>
-      {{ else if (unset optionalParam.default.value) }}
-        <t> = {{optionalParam.default.value}}</t>
+      {{ else if (defined optionalParam.default.value) }}
+        <t> = {{toString optionalParam.default.value}}</t>
       {{/if}}
     {{/if}}
     <t>]</t>
@@ -53,10 +53,10 @@
       <br />
     {{/if}}
     <t>  <materialGold>{{param.name}}: {{param.type.name}}</materialGold></t>
-    {{#unless (unset param.description)}}
+    {{#if (defined param.description)}}
       <br />
       <t>  {{param.description}}</t>
-    {{/unless}}
+    {{/if}}
   {{/each}}
   {{#each cmd.examples as |example|}}
     <br />

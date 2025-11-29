@@ -5,5 +5,12 @@
     "./src/mapart",
     "./src/schema",
     "./src/ui"
-  ]
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true
+  }
 }

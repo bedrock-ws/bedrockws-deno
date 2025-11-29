@@ -31,6 +31,25 @@ const shadeOffset = 2;
 const preferredTickingAreaNameLength = 15;
 const barsAmount = 20;
 
+const kernelValues = {
+  nearest: "nearest",
+  cubic: "cubic",
+  linear: "linear",
+  mitchell: "mitchell",
+  lanczos2: "lanczos2",
+  lanczos3: "lanczos3",
+  mks2013: "mks2013",
+  mks2021: "mks2021",
+} as const satisfies sharp.KernelEnum;
+
+const fitValues = {
+  contain: "contain",
+  cover: "cover",
+  fill: "fill",
+  inside: "inside",
+  outside: "outside",
+} as const satisfies sharp.FitEnum;
+
 /**
  * Finds out the edge coordinates of the map area the player is currently in.
  */
@@ -157,12 +176,24 @@ function logChat(client: Client, level: LogLevel, message: string) {
   }
 }
 
+function displayEnumType(options: string[]) {
+  return options.join("|");
+}
+
 const bot = new Bot({ commandPrefix: "-" });
+
+bot.on("Ready", (_event) => {
+  console.log("Ready!");
+});
+
+bot.on("Connect", (_event) => {
+  console.log("Connected!");
+});
 
 bot.cmd({
   name: "mapart",
-  description:
-    ui.style`Generate a map art from an image. See also: <darkAqua>https://sharp.pixelplumbing.com/api-resize/</darkAqua> for the resizing methods`,
+  description: ui
+    .style`Generate a map art from an image. See also: <darkAqua>https://sharp.pixelplumbing.com/api-resize/</darkAqua> for the resizing methods`,
   mandatoryParameters: [{ name: "path", type: stringParamType }],
   optionalParameters: [
     // TODO: custom types/converters for enum values
@@ -175,13 +206,35 @@ bot.cmd({
     },
     {
       name: "resize_method",
-      type: stringParamType,
+      type: {
+        name: "resize-method",
+        converter: ([raw]): keyof typeof fitValues => {
+          if (raw in fitValues) {
+            return fitValues[raw as keyof typeof fitValues];
+          }
+          throw new Error(
+            `${raw} is not any of ${displayEnumType(Object.keys(fitValues))}`,
+          );
+        },
+      },
       description: "The resizing method for non-square images",
       default: { value: "contain" },
     },
     {
       name: "downsize_kernel",
-      type: stringParamType,
+      type: {
+        name: "downsize-kernel",
+        converter: ([raw]): keyof typeof kernelValues => {
+          if (raw in kernelValues) {
+            return kernelValues[raw as keyof typeof kernelValues];
+          }
+          throw new Error(
+            `${raw} is not any of ${
+              displayEnumType(Object.keys(kernelValues))
+            }`,
+          );
+        },
+      },
       description: "The algorithm used for downscaling images",
       default: { value: "mitchell" },
     },
@@ -223,36 +276,10 @@ bot.cmd({
 
   const path = args.shift() as string;
   const flat = args.shift() as boolean;
-  const resizeMethod = args.shift() as string;
-  const downsizeKernel = args.shift() as string;
+  const resizeMethod = args.shift() as keyof typeof fitValues;
+  const downsizeKernel = args.shift() as keyof typeof kernelValues;
   const backgroundColor = args.shift() as string;
   const alphaThreshold = args.shift() as string;
-
-  if (
-    resizeMethod !== "cover" && resizeMethod !== "contain" &&
-    resizeMethod !== "fill"
-  ) {
-    logChat(
-      client,
-      "error",
-      `Invalid value ${resizeMethod} for parameter resize_method`,
-    );
-    return;
-  }
-
-  if (
-    downsizeKernel !== "nearest" && downsizeKernel !== "linear" &&
-    downsizeKernel !== "cubic" && downsizeKernel !== "mitchell" &&
-    downsizeKernel !== "lanczos2" && downsizeKernel !== "lanczos3" &&
-    downsizeKernel !== "mks2013" && downsizeKernel !== "mks2021"
-  ) {
-    logChat(
-      client,
-      "error",
-      `Invalid value ${downsizeKernel} for parameter downsize_kernel`,
-    );
-    return;
-  }
 
   if (!await exists(path, { isFile: true })) {
     logChat(client, "error", `No file found at ${path}`);
@@ -312,11 +339,14 @@ bot.cmd({
   const displayProgress = (progress: number) => {
     const progressSymbolDone = "█";
     const progressSymbolLeft = "█";
-    const progressDisplay = `${progress === 1 ? ui.codes.colors.green : ""}${
-      progressSymbolDone.repeat(barsAmount * progress)
-    }${progressSymbolLeft.repeat(Math.ceil(barsAmount * (1 - progress)))} ${
-      Math.floor(progress * 100)
-    }%`;
+    let progressDisplay = "";
+    progressDisplay += ui.codes.colors.green;
+    progressDisplay += progressSymbolDone.repeat(barsAmount * progress);
+    progressDisplay += ui.codes.formatting.reset;
+    progressDisplay += ui.codes.colors.gray;
+    progressDisplay += progressSymbolLeft.repeat(Math.ceil(barsAmount * (1 - progress)));
+    progressDisplay += ui.codes.formatting.reset;
+    progressDisplay += ` ${Math.floor(progress * 100)}%`;
     client.run(`title @a actionbar ${progressDisplay}`);
   };
 

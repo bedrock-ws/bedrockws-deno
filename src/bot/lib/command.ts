@@ -280,8 +280,8 @@ export interface HelpCommandOptions {
   helpTemplate?: HandlebarsTemplateDelegate;
 }
 
-// TODO:Add config options like ordering of functions and which information
-//      to include.
+// TODO: Add config options like ordering of functions and which information
+//       to include.
 export class HelpCommand implements Command {
   readonly name = "help";
   readonly aliases = ["?"];
@@ -340,6 +340,7 @@ export class HelpCommand implements Command {
 
   static defaultTemplate(): HandlebarsTemplateDelegate {
     const hbs = Handlebars.create();
+    hbs.registerHelper("toString", (value) => value.toString());
     hbs.registerHelper("shlexQuote", shlex.quote);
     hbs.registerHelper(
       "concat",
@@ -347,8 +348,8 @@ export class HelpCommand implements Command {
         Array.prototype.concat(...arrays.slice(0, -1)),
     );
     hbs.registerHelper(
-      "unset",
-      (value) => value === undefined || value === null,
+      "defined",
+      (value) => value !== undefined && value !== null,
     );
     return hbs.compile(helpTemplate, { strict: true });
   }

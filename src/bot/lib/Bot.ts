@@ -48,7 +48,7 @@ export default class Bot extends Server {
     this.whisperErrors = options.whisperErrors ?? false;
     if (options.helpCommand ?? true) {
       const helpCommand = new HelpCommand();
-      this.commands.push([helpCommand, helpCommand.runHelp]);
+      this.commands.push([helpCommand, helpCommand.runHelp.bind(helpCommand)]);
     }
 
     this.on("PlayerMessage", (event) => {
@@ -112,6 +112,12 @@ export default class Bot extends Server {
   }
 
   private displayError(client: Client, player: string, error: Error) {
+    console.error({
+      message: error.message,
+      name: error.name,
+      cause: error.cause,
+      stack: error.stack,
+    });
     client.sendMessage(
       ui.style`<red><bold>${error.name}</bold>: ${error.message}</red>`,
       this.whisperErrors ? player : "@a",

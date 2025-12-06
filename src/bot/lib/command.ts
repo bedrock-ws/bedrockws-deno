@@ -5,6 +5,7 @@ import { TypeError } from "./errors.ts";
 import * as shlex from "shlex";
 import helpTemplate from "./help.hbs" with { type: "text" };
 import Handlebars from "handlebars";
+import { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
 
 /**
  * A command for a bot.
@@ -100,6 +101,9 @@ export type CommandCallback = (
 export interface CommandOrigin {
   /** The player name of the player who triggered the command. */
   readonly initiator: string;
+
+  /** The message event that triggered the command. */
+  readonly event: PlayerMessageEvent,
 
   /** The client that received the command. */
   readonly client: Client;
@@ -397,7 +401,7 @@ export class HelpCommand implements Command {
    * Runs the help command.
    */
   runHelp(origin: CommandOrigin, ...args: CommandArgument[]): void {
-    const { client, bot } = origin;
+    const { event, bot } = origin;
 
     let commands;
 
@@ -415,8 +419,6 @@ export class HelpCommand implements Command {
       commandPrefix: bot.commandPrefix,
     });
 
-    for (const line of message.split("\n")) {
-      client.sendMessage(`${line}\n`);
-    }
+    event.reply(message);
   }
 }

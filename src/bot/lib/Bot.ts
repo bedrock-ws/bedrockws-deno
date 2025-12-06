@@ -93,6 +93,7 @@ export default class Bot extends Server {
 
       const origin: CommandOrigin = {
         initiator: data.sender,
+        event,
         client,
         bot: this,
       };
@@ -120,7 +121,7 @@ export default class Bot extends Server {
     });
     client.sendMessage(
       ui.style`<red><bold>${error.name}</bold>: ${error.message}</red>`,
-      this.whisperErrors ? player : "@a",
+      { target: this.whisperErrors ? player : "@a" },
     );
   }
 

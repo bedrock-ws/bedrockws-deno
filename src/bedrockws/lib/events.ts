@@ -1,5 +1,6 @@
 import type Server from "./Server.ts";
 import type Client from "./Client.ts";
+import type { Response } from "@bedrock-ws/bedrockws";
 import type * as event from "@bedrock-ws/schema/events";
 import type { RawText } from "@minecraft/server";
 import type { z } from "zod/v4";
@@ -1127,11 +1128,11 @@ export class PlayerMessageEvent implements GameEventBase {
     this.data = options.data;
   }
 
-  reply(message: RawText | string) {
+  reply(message: RawText | string): Promise<Response> {
     const rawText: RawText = typeof message === "string"
       ? { rawtext: [{ text: message }] }
       : message;
-    this.client.run(`tellraw ${this.data.sender} ${JSON.stringify(rawText)}`);
+    return this.client.sendMessage(rawText, { target: this.data.sender });
   }
 
   get receiver(): string | undefined {

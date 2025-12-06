@@ -1,4 +1,5 @@
 // TODO: remove all console.* calls and use proper logging
+// TODO: nothrow option when sending commands (or maybe even requests in general) (see also: https://bun.sh/docs/runtime/shell)
 // TODO: encryption; see also: https://github.com/Sandertv/mcwss/blob/master/encryption.go
 
 export { default as Client } from "./Client.ts";

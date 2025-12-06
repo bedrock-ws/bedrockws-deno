@@ -113,6 +113,30 @@ export interface RunOptions {
   minecraftVersion?: string;
 }
 
+/**
+ * Additional options for {@link Client#sendMessage}.
+ */
+export interface SendMessageOptions {
+  /**
+   * The target(s) who should receive the message.
+   */
+  target?: string;
+
+  /**
+   * Whether to split the message and send the parts separately.
+   *
+   * This is useful for large messages as the game can only handle a certain
+   * message length. The output will not be altered as the implementation only
+   * splits the message at line breaks. Two minor issues may raise from setting
+   * this to `true`:
+   * - more messages will be sent in total
+   * - messages may appear in between the split message
+   *
+   * This is `true` by default.
+   */
+  split?: boolean;
+}
+
 /** Representation of a Minecraft client connected to the WebSocket server. */
 export default class Client {
   /** The WebSocket connection with the server. */
@@ -167,17 +191,16 @@ export default class Client {
 
   /**
    * Sends a message in the chat.
-   *
-   * If you want to send multiple lines of text, you may want to send each one
-   * separately as there is a low character limit for sending messages.
    */
-  sendMessage(message: RawText | string, target: string = "@a") {
-    // TODO: perhaps by default intelligently split lines of input if it
-    //       exceeds message limit
+  sendMessage(message: RawText | string, options?: SendMessageOptions): Promise<Response> {
+    const target = options?.target ?? "@a";
+    const split = options?.split ?? true;
+    // TODO: split
     const rawText: RawText = typeof message === "string"
       ? { rawtext: [{ text: message }] }
       : message;
-    this.run(`tellraw ${target} ${JSON.stringify(rawText)}`);
+    // SECURITY: `target` may spread
+    return this.run(`tellraw ${target} ${JSON.stringify(rawText)}`);
   }
 
   /** Queries details of the client as a player in the world. */
@@ -981,9 +1004,9 @@ export default class Client {
    *
    * The command should not include the slash prefix.
    */
-  async run(command: string, options?: RunOptions): Promise<Response> {
+  run(command: string, options?: RunOptions): Promise<Response> {
     const identifier = crypto.randomUUID();
-    return await this.send({
+    return this.send({
       header: {
         version: 1,
         requestId: identifier,
@@ -1001,9 +1024,9 @@ export default class Client {
   }
 
   /** Subscribes to a client's event. */
-  async subscribe(eventName: keyof GameEvent): Promise<Response> {
+  subscribe(eventName: keyof GameEvent): Promise<Response> {
     const identifier = crypto.randomUUID();
-    const res = await this.send({
+    return this.send({
       header: {
         version: 1,
         requestId: identifier,
@@ -1014,6 +1037,5 @@ export default class Client {
         eventName: eventName,
       },
     });
-    return res;
   }
 }

@@ -19,6 +19,40 @@ server.on("PlayerMessage", (event) => {
 });
 ```
 
+```typescript
+import { Bot, floatParamType } from "@bedrock-ws/bot";
+import type { Command, CommandArgument, CommandOrigin } from "@bedrock-ws/bot";
+
+const sinCommand: Command = {
+  name: "sin",
+  description: "Calculates the sine",
+  mandatoryParameters: [
+    { type: floatParamType, name: "number" },
+  ],
+  examples: [{
+    description: "Calculate the sine of 1",
+    args: ["1"],
+  }],
+};
+
+bot.cmd(sinCommand, (origin: CommandOrigin, ...args: CommandArgument[]) => {
+  const { client } = origin;
+  const n = args.shift() as number;
+  client.sendMessage(`sin(${n}) = ${Math.sin(n)}`);
+});
+```
+
+## Features
+
+- **Markup**
+  ```typescript
+  import { style } from "@bedrock-ws/ui";
+  assertEquals(style`<red>A<bold>B</bold>C</red>`, "§cA§lB§r§cC§r");
+  ```
+- **Pretty help command out of the box**
+  ![Help command output](./assets/help_output.jpg)
+- ... and more
+
 ## Examples
 
 You can configure the host and port in the `.env` file. See also

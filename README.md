@@ -43,5 +43,5 @@ logging. Messages received from the Minecraft client(s) will be stored in
 ## License
 
 `bedrockws-deno` is licensed under Apache 2.0 with exceptions of `src/mapart`
-and `src/ui` which are licensed under MIT. Further information can be found
-in the license files of the subdirectories accordingly.
+and `src/ui` which are licensed under MIT. Further information can be found in
+the license files of the subdirectories accordingly.

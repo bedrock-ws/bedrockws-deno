@@ -1,7 +1,7 @@
 # Setup
 
-The next chapter will discuss how to get started but before we can program
-the WebSocket server, we first need to take some steps.
+The next chapter will discuss how to get started but before we can program the
+WebSocket server, we first need to take some steps.
 
 Note, that WebSocket connections cannot be established on consoles.
 
@@ -17,7 +17,6 @@ privileges:
 CheckNetIsolation LoopbackExempt -a -n="Microsoft.MinecraftUWP_8wekyb3d8bbwe"
 ```
 
-
 ## Establishing a Connection to Console Hosted World
 
 Consoles do not support WebSocket connections but mobile and desktop devices do.
@@ -27,5 +26,5 @@ This device can join the world hosted on the console and then connect to the
 WebSocket server.
 
 > [!IMPORTANT]
-> On PlayStation 4 and 5, a PlayStation Plus subscription is required for
-> online play. This includes online play in the local network.
+> On PlayStation 4 and 5, a PlayStation Plus subscription is required for online
+> play. This includes online play in the local network.

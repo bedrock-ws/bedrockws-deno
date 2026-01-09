@@ -150,7 +150,7 @@ export class DisconnectEvent implements GameEventBase {
   client: Client;
   code: number;
 
-  constructor(options: { server: Server; client: Client, code: number }) {
+  constructor(options: { server: Server; client: Client; code: number }) {
     this.server = options.server;
     this.client = options.client;
     this.code = options.code;

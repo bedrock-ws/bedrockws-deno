@@ -642,8 +642,8 @@ export const CommandResponseAgentGetPosition = z.strictObject({
   header: CommandResponseHeader,
   body: CommandResponseBodyBase.extend({
     position: Position,
-  })
-})
+  }),
+});
 
 export const CommandResponse = z.union(
   [

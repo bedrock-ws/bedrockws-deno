@@ -8,4 +8,4 @@ export const TargetQueryDetails = z.array(z.strictObject({
   position: Position,
   uniqueId: z.uuidv4(),
   yRot: z.number(),
-}))
+}));

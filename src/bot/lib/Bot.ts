@@ -34,6 +34,9 @@ export interface BotOptions {
 
   // TODO: `flavor` option being either `"minecraft"` or `"command-line"` for
   //       Minecraft-style commands and command-line-style commands accordingly.
+  //       Note that the `take` parameter of command parameter only makes sense
+  //       for Minecraft-style commands. Also let user choose a prefix when
+  //       using command-line-style commands (Unix uses `--`, Windows uses `/`).
 }
 
 export default class Bot extends Server {
@@ -163,7 +166,9 @@ export default class Bot extends Server {
   /**
    * Search for a command and its callback by its name or alias.
    */
-  searchCommand(commandName: string): readonly [Command, CommandCallback] | undefined {
+  searchCommand(
+    commandName: string,
+  ): readonly [Command, CommandCallback] | undefined {
     for (const cmd of this.commands) {
       if ([cmd[0].name, ...cmd[0].aliases ?? []].includes(commandName)) {
         return cmd;

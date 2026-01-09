@@ -344,7 +344,9 @@ bot.cmd({
     progressDisplay += progressSymbolDone.repeat(barsAmount * progress);
     progressDisplay += ui.codes.formatting.reset;
     progressDisplay += ui.codes.colors.gray;
-    progressDisplay += progressSymbolLeft.repeat(Math.ceil(barsAmount * (1 - progress)));
+    progressDisplay += progressSymbolLeft.repeat(
+      Math.ceil(barsAmount * (1 - progress)),
+    );
     progressDisplay += ui.codes.formatting.reset;
     progressDisplay += ` ${Math.floor(progress * 100)}%`;
     client.run(`title @a actionbar ${progressDisplay}`);

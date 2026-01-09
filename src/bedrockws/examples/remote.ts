@@ -12,8 +12,8 @@ const rl = readline.createInterface({ input: stdin, output: stdout });
 rl.on("line", (line) => {
   server.clients.forEach((client) => {
     client.run(line);
-  })
-})
+  });
+});
 
 server.launch({
   hostname: Deno.env.get("BEDROCKWS_DENO_HOST")!,

@@ -230,7 +230,7 @@ export default class Client {
     //       such that we minimize the amount of messages to send. Extra
     //       attention is needed for style codes (`§a`, etc.): Styles must
     //       retain after line break!
-    return message.split("\n").map(line => line === "" ? "\n" : line);
+    return message.split("\n").map((line) => line === "" ? "\n" : line);
   }
 
   /** Queries details of the client as a player in the world. */

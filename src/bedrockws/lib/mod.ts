@@ -27,7 +27,10 @@ export class Response {
       return false;
     }
     if (this.header.messagePurpose === "commandResponse") {
-      const data = this.data as Extract<z.infer<typeof ResponseSchema>, {"header": {"messagePurpose": "commandResponse"}}>;
+      const data = this.data as Extract<
+        z.infer<typeof ResponseSchema>,
+        { "header": { "messagePurpose": "commandResponse" } }
+      >;
       return data.body.statusCode === 0;
     }
     return true;

@@ -1,11 +1,12 @@
 # Hello World
 
 There are multiple implementations available by the
-[Bedrock WebSocket Team][] for different programming languages. This manual is
-part of `bedrockws-deno`, an implementation in [TypeScript][] and thus
-makes use of that implementation.
+[Bedrock WebSocket Team][Bedrock WebSocket Team] for different programming
+languages. This manual is part of `bedrockws-deno`, an implementation in
+[TypeScript][TypeScript] and thus makes use of that implementation.
 
-- Dart (unstable): [bedrockws-dart](https://github.com/bedrock-ws/bedrockws-dart)
+- Dart (unstable):
+  [bedrockws-dart](https://github.com/bedrock-ws/bedrockws-dart)
 - Python (unstable): [bedrockpy](https://github.com/bedrock-ws/bedrockpy)
 - Go (external): [MCWSS](https://github.com/Sandertv/mcwss)
 

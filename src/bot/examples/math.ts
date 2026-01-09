@@ -53,8 +53,8 @@ const factCommand: Command = {
   examples: [{
     description: "Calculate the factorial of 5",
     args: ["5"],
-  }]
-}
+  }],
+};
 
 bot.cmd(factCommand, (origin: CommandOrigin, ...args: CommandArgument[]) => {
   const { client } = origin;

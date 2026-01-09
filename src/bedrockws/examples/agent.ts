@@ -24,7 +24,7 @@ server.on("PlayerMessage", async (event) => {
   if (!data.message.startsWith(prefix)) return;
   const response = await client.run(data.message);
   console.log(response);
-})
+});
 
 server.launch({
   hostname: Deno.env.get("BEDROCKWS_DENO_HOST")!,

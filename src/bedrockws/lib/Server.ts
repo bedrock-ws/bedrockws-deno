@@ -31,7 +31,7 @@ export default class Server extends EventEmitter {
    * Closes the server.
    *
    * This has no effect when the server is not running.
-   * */
+   */
   close() {
     this.wss?.close();
   }

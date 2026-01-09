@@ -78,7 +78,7 @@ export interface CommandParamType<T> {
    * {@link blockLocationParamType} for example accepts three words which
    * almost matches the way Minecraft commands parse coordinates. A parameter
    * type must take at least one word. By default it takes exactly one.
-   * */
+   */
   take?: number;
 }
 
@@ -103,7 +103,7 @@ export interface CommandOrigin {
   readonly initiator: string;
 
   /** The message event that triggered the command. */
-  readonly event: PlayerMessageEvent,
+  readonly event: PlayerMessageEvent;
 
   /** The client that received the command. */
   readonly client: Client;

@@ -76,4 +76,4 @@ Deno.test("text within text tag", () => {
 
 Deno.test("line break tag", () => {
   assertEquals(render("Hello<br />World"), "Hello\nWorld§r");
-})
+});

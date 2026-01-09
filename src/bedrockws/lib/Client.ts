@@ -168,7 +168,7 @@ export default class Client {
   /**
    * Closes the WebSocket connection.
    */
-  close(options?: {code: number, reason: string}) {
+  close(options?: { code: number; reason: string }) {
     // FIXME: neither emits "close"/"disconnect" event nor makes Minecraft tell
     //        that the connection closed but no further events are triggered
     //        and the connection eventually closes with code 1006
@@ -192,15 +192,45 @@ export default class Client {
   /**
    * Sends a message in the chat.
    */
-  sendMessage(message: RawText | string, options?: SendMessageOptions): Promise<Response> {
+  sendMessage(
+    message: RawText | string,
+    options?: SendMessageOptions,
+  ): Promise<Response>[] {
     const target = options?.target ?? "@a";
     const split = options?.split ?? true;
-    // TODO: split
-    const rawText: RawText = typeof message === "string"
-      ? { rawtext: [{ text: message }] }
-      : message;
+    // TODO: support splitting RawText
+    const messages: RawText[] = [];
+    if (split && typeof message === "string") {
+      for (const msg of Client.splitMessage(message)) {
+        messages.push({ rawtext: [{ text: msg }] });
+      }
+    } else {
+      const rawText: RawText = typeof message === "string"
+        ? { rawtext: [{ text: message }] }
+        : message;
+      messages.push(rawText);
+    }
     // SECURITY: `target` may spread
-    return this.run(`tellraw ${target} ${JSON.stringify(rawText)}`);
+    const promises = [];
+    for (const msg of messages) {
+      promises.push(this.run(`tellraw ${target} ${JSON.stringify(msg)}`));
+    }
+    return promises;
+  }
+
+  /**
+   * Splits a message intended to be sent via chat such that the client's game
+   * does not crash.
+   *
+   * Messages larger than around 456 characters appear to make the client' game
+   * error and the world is left as a reaction.
+   */
+  private static splitMessage(message: string): string[] {
+    // TODO: Currently, we use a dumb implementation. This should be improved
+    //       such that we minimize the amount of messages to send. Extra
+    //       attention is needed for style codes (`§a`, etc.): Styles must
+    //       retain after line break!
+    return message.split("\n").map(line => line === "" ? "\n" : line);
   }
 
   /** Queries details of the client as a player in the world. */
@@ -999,7 +1029,7 @@ export default class Client {
     }
   }
 
-  /** 
+  /**
    * Runs a command as the Minecraft client.
    *
    * The command should not include the slash prefix.

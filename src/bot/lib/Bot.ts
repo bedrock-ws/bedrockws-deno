@@ -31,6 +31,9 @@ export interface BotOptions {
    * This is `true` by default.
    */
   helpCommand?: boolean;
+
+  // TODO: `flavor` option being either `"minecraft"` or `"command-line"` for
+  //       Minecraft-style commands and command-line-style commands accordingly.
 }
 
 export default class Bot extends Server {

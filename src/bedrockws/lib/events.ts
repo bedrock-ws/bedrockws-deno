@@ -1128,11 +1128,8 @@ export class PlayerMessageEvent implements GameEventBase {
     this.data = options.data;
   }
 
-  reply(message: RawText | string): Promise<Response> {
-    const rawText: RawText = typeof message === "string"
-      ? { rawtext: [{ text: message }] }
-      : message;
-    return this.client.sendMessage(rawText, { target: this.data.sender });
+  reply(message: RawText | string): Promise<Response>[] {
+    return this.client.sendMessage(message, { target: this.data.sender });
   }
 
   get receiver(): string | undefined {

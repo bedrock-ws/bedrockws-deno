@@ -86,7 +86,7 @@ import {
   WorldLoadedEvent,
   WorldUnloadedEvent,
 } from "./events.ts";
-import type { Request, Response, Server } from "@bedrock-ws/bedrockws";
+import { Request, type Response, type Server } from "@bedrock-ws/bedrockws";
 import type { WebSocket } from "ws";
 import type { RawText } from "@minecraft/server";
 import type * as event from "@bedrock-ws/schema/events";
@@ -1034,36 +1034,40 @@ export default class Client {
    */
   run(command: string, options?: RunOptions): Promise<Response> {
     const identifier = crypto.randomUUID();
-    return this.send({
-      header: {
-        version: 1,
-        requestId: identifier,
-        messageType: "commandRequest",
-        messagePurpose: "commandRequest",
-      },
-      body: {
-        version: options?.minecraftVersion,
-        commandLine: command,
-        origin: {
-          type: "player",
+    return this.send(
+      new Request({
+        header: {
+          version: 1,
+          requestId: identifier,
+          messageType: "commandRequest",
+          messagePurpose: "commandRequest",
         },
-      },
-    });
+        body: {
+          version: options?.minecraftVersion,
+          commandLine: command,
+          origin: {
+            type: "player",
+          },
+        },
+      }),
+    );
   }
 
   /** Subscribes to a client's event. */
   subscribe(eventName: keyof GameEvent): Promise<Response> {
     const identifier = crypto.randomUUID();
-    return this.send({
-      header: {
-        version: 1,
-        requestId: identifier,
-        messageType: "commandRequest",
-        messagePurpose: "subscribe",
-      },
-      body: {
-        eventName: eventName,
-      },
-    });
+    return this.send(
+      new Request({
+        header: {
+          version: 1,
+          requestId: identifier,
+          messageType: "commandRequest",
+          messagePurpose: "subscribe",
+        },
+        body: {
+          eventName: eventName,
+        },
+      }),
+    );
   }
 }

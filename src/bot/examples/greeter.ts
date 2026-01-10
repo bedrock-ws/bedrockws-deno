@@ -8,7 +8,7 @@ const greetCommand: Command = {
   aliases: ["sayhello", "welcome"],
   description: "Greets a player",
   optionalParameters: [
-    { type: stringParamType, name: "target" },
+    { type: stringParamType, name: "target", default: { value: "everyone"} },
   ],
   examples: [{
     description: "Greet a player named Steve",
@@ -19,9 +19,8 @@ const greetCommand: Command = {
 bot.cmd(greetCommand, (origin: CommandOrigin, ...args: CommandArgument[]) => {
   const { initiator, client } = origin;
   console.debug(args);
-  const target = args.shift() as string | undefined;
-  const player = target ?? "everyone";
-  client.sendMessage(`${initiator} greets ${player}!`);
+  const target = args.shift() as string;
+  client.sendMessage(`${initiator} greets ${target}!`);
 });
 
 bot.launch({

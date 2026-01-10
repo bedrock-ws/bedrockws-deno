@@ -1,6 +1,6 @@
 {
   "name": "@bedrock-ws/bedrockws",
-  "version": "0.1.0",
+  "version": "0.1.0-beta1",
   "exports": {
     ".": "./lib/mod.ts",
     "./events": "./lib/events.ts"

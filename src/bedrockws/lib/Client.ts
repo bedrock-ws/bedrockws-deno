@@ -91,15 +91,13 @@ import type { WebSocket } from "ws";
 import type { RawText } from "@minecraft/server";
 import type * as event from "@bedrock-ws/schema/events";
 import type { CommandResponseWithDetails } from "@bedrock-ws/schema/response";
-import { targetquery } from "@bedrock-ws/schema";
+import type { targetquery } from "@bedrock-ws/schema";
 import type { z } from "zod/v4";
 
 interface PendingRequest<O, E> {
   resolve: (value: O) => void;
   reject: (reason: E) => void;
 }
-
-const TargetQueryDetail = targetquery.TargetQueryDetails.unwrap();
 
 /**
  * Additional options for {@link Client#run}.
@@ -234,7 +232,7 @@ export default class Client {
   }
 
   /** Queries details of the client as a player in the world. */
-  async queryPlayer(): Promise<z.infer<typeof TargetQueryDetail>> {
+  async queryPlayer(): Promise<z.infer<typeof targetquery.TargetQueryDetail>> {
     const response = await this.run("querytarget @s");
     if (response.body === undefined || !("details" in response.body)) {
       throw new Error("unexpected response by querytarget command");

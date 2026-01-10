@@ -654,12 +654,14 @@ export const CommandResponse = z.union(
   ] as const,
 );
 
+export const ErrorResponseHeader = z.strictObject({
+  messagePurpose: z.literal("error"),
+  requestId: z.uuidv4(),
+  version: CompatibilityVersion,
+});
+
 export const ErrorResponse = z.strictObject({
-  header: z.strictObject({
-    messagePurpose: z.literal("error"),
-    requestId: z.uuidv4(),
-    version: CompatibilityVersion,
-  }),
+  header: ErrorResponseHeader,
   body: z.strictObject({}), // TODO
 });
 

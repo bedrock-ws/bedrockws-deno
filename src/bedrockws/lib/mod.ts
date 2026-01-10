@@ -36,11 +36,11 @@ export class Response {
     return true;
   }
 
-  get header() {
+  get header(): z.infer<typeof ResponseSchema>["header"] {
     return this.data.header;
   }
 
-  get body() {
+  get body(): z.infer<typeof ResponseSchema>["body"] {
     return this.data.body;
   }
 }

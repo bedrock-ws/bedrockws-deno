@@ -5,7 +5,8 @@ import { TypeError } from "./errors.ts";
 import * as shlex from "shlex";
 import helpTemplate from "./help.hbs" with { type: "text" };
 import Handlebars from "handlebars";
-import { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
+import type { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
+import { inspect } from "node:util";
 
 /**
  * A command for a bot.
@@ -180,7 +181,7 @@ export const booleanParamType: CommandParamType<boolean> = {
   converter: ([value]) => {
     if (value === "true") return true;
     if (value === "false") return false;
-    throw new TypeError(`expected boolean; got ${value}`);
+    throw new TypeError(`expected boolean; got ${inspect(value)}`);
   },
 };
 
@@ -257,7 +258,7 @@ export const blockLocationParamType: CommandParamType<
 function stringToFloat(value: string) {
   const n = +value;
   if (isNaN(n)) {
-    throw new TypeError(`expected integer; got ${value}`);
+    throw new TypeError(`expected integer; got ${inspect(value)}`);
   }
   return n;
 }
@@ -281,13 +282,13 @@ function stringToCoordinate(value: string, options: StringToCoordinateOptions) {
     try {
       coord = stringToInteger(numericValue);
     } catch {
-      throw new TypeError(`expected block coordinate; got ${value}`);
+      throw new TypeError(`expected block coordinate; got ${inspect(value)}`);
     }
   } else {
     try {
       coord = stringToFloat(numericValue);
     } catch {
-      throw new TypeError(`expected coordinate; got ${value}`);
+      throw new TypeError(`expected coordinate; got ${inspect(value)}`);
     }
   }
   return { coord, relative };
@@ -296,7 +297,7 @@ function stringToCoordinate(value: string, options: StringToCoordinateOptions) {
 function stringToInteger(value: string) {
   const n = Number(value);
   if (!Number.isInteger(n)) {
-    throw new TypeError(`expected integer; got ${value}`);
+    throw new TypeError(`expected integer; got ${inspect(value)}`);
   }
   return n;
 }

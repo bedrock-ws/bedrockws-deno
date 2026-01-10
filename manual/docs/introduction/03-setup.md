@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Setup
 
 The next chapter will discuss how to get started but before we can program the
@@ -25,6 +29,9 @@ mobile or desktop device (or a friend that has one) that has Minecraft on it.
 This device can join the world hosted on the console and then connect to the
 WebSocket server.
 
-> [!IMPORTANT]
-> On PlayStation 4 and 5, a PlayStation Plus subscription is required for online
-> play. This includes online play in the local network.
+:::important
+
+On PlayStation 4 and 5, a PlayStation Plus subscription is required for online
+play. This includes online play in the local network.
+
+:::

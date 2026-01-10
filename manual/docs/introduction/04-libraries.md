@@ -1,4 +1,8 @@
-# Hello World
+---
+sidebar_position: 4
+---
+
+# Libraries
 
 There are multiple implementations available by the
 [Bedrock WebSocket Team][Bedrock WebSocket Team] for different programming

@@ -2,7 +2,6 @@
   "workspace": [
     "./src/bedrockws",
     "./src/bot",
-    "./src/mapart",
     "./src/schema",
     "./src/ui"
   ],

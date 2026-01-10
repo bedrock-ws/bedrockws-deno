@@ -3,6 +3,12 @@
 This library provides an interface for UI related things of MCBE. This mainly
 includes appearance of text.
 
+![JSR Version](https://img.shields.io/jsr/v/@bedrock-ws/ui?style=for-the-badge&logo=jsr)
+
+```console
+deno add jsr:@bedrock-ws/ui
+```
+
 ## Usage
 
 ```typescript

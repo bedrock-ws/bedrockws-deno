@@ -1,1 +1,2 @@
-src/schema/schemas/* linguist-generated
+src/schema/schemas/** linguist-generated
+manual/ linguist-documentation

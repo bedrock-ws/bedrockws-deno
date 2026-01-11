@@ -84,7 +84,7 @@ import {
   WorldGenerated,
   WorldLoaded,
   WorldUnloaded,
-} from "@bedrock-ws/schema/events";
+} from "./events/mod.ts";
 import Position from "./common/Position.ts";
 
 export const CommandResponseBodyBase = z.strictObject({

@@ -83,6 +83,9 @@ export interface CommandParamType<T> {
   take?: number;
 }
 
+/**
+ * The location of a block or entity in a Minecraft world.
+ */
 export interface Location {
   x: { coord: number; relative: boolean };
   y: { coord: number; relative: boolean };
@@ -302,7 +305,11 @@ function stringToInteger(value: string) {
   return n;
 }
 
+/**
+ * Fields provided to the help template.
+ */
 export interface RenderHelpOptions {
+  /** The command prefix used by the bot. */
   commandPrefix: string;
 }
 
@@ -313,11 +320,15 @@ export interface RenderHelpOptions {
  * even if it contains spaces.
  */
 export interface CommandRequest {
+  /** The name of the command. */
   name: string;
+
+  /** Raw arguments provided by the player. */
   args: string[];
 }
 
 export interface HelpCommandOptions {
+  /** The help template used to render the help message. */
   helpTemplate?: HandlebarsTemplateDelegate;
 }
 

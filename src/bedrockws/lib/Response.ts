@@ -1,6 +1,9 @@
 import type { z } from "zod/v4";
 import type { Response as ResponseSchema } from "@bedrock-ws/schema";
 
+/**
+ * The response received from a WebSocket server.
+ */
 export default class Response {
   private readonly data: z.infer<typeof ResponseSchema>;
 

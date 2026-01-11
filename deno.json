@@ -5,6 +5,10 @@
     "./src/schema",
     "./src/ui"
   ],
+  "tasks": {
+    "doc": "deno doc --unstable-raw-imports --html --name='bedrockws-deno' --output=./docs/ ./src/**/*.ts",
+    "doc:lint": "deno doc --unstable-raw-imports --lint ./src/**/*.ts"
+  },
   "compilerOptions": {
     "strict": true,
     "strictBindCallApply": true,

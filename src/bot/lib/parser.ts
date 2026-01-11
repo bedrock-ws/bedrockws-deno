@@ -11,12 +11,24 @@ import {
 } from "./errors.ts";
 import * as shlex from "shlex";
 
+/**
+ * Serializes the player's input message (without the command prefix) into a
+ * command name and the raw arguments if possible.
+ *
+ * Shell-like syntax is used so for instance quoted text represents a single
+ * argument.
+ *
+ * @see https://www.npmjs.com/package/shlex
+ */
 export function lexCommandInput(input: string): CommandRequest {
   const [name, ...args] = shlex.split(input);
   if (name === undefined) throw new SyntaxError("no command name provided");
   return { name, args };
 }
 
+/**
+ * Parses the raw command arguments into the converted values.
+ */
 export function parseCommand(
   mendatoryParams: readonly MandatoryCommandParameter<unknown>[],
   optionalParams: readonly OptionalCommandParameter<unknown>[],

@@ -1,6 +1,9 @@
 import * as xml from "@rgrove/parse-xml";
 import * as html from "@std/html";
 
+/**
+ * Style codes that can be used to format text in Minecraft.
+ */
 export const codes = {
   colors: {
     /** Color code that represents #000000. */
@@ -110,6 +113,9 @@ export function strip(text: string): string {
   return text.replaceAll(/§./g, "");
 }
 
+/**
+ * Configuration for the styling engine behavior.
+ */
 export interface StyleOptions {
   /** Whether to escape XML for interpolated values. */
   escapeXml?: boolean;
@@ -159,6 +165,9 @@ export function styleWithOptions(
   };
 }
 
+/**
+ * Additional options for rendering.
+ */
 export interface RenderOptions {
   /** Whether text is required to be within text tags. */
   requireTextWithinTags?: boolean;

@@ -39,6 +39,9 @@ export interface BotOptions {
   //       using command-line-style commands (Unix uses `--`, Windows uses `/`).
 }
 
+/**
+ * A bot is a WebSocket server that is capable of managing custom commands.
+ */
 export default class Bot extends Server {
   readonly commandPrefix: string;
   readonly whisperErrors: boolean;

@@ -333,13 +333,15 @@ export interface HelpCommandOptions {
   helpTemplate?: Handlebars.TemplateDelegate;
 }
 
+const helpCommandName = "help";
+
 // TODO: Add config options like ordering of functions and which information
 //       to include.
 /**
  * A help command that displays help for other commands registered by the bot.
  */
 export class HelpCommand implements Command {
-  readonly name = "help";
+  readonly name = helpCommandName;
   readonly aliases = ["?"];
   readonly description = "Display help for all or a certain command";
   readonly optionalParameters = [{
@@ -354,7 +356,7 @@ export class HelpCommand implements Command {
     },
     {
       description: "Display help for the help command",
-      args: [this.name],
+      args: [helpCommandName],
     },
   ];
   private readonly helpTemplate: Handlebars.TemplateDelegate;

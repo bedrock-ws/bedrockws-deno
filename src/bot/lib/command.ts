@@ -330,7 +330,7 @@ export interface CommandRequest {
 
 export interface HelpCommandOptions {
   /** The help template used to render the help message. */
-  helpTemplate?: HandlebarsTemplateDelegate;
+  helpTemplate?: Handlebars.TemplateDelegate;
 }
 
 // TODO: Add config options like ordering of functions and which information
@@ -357,7 +357,7 @@ export class HelpCommand implements Command {
       args: [this.name],
     },
   ];
-  private readonly helpTemplate: HandlebarsTemplateDelegate;
+  private readonly helpTemplate: Handlebars.TemplateDelegate;
 
   constructor(options?: HelpCommandOptions) {
     const helpTemplate = options?.helpTemplate;
@@ -372,7 +372,7 @@ export class HelpCommand implements Command {
    * Renders a help message from an array of commands.
    */
   static renderHelp(
-    template: HandlebarsTemplateDelegate,
+    template: Handlebars.TemplateDelegate,
     commands: Command[],
     options: RenderHelpOptions,
   ): string {
@@ -394,7 +394,7 @@ export class HelpCommand implements Command {
     );
   }
 
-  static defaultTemplate(): HandlebarsTemplateDelegate {
+  static defaultTemplate(): Handlebars.TemplateDelegate {
     const hbs = Handlebars.create();
     hbs.registerHelper("toString", (value) => value.toString());
     hbs.registerHelper("shlexQuote", shlex.quote);

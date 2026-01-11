@@ -4,6 +4,9 @@
     <p align="center">A Minecraft: Bedrock Edition WebSocket implementation in Deno/TypeScript.</p>
 </p>
 
+> [!WARNING]
+> `@bedrock-ws/bedrockws` and `@bedrock-ws/schema` are still in beta release.
+
 ```typescript
 import { consts, Server } from "@bedrock-ws/bedrockws";
 

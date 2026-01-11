@@ -5,7 +5,7 @@ import type { Request as RequestSchema } from "@bedrock-ws/schema";
  * A request that can be sent to the WebSocket server.
  */
 export default class Request {
-  private readonly data: z.infer<typeof RequestSchema>;
+  readonly data: z.infer<typeof RequestSchema>;
 
   constructor(data: z.infer<typeof RequestSchema>) {
     this.data = data;

@@ -9,6 +9,9 @@
     "doc": "deno doc --html --name='bedrockws-deno' --output=./docs/ ./src/**/*.ts",
     "doc:lint": "deno doc --lint ./src/**/*.ts"
   },
+  "fmt": {
+    "exclude": ["./src/bot/tests/expected_help_output/*.xml"]
+  },
   "compilerOptions": {
     "strict": true,
     "strictBindCallApply": true,

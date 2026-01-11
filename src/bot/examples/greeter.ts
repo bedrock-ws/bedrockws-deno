@@ -8,7 +8,7 @@ const greetCommand: Command = {
   aliases: ["sayhello", "welcome"],
   description: "Greets a player",
   optionalParameters: [
-    { type: stringParamType, name: "target", default: { value: "everyone"} },
+    { type: stringParamType, name: "target", default: { value: "everyone" } },
   ],
   examples: [{
     description: "Greet a player named Steve",

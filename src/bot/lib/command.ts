@@ -7,7 +7,7 @@ import Handlebars from "handlebars";
 import type { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
 import { inspect } from "node:util";
 
-const helpTemplate = await Deno.readTextFile(`${import.meta.dirname}/help.hbs`)
+const helpTemplate = await Deno.readTextFile(`${import.meta.dirname}/help.hbs`);
 
 /**
  * A command for a bot.

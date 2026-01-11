@@ -104,9 +104,13 @@ Deno.test("JSON", () => {
   const values = [[], {}, "Hello", null, true, false];
   for (const value of values) {
     const input = [JSON.stringify(value)];
-    const args = parseCommand([{name: "foo", type: jsonParamType}], [], input);
+    const args = parseCommand(
+      [{ name: "foo", type: jsonParamType }],
+      [],
+      input,
+    );
     assertEquals(args, [value]);
   }
-})
+});
 
 // TODO: etc...

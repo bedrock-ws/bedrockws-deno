@@ -86,7 +86,7 @@ import {
   WorldLoadedEvent,
   WorldUnloadedEvent,
 } from "./events.ts";
-import { Request, type Response, type Server } from "@bedrock-ws/bedrockws";
+import { Request, type Response, type Server } from "./mod.ts";
 import type { WebSocket } from "ws";
 import type { RawText } from "@minecraft/server";
 import type * as event from "@bedrock-ws/schema/events";

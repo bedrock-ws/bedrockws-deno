@@ -1,6 +1,6 @@
 import type Server from "./Server.ts";
 import type Client from "./Client.ts";
-import type { Response } from "@bedrock-ws/bedrockws";
+import type { Response } from "./mod.ts";
 import type * as event from "@bedrock-ws/schema/events";
 import type { RawText } from "@minecraft/server";
 import type { z } from "zod/v4";

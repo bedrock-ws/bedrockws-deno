@@ -4,7 +4,7 @@ import type { Event, GameEvent } from "./events.ts";
 import { ConnectEvent, DisconnectEvent, ReadyEvent } from "./events.ts";
 import Client from "./Client.ts";
 import { WebSocketServer } from "ws";
-import { type Request, Response } from "@bedrock-ws/bedrockws";
+import { type Request, Response } from "./mod.ts";
 import * as path from "@std/path";
 import * as datetime from "@std/datetime";
 

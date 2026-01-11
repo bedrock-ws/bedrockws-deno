@@ -3,10 +3,11 @@ import type { Bot } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";
 import { TypeError } from "./errors.ts";
 import * as shlex from "shlex";
-import helpTemplate from "./help.hbs" with { type: "text" };
 import Handlebars from "handlebars";
 import type { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
 import { inspect } from "node:util";
+
+const helpTemplate = await Deno.readTextFile(`${import.meta.dirname}/help.hbs`)
 
 /**
  * A command for a bot.

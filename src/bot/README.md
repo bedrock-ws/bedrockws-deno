@@ -2,6 +2,8 @@
 
 This auxillary library helps creating Minecraft-like commands.
 
+![JSR Version](https://img.shields.io/jsr/v/@bedrock-ws/bot?style=for-the-badge&logo=jsr)
+
 ## Usage
 
 ```typescript

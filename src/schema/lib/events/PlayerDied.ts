@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { Player } from "@bedrock-ws/schema/common";
+import { Player } from "../common/mod.ts";
 
 export default z.strictObject({
   cause: z.union(

@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { DetailedItem, Entity, Player } from "@bedrock-ws/schema/common";
+import { DetailedItem, Entity, Player } from "../common/mod.ts";
 
 export default z.strictObject({
   armorBody: DetailedItem,

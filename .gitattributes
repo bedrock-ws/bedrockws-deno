@@ -1,2 +1,3 @@
 src/schema/schemas/** linguist-generated
+src/bot/lib/help.hbs.ts linguist-generated
 manual/ linguist-documentation

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.1.0-beta.3
+
+### Changed
+
+- Replace Deno specific APIs with more compatible Node APIs (#5).
+
 ## 0.1.0-beta.2
 
 ### Fixed

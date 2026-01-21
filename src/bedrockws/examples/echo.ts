@@ -22,6 +22,9 @@ server.on("Connect", (event: ConnectEvent) => {
   client.run("say Hello World 2!");
   client.run("say Hello World 3!");
   client.run("say Hello World 4!");
+  client.queryPlayer().then((player) =>
+    client.sendMessage(JSON.stringify(player))
+  );
 });
 
 server.on("Disconnect", (event: DisconnectEvent) => {

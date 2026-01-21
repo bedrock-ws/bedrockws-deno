@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+## 0.1.0-beta.5
+
+## Fixed
+
+- Use correct schema for `getlocalplayername` response.
+
 ## 0.1.0-beta.4
 
 ## Added

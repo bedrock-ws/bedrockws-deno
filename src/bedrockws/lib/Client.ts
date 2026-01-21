@@ -90,7 +90,10 @@ import { Request, type Response, type Server } from "./mod.ts";
 import type { WebSocket } from "ws";
 import type { RawText } from "@minecraft/server";
 import type * as event from "@bedrock-ws/schema/events";
-import type { CommandResponseWithDetails } from "@bedrock-ws/schema/response";
+import type {
+  CommandReponseLocalPlayerName,
+  CommandResponseWithDetails,
+} from "@bedrock-ws/schema/response";
 import type { targetquery } from "@bedrock-ws/schema";
 import type { z } from "zod/v4";
 
@@ -233,23 +236,31 @@ export default class Client {
   }
 
   /** Queries details of the client as a player in the world. */
-  async queryPlayer(): Promise<z.infer<typeof targetquery.TargetQueryDetail> & { name: string }> {
-    type ResponseDetails = Extract<
-      z.infer<typeof CommandResponseWithDetails>,
-      { "body": { "details": string } }
-    >;
+  async queryPlayer(): Promise<
+    z.infer<typeof targetquery.TargetQueryDetail> & { name: string }
+  > {
     const queryTargetResponse = await this.run("querytarget @s");
-    if (queryTargetResponse.body === undefined || !("details" in queryTargetResponse.body)) {
+    if (
+      queryTargetResponse.body === undefined ||
+      !("details" in queryTargetResponse.body)
+    ) {
       throw new Error("unexpected response by querytarget command");
     }
-    const queryTargetResponseBody = (queryTargetResponse as ResponseDetails).body;
+    const queryTargetResponseBody = (queryTargetResponse as Extract<
+      z.infer<typeof CommandResponseWithDetails>,
+      { "body": { "details": string } }
+    >).body;
     const details: z.infer<typeof targetquery.TargetQueryDetails> = JSON
       .parse(
         queryTargetResponseBody.details,
       );
     const getLocalPlayerNameResponse = await this.run("getlocalplayername");
-    const getLocalPlayerNameResponseBody = (getLocalPlayerNameResponse as ResponseDetails).body;
-    const playerName = getLocalPlayerNameResponseBody.details;
+    const getLocalPlayerNameResponseBody =
+      (getLocalPlayerNameResponse as Extract<
+        z.infer<typeof CommandReponseLocalPlayerName>,
+        { "body": { "localplayername": string } }
+      >).body;
+    const playerName = getLocalPlayerNameResponseBody.localplayername;
     return {
       ...details[0], // only a single target is queried
       name: playerName,

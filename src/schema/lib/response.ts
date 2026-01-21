@@ -630,7 +630,16 @@ export const CommandResponseWithDetails = z.strictObject({
     details: z.string(),
   }),
 }).meta({
-  description: "The response of getlocalplayername and querytarget commands",
+  description: "The response of the querytarget command",
+});
+
+export const CommandReponseLocalPlayerName = z.strictObject({
+  header: CommandResponseHeader,
+  body: CommandResponseBodyBase.extend({
+    localplayername: z.string(),
+  }),
+}).meta({
+  description: "The response of the getlocalplayername command",
 });
 
 export const CommandResponseOther = z.strictObject({
@@ -650,6 +659,7 @@ export const CommandResponse = z.union(
     CommandResponseTellCommand,
     CommandResponseWithDetails,
     CommandResponseAgentGetPosition,
+    CommandReponseLocalPlayerName,
     CommandResponseOther,
   ] as const,
 );

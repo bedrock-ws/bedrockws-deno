@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Added
+
+- The return value of `Client.queryPlayer` now contains the player name (#6).
+
 ## 0.1.0-beta.3
 
 ### Changed

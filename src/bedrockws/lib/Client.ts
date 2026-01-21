@@ -233,20 +233,27 @@ export default class Client {
   }
 
   /** Queries details of the client as a player in the world. */
-  async queryPlayer(): Promise<z.infer<typeof targetquery.TargetQueryDetail>> {
-    const response = await this.run("querytarget @s");
-    if (response.body === undefined || !("details" in response.body)) {
-      throw new Error("unexpected response by querytarget command");
-    }
-    const { body } = response as Extract<
+  async queryPlayer(): Promise<z.infer<typeof targetquery.TargetQueryDetail> & { name: string }> {
+    type ResponseDetails = Extract<
       z.infer<typeof CommandResponseWithDetails>,
       { "body": { "details": string } }
     >;
+    const queryTargetResponse = await this.run("querytarget @s");
+    if (queryTargetResponse.body === undefined || !("details" in queryTargetResponse.body)) {
+      throw new Error("unexpected response by querytarget command");
+    }
+    const queryTargetResponseBody = (queryTargetResponse as ResponseDetails).body;
     const details: z.infer<typeof targetquery.TargetQueryDetails> = JSON
       .parse(
-        body.details,
+        queryTargetResponseBody.details,
       );
-    return details[0]; // only a single target is queried
+    const getLocalPlayerNameResponse = await this.run("getlocalplayername");
+    const getLocalPlayerNameResponseBody = (getLocalPlayerNameResponse as ResponseDetails).body;
+    const playerName = getLocalPlayerNameResponseBody.details;
+    return {
+      ...details[0], // only a single target is queried
+      name: playerName,
+    };
   }
 
   /** Handles a response from the Minecraft client. */

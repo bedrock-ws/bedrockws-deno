@@ -12,6 +12,7 @@
   "fmt": {
     "exclude": ["./src/bot/tests/expected_help_output/*.xml"]
   },
+  "exclude": ["./manual"],
   "compilerOptions": {
     "strict": true,
     "strictBindCallApply": true,

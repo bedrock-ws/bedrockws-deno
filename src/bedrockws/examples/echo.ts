@@ -39,7 +39,7 @@ server.on("PlayerMessage", (event: PlayerMessageEvent) => {
       event.reply("pong");
       break;
     case "close":
-      event.client.close();
+      event.client.close({ code: 1000, reason: "I'm done" });
       break;
     case "crash":
       throw new Error("intentional user caused crash");

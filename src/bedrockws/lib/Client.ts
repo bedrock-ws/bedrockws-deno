@@ -194,6 +194,7 @@ export default class Client {
     message: RawText | string,
     options?: SendMessageOptions,
   ): Promise<Response>[] {
+    // TODO: when split == true, then only return single promise
     const target = options?.target ?? "@a";
     const split = options?.split ?? true;
     // TODO: support splitting RawText

@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
 export default z.strictObject({
-  message: z.string().meta({ description: "The message that got sent." }),
+  message: z.string().meta({ description: "The message that got sent. When the `say` command is used, the message is prefixed by `[PlayerName] ` exactly as seen in the chat." }),
   sender: z.string().meta({
     description: "The player name of the sender of the message.",
   }),

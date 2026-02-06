@@ -1111,6 +1111,12 @@ export class PlayerLeaveEvent implements GameEventBase {
   }
 }
 
+/**
+ * Event fired when a player sends a message.
+ *
+ * Note, that the client cannot record player messages sent by other players
+ * unless the client hosts the world.
+ */
 export class PlayerMessageEvent implements GameEventBase {
   server: Server;
   client: Client;
@@ -1128,10 +1134,16 @@ export class PlayerMessageEvent implements GameEventBase {
     this.data = options.data;
   }
 
+  /**
+   * Privately reply to the sender of the message.
+   */
   reply(message: RawText | string): Promise<Response>[] {
     return this.client.sendMessage(message, { target: this.data.sender });
   }
 
+  /**
+   * The receiver or `undefined` when there is none.
+   */
   get receiver(): string | undefined {
     const receiver = this.data.receiver;
     return receiver === "" ? undefined : receiver;

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- `BotOptions.recognizePrivateMessages`
+
 ## 0.1.1
 
 ### Fixed

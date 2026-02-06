@@ -13,7 +13,8 @@ export interface BotOptions {
    * The prefix required to invoke commands.
    *
    * The prefix can be of any length including zero. The prefix must not begin
-   * with a slash (`/`).
+   * with a slash (`/`) and should not begin with a opening bracket (`[`) to
+   * avoid issues when the `say` command is used.
    */
   commandPrefix: string;
 
@@ -24,6 +25,21 @@ export interface BotOptions {
    * This is `false` by default.
    */
   whisperErrors?: boolean;
+
+  /**
+   * Recognize private messages as potential commands.
+   *
+   * Only private messages initiated by a player to itself can be recognized as
+   * commands. This allows a player to execute `/w @s -hello` assuming `-` is
+   * the command prefix to run the `hello` command. This functionality is not
+   * limited to the `w` command and can be used with the aliases `msg` and
+   * `tell` as well. All errors will be replied **privately** ignoring the
+   * option {@link BotOptions.whisperErrors} when commands are used via private
+   * messages.
+   *
+   * This is `true` by default.
+   */
+  recognizePrivateMessages?: boolean;
 
   /**
    * Whether to automatically add a help command.
@@ -45,6 +61,7 @@ export interface BotOptions {
 export default class Bot extends Server {
   readonly commandPrefix: string;
   readonly whisperErrors: boolean;
+  readonly recognizePrivateMessages: boolean;
 
   private commands: [Command, CommandCallback][];
 
@@ -55,6 +72,7 @@ export default class Bot extends Server {
 
     this.commandPrefix = options.commandPrefix;
     this.whisperErrors = options.whisperErrors ?? false;
+    this.recognizePrivateMessages = options.recognizePrivateMessages ?? true;
     if (options.helpCommand ?? true) {
       const helpCommand = new HelpCommand();
       this.commands.push([helpCommand, helpCommand.runHelp.bind(helpCommand)]);
@@ -62,27 +80,31 @@ export default class Bot extends Server {
 
     this.on("PlayerMessage", (event) => {
       const { client, data } = event;
+      const { sender, message } = data;
 
-      if ((Object.values(consts.names) as string[]).includes(data.sender)) {
-        return;
-      }
-      if (event.receiver !== undefined) return;
-      if (!data.message.startsWith(this.commandPrefix)) return;
+      const sentByServer = (Object.values(consts.names) as string[])
+        .includes(data.sender);
+      const privateMessage = data.type === "tell";
+
+      if (sentByServer) return;
+      if (!this.recognizePrivateMessages && privateMessage) return;
+      if (!message.startsWith(this.commandPrefix)) return;
 
       let name, args;
       try {
         ({ name, args } = lexCommandInput(
-          data.message.slice(this.commandPrefix.length),
+          message.slice(this.commandPrefix.length),
         ));
       } catch (e) {
-        this.displayError(client, data.sender, e as Error);
+        this.displayError(client, sender, privateMessage, e as Error);
         return;
       }
       const cmd = this.searchCommand(name);
       if (cmd === undefined) {
         this.displayError(
           client,
-          event.data.sender,
+          sender,
+          privateMessage,
           new UnknownCommandError(`unknown command ${name}`),
         );
         return;
@@ -96,12 +118,12 @@ export default class Bot extends Server {
           args,
         );
       } catch (e) {
-        this.displayError(client, data.sender, e as Error);
+        this.displayError(client, sender, privateMessage, e as Error);
         return;
       }
 
       const origin: CommandOrigin = {
-        initiator: data.sender,
+        initiator: sender,
         event,
         client,
         bot: this,
@@ -111,7 +133,7 @@ export default class Bot extends Server {
         cmd[1](origin, ...parsedArgs);
       } catch (e) {
         // FIXME: application code may throw different types than Error!
-        this.displayError(client, data.sender, e as Error);
+        this.displayError(client, sender, privateMessage, e as Error);
       }
     });
   }
@@ -121,16 +143,25 @@ export default class Bot extends Server {
     return this.commands;
   }
 
-  private displayError(client: Client, player: string, error: Error): void {
+  private displayError(
+    client: Client,
+    player: string,
+    privateMessage: boolean,
+    error: Error,
+  ): void {
     console.error({
       message: error.message,
       name: error.name,
       cause: error.cause,
       stack: error.stack,
     });
+    const target =
+      this.whisperErrors || (privateMessage && this.recognizePrivateMessages)
+        ? player
+        : "@a";
     client.sendMessage(
       ui.style`<red><bold>${error.name}</bold>: ${error.message}</red>`,
-      { target: this.whisperErrors ? player : "@a" },
+      { target },
     );
   }
 

@@ -76,6 +76,7 @@ export function parseCommand(
       }
 
       // Ensure we exhaustively matched every variant of the parameter default.
+      // deno-coverage-ignore
       const _: never = paramDefault;
     }
 

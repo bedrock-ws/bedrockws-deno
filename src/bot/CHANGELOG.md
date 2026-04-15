@@ -10,6 +10,7 @@
 
 - `lexCommandInput` now throws custom `SyntaxError` instead of built-in
   `SyntaxError`.
+- Partially providing an argument now correctly throws an error.
 
 ## 0.1.1
 

@@ -49,14 +49,16 @@ export function parseCommand(
         continue;
       }
 
-      if (index + 1 <= mendatoryParams.length) {
-        throw new MissingArgumentError(`missing argument for ${param.name}`);
-      }
-      if (args.length > 0) {
+      if (localArgs.length > 0) {
         throw new PartialArgumentError(
           `argument for ${param.name} only partially provided`,
         );
       }
+
+      if (index + 1 <= mendatoryParams.length) {
+        throw new MissingArgumentError(`missing argument for ${param.name}`);
+      }
+
       const paramDefault = (param as OptionalCommandParameter<unknown>).default;
 
       if (paramDefault === undefined) {

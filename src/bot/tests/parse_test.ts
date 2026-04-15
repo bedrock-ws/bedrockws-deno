@@ -9,6 +9,7 @@ import {
   locationParamType,
   stringParamType,
   TypeError,
+  SyntaxError,
 } from "@bedrock-ws/bot";
 import { assertInstanceOf } from "@std/assert/instance-of";
 
@@ -52,6 +53,11 @@ Deno.test("lexer", async (t) => {
       args: ["can't"],
     });
   });
+
+  await t.step("empty input", () => {
+    const error = assertThrows(() => lexCommandInput(""));
+    assertInstanceOf(error, SyntaxError);
+  })
 });
 
 Deno.test("string", () => {

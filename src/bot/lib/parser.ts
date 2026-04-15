@@ -7,6 +7,7 @@ import type {
 import {
   MissingArgumentError,
   PartialArgumentError,
+  SyntaxError,
   TooManyArgumentsError,
 } from "./errors.ts";
 import * as shlex from "shlex";

@@ -3,6 +3,7 @@ import { blockLocationParamType } from "../lib/command.ts";
 import { parseCommand } from "../lib/parser.ts";
 import {
   booleanParamType,
+  floatParamType,
   jsonParamType,
   type Location,
   locationParamType,
@@ -21,23 +22,61 @@ Deno.test("string", () => {
   assertEquals(args, ["Hello World"]);
 });
 
-Deno.test("block location", () => {
-  const input = ["12", "~9", "-1"];
-  const args = parseCommand(
-    [{ name: "foo", type: blockLocationParamType }],
-    [],
-    input,
-  );
-  assertEquals(
-    args,
-    [
-      {
-        x: { coord: 12, relative: false },
-        y: { coord: 9, relative: true },
-        z: { coord: -1, relative: false },
-      } satisfies Location,
-    ],
-  );
+Deno.test("block location", async (t) => {
+  await t.step("everything mixed", () => {
+    const input = ["12", "~9", "-1"];
+    const args = parseCommand(
+      [{ name: "foo", type: blockLocationParamType }],
+      [],
+      input,
+    );
+    assertEquals(
+      args,
+      [
+        {
+          x: { coord: 12, relative: false },
+          y: { coord: 9, relative: true },
+          z: { coord: -1, relative: false },
+        } satisfies Location,
+      ],
+    );
+  });
+
+  await t.step("two negations", () => {
+    const input = ["--1", "0", "0"];
+    const error = assertThrows(() =>
+      parseCommand(
+        [{ name: "foo", type: blockLocationParamType }],
+        [],
+        input,
+      )
+    );
+    assertInstanceOf(error, TypeError);
+  });
+
+  await t.step("floating point coordinates", () => {
+    const input = ["12.6", "~9.3", "-1.1"];
+    const error = assertThrows(() =>
+      parseCommand(
+        [{ name: "foo", type: blockLocationParamType }],
+        [],
+        input,
+      )
+    );
+    assertInstanceOf(error, TypeError);
+  });
+
+  await t.step("non-numeric coordinates", () => {
+    const input = ["a", "b", "c"];
+    const error = assertThrows(() =>
+      parseCommand(
+        [{ name: "foo", type: blockLocationParamType }],
+        [],
+        input,
+      )
+    );
+    assertInstanceOf(error, TypeError);
+  });
 });
 
 Deno.test("entity location", async (t) => {
@@ -116,4 +155,13 @@ Deno.test("JSON", () => {
   }
 });
 
-// TODO: etc...
+Deno.test("float", () => {
+  const value = 42.1010100;
+  const input = [value.toString()];
+  const args = parseCommand(
+    [{ name: "foo", type: floatParamType }],
+    [],
+    input,
+  );
+  assertEquals(args, [value]);
+});

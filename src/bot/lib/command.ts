@@ -1,3 +1,9 @@
+// TODO: Minecraft interprets integer coordinates different than floating point
+//       coordinates even if they represent the same number. For example the
+//       coordinate `3` points to the middle of the block whereas `3.0` points
+//       to the edge of the block. JavaScript cannot distinguish these two
+//       values. How should we handle this issue?
+
 import type { Client } from "@bedrock-ws/bedrockws";
 import type { Bot } from "@bedrock-ws/bot";
 import * as ui from "@bedrock-ws/ui";

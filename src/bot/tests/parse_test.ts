@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { blockLocationParamType } from "../lib/command.ts";
-import { parseCommand } from "../lib/parser.ts";
+import { lexCommandInput, parseCommand } from "../lib/parser.ts";
 import {
   booleanParamType,
   floatParamType,
@@ -11,6 +11,48 @@ import {
   TypeError,
 } from "@bedrock-ws/bot";
 import { assertInstanceOf } from "@std/assert/instance-of";
+
+Deno.test("lexer", async (t) => {
+  await t.step("only command", () => {
+    const deserialized = lexCommandInput("foo");
+    assertEquals(deserialized, {
+      name: "foo",
+      args: [],
+    });
+  });
+
+  await t.step("simple arguments", () => {
+    const deserialized = lexCommandInput("foo bar baz boo");
+    assertEquals(deserialized, {
+      name: "foo",
+      args: ["bar", "baz", "boo"],
+    });
+  });
+
+  await t.step("quoted arguments", () => {
+    const deserialized = lexCommandInput("foo 'Hello World' \"Bye World\"");
+    assertEquals(deserialized, {
+      name: "foo",
+      args: ["Hello World", "Bye World"],
+    });
+  });
+
+  await t.step("quoted command", () => {
+    const deserialized = lexCommandInput("'avoid this' bar baz");
+    assertEquals(deserialized, {
+      name: "avoid this",
+      args: ["bar", "baz"],
+    });
+  });
+
+  await t.step("including a literal quote", () => {
+    const deserialized = lexCommandInput(`i 'can'"'"'t'`);
+    assertEquals(deserialized, {
+      name: "i",
+      args: ["can't"],
+    });
+  });
+});
 
 Deno.test("string", () => {
   const input = ["Hello World"];

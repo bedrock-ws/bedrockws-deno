@@ -40,8 +40,8 @@ Deno.test("block location", () => {
   );
 });
 
-Deno.test("entity location", () => {
-  {
+Deno.test("entity location", async (t) => {
+  await t.step("everything mixed", () => {
     const input = ["42.3", "~-1.2", "0"];
     const args = parseCommand(
       [{ name: "foo", type: locationParamType }],
@@ -58,18 +58,19 @@ Deno.test("entity location", () => {
         } satisfies Location,
       ],
     );
-  }
-  {
+  });
+
+  await t.step("non-numeric coordinates", () => {
     const input = ["a", "b", "c"];
     const error = assertThrows(() =>
       parseCommand([{ name: "foo", type: locationParamType }], [], input)
     );
     assertInstanceOf(error, TypeError);
-  }
+  });
 });
 
-Deno.test("boolean", () => {
-  {
+Deno.test("boolean", async (t) => {
+  await t.step("true input", () => {
     const input = ["true"];
     const args = parseCommand(
       [{ name: "foo", type: booleanParamType }],
@@ -77,8 +78,9 @@ Deno.test("boolean", () => {
       input,
     );
     assertEquals(args, [true]);
-  }
-  {
+  });
+
+  await t.step("false input", () => {
     const input = ["false"];
     const args = parseCommand(
       [{ name: "foo", type: booleanParamType }],
@@ -86,8 +88,9 @@ Deno.test("boolean", () => {
       input,
     );
     assertEquals(args, [false]);
-  }
-  {
+  });
+
+  await t.step("non-boolean input", () => {
     const input = ["TRUE"];
     const error = assertThrows(() =>
       parseCommand(
@@ -97,7 +100,7 @@ Deno.test("boolean", () => {
       )
     );
     assertInstanceOf(error, TypeError);
-  }
+  });
 });
 
 Deno.test("JSON", () => {

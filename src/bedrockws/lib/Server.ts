@@ -9,10 +9,16 @@ import { WebSocketServer } from "ws";
 import { type Request, Response } from "./mod.ts";
 import * as path from "@std/path";
 import * as datetime from "@std/datetime";
+import { Encryption, type EncryptionMode } from "@bedrock-ws/encryption";
+import { randomBytes } from "node:crypto";
 
 export interface LaunchOptions {
   port: number;
   hostname: string;
+}
+
+export interface ServerOptions {
+  encryptionMode?: EncryptionMode;
 }
 
 export default class Server extends EventEmitter {
@@ -21,12 +27,15 @@ export default class Server extends EventEmitter {
 
   protected wss: WebSocketServer | undefined;
 
+  protected encryptionMode: EncryptionMode | undefined;
+
   /** Events that should be subscribed to as soon as a connection is established. */
   protected pendingSubscriptions: Set<keyof GameEvent> = new Set();
 
-  constructor() {
+  constructor(options?: ServerOptions) {
     super();
     this.clients = [];
+    this.encryptionMode = options?.encryptionMode;
   }
 
   /**
@@ -48,6 +57,13 @@ export default class Server extends EventEmitter {
       for (const eventName of this.pendingSubscriptions) {
         client.subscribe(eventName);
       }
+
+      if (this.encryptionMode !== undefined) {
+        const encryption = new Encryption();
+        const salt = randomBytes(16); // TODO
+        client.enableEncryption({ publicKey: encryption.publicKey, salt });
+      }
+
       this.emit(
         "Connect",
         new ConnectEvent({ server: this, client }),

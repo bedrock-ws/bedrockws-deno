@@ -630,7 +630,7 @@ export const CommandResponseWithDetails = z.strictObject({
     details: z.string(),
   }),
 }).meta({
-  description: "The response of the querytarget command",
+  description: "The response of the `querytarget` command",
 });
 
 export const CommandReponseLocalPlayerName = z.strictObject({
@@ -654,12 +654,21 @@ export const CommandResponseAgentGetPosition = z.strictObject({
   }),
 });
 
+export const CommandResponseEnableEncryption = z.strictObject({
+  header: CommandResponseHeader,
+  body: CommandResponseBodyBase.extend({
+    publicKey: z.string(),
+  })
+}).describe("The response of executing the `enableencryption` command");
+
+
 export const CommandResponse = z.union(
   [
     CommandResponseTellCommand,
     CommandResponseWithDetails,
     CommandResponseAgentGetPosition,
     CommandReponseLocalPlayerName,
+    CommandResponseEnableEncryption,
     CommandResponseOther,
   ] as const,
 );
@@ -674,6 +683,11 @@ export const ErrorResponse = z.strictObject({
   header: ErrorResponseHeader,
   body: z.strictObject({}), // TODO
 });
+
+export const EncryptionMode = z.union([
+  z.literal("cfb8").describe("AES256 CFB-8"),
+  z.literal("cfb").describe("AES256 CFB"),
+] as const);
 
 export const Response = z.union(
   [EventResponse, CommandResponse, ErrorResponse] as const,

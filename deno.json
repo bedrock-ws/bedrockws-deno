@@ -2,6 +2,7 @@
   "workspace": [
     "./src/bedrockws",
     "./src/bot",
+    "./src/encryption",
     "./src/schema",
     "./src/ui"
   ],

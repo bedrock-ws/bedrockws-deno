@@ -25,6 +25,26 @@ export const SubscribeRequest = z.strictObject({
   }),
 });
 
+// TODO: duplicate code fragments
+
+export const EncryptionMode = z.union([
+  z.literal("cfb8").describe("AES256 CFB-8"),
+  z.literal("cfb").describe("AES256 CFB"),
+]);
+
+export const EncryptionRequest = z.strictObject({
+  header: z.strictObject({
+    version: z.literal(1).meta({ description: "Protocol version" }),
+    requestId: z.uuidv4(),
+    messagePurpose: z.literal("ws:encrypt"),
+  }),
+  body: z.strictObject({
+    mode: EncryptionMode,
+    publicKey: z.string(),
+    salt: z.string(),
+  })
+});
+
 export const CommandRequest = z.strictObject({
   header: z.strictObject({
     version: z.literal(1).meta({ description: "Protocol version" }),
@@ -48,5 +68,6 @@ export const CommandRequest = z.strictObject({
 export const Request = z.union([
   SubscribeRequest,
   UnsubscribeRequest,
+  EncryptionRequest,
   CommandRequest,
 ]);

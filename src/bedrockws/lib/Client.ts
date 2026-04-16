@@ -1,4 +1,5 @@
 import { Semaphore } from "@asyncio/sync/semaphore";
+import { encodeBase64 } from "@std/encoding";
 import * as consts from "./consts.ts";
 import type { GameEvent } from "./events.ts";
 import {
@@ -92,10 +93,20 @@ import type { RawText } from "@minecraft/server";
 import type * as event from "@bedrock-ws/schema/events";
 import type {
   CommandReponseLocalPlayerName,
+  CommandResponseEnableEncryption,
   CommandResponseWithDetails,
 } from "@bedrock-ws/schema/response";
+import { EncryptionRequest } from "@bedrock-ws/schema/request";
 import type { targetquery } from "@bedrock-ws/schema";
 import type { z } from "zod/v4";
+import {
+  asJsPublicKey,
+  asOpenSSLPublicKey,
+  type EncryptionMode,
+  ServerEncryption,
+} from "@bedrock-ws/encryption";
+import { Buffer } from "node:buffer";
+import { randomUUID } from "node:crypto";
 
 interface PendingRequest<O, E> {
   resolve: (value: O) => void;
@@ -157,6 +168,8 @@ export default class Client {
    */
   protected commandSemaphore: Semaphore;
 
+  protected encryption?: ServerEncryption;
+
   constructor(socket: WebSocket, server: Server) {
     this.socket = socket;
     this.server = server;
@@ -181,8 +194,11 @@ export default class Client {
     const requestId = req.header.requestId;
 
     // Send the request as soon as the queue has enough space.
+    let data: Buffer | string = JSON.stringify(req.data);
+    if (this.encryption !== undefined) {
+      data = this.encryption.encrypt(data);
+    }
     await this.commandSemaphore.acquire();
-    const data = JSON.stringify(req.data);
     this.socket.send(data);
 
     return new Promise((resolve, reject) => {
@@ -235,6 +251,53 @@ export default class Client {
     return message.split("\n").map((line) => line === "" ? "\n" : line);
   }
 
+  /**
+   * Sends a request to enable encryption for this session.
+   *
+   * This function prepends the ASN.1 header to the public key.
+   */
+  async enableEncryption(
+    options: { publicKey: Buffer; salt: Buffer; mode?: EncryptionMode },
+  ): Promise<void> {
+    const mode: EncryptionMode = options.mode ?? "cfb8";
+    const serverPublicKeyEncoded = encodeBase64(
+      asOpenSSLPublicKey(options.publicKey),
+    );
+    const saltEncoded = encodeBase64(options.salt);
+    const args: string[] = [
+      serverPublicKeyEncoded,
+      saltEncoded,
+      mode,
+    ];
+    const requestId = randomUUID();
+    const request: z.infer<typeof EncryptionRequest> = {
+      header: {
+        requestId,
+        messagePurpose: "ws:encrypt",
+        version: 1,
+      },
+      body: {
+        publicKey: serverPublicKeyEncoded,
+        salt: saltEncoded,
+        mode,
+      },
+    };
+    const response = await this.send(new Request(request));
+    // TODO: legacy
+    // const response = await this.run(`eneableencryption ${args.join(" ")}`);
+    console.debug(response);
+    if (response.body !== undefined && !("publicKey" in response.body)) {
+      // TODO: handle possible error cases as well: https://minecraft.wiki/w/Commands/enableencryption
+      throw new Error("unexpected response by enableencryption command");
+    }
+    const body = response.body as z.infer<
+      typeof CommandResponseEnableEncryption
+    >["body"];
+    const clientPublicKey = Buffer.from(body.publicKey, "base64");
+    this.encryption = new ServerEncryption();
+    this.encryption.completeKeyExchange(mode, asJsPublicKey(clientPublicKey));
+  }
+
   /** Queries details of the client as a player in the world. */
   async queryPlayer(): Promise<
     z.infer<typeof targetquery.TargetQueryDetail> & { name: string }
@@ -274,6 +337,7 @@ export default class Client {
       : undefined;
     const isError = !res.ok;
     const isResponse = res.header.messagePurpose === "commandResponse";
+
     if (isResponse && requestId !== undefined) {
       this.commandSemaphore.release();
       const maybeRequest = this.requests.get(requestId);

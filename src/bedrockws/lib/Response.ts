@@ -20,7 +20,7 @@ export default class Response {
         z.infer<typeof ResponseSchema>,
         { "header": { "messagePurpose": "commandResponse" } }
       >;
-      return data.body.statusCode === 0;
+      if (data.body.statusCode !== undefined) return data.body.statusCode === 0;
     }
     return true;
   }

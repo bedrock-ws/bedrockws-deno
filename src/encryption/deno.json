@@ -1,0 +1,7 @@
+{
+  "name": "@bedrock-ws/encryption",
+  "version": "0.1.0",
+  "exports":{
+    ".": "./lib/mod.ts"
+  }
+}

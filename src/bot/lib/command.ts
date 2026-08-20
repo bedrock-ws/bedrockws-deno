@@ -12,7 +12,6 @@ import * as shlex from "shlex";
 import Handlebars from "handlebars";
 import type { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
 import { inspect } from "node:util";
-// Use `{ type: "text" }` imports when they are stabilized.
 import helpTemplate from "./help.hbs" with { type: "text" };
 
 /**

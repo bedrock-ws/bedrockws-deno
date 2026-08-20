@@ -13,7 +13,7 @@ import Handlebars from "handlebars";
 import type { PlayerMessageEvent } from "@bedrock-ws/bedrockws/events";
 import { inspect } from "node:util";
 // Use `{ type: "text" }` imports when they are stabilized.
-import { default as helpTemplate } from "./help.hbs.ts";
+import helpTemplate from "./help.hbs" with { type: "text" };
 
 /**
  * A command for a bot.
